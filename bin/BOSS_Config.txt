@@ -1,0 +1,76 @@
+{
+    "Game Data" : "BWData.json",
+
+    "Experiments" : 
+    {    
+        "BuildOrderPlot" :
+        {
+            "Run"           : true,
+            "Type"          : "BuildOrderPlot",
+            "OutputDir"     : "gnuplot/",
+            "Scenarios"     :   
+            [ 
+                { "State" : "Zerg Start State", "BuildOrder" : "3 Hatch Muta" }
+            ] 
+        },
+    
+        "TestCombatSearch" :
+        {
+            "Run"               : false,
+            "Type"              : "CombatSearch",
+            "SearchTypes"       : [ "BestResponse", "Integral", "Bucket"],
+            "Race"              : "Protoss",
+            "State"             : "Protoss Start State",
+            "PrintNewBest"      : true,
+            "SearchTimeLimitMS" : 1200000,
+            "FrameTimeLimit"    : 4500,
+            "RelevantActions"   : [ "Probe", "Pylon", "Nexus", "Assimilator", "Gateway", "Zealot", "Cybernetics_Core", "Dragoon" ],
+            "MaxActions"        : [ ["Nexus", 1], ["Assimilator", 1], ["Cybernetics_Core", 1], ["Pylon", 6], ["Gateway", 3] ],
+            "AlwaysMakeWorkers" : true,
+            "OpeningBuildOrder" : "Protoss Opening Book",
+            "BestResponseParams":
+            {
+                "EnemyState"        : "Protoss Start State",
+                "EnemyBuildOrder"   : "8 Zealots"
+            }
+        },
+        
+        "DT Rush" :   
+        {   
+            "Run"           : false, 
+            "Type"          : "BuildOrderSearch", 
+            "OutputFile"    : "DTRush_Opt.txt", 
+            "Race"          : "Protoss",
+            "State"         : "Protoss Start State"
+        }
+    },
+
+    "States" : 
+    {
+        "Protoss Start State"   : { "race" : "Protoss", "minerals" : 50, "gas" : 0, "units" : [ ["Probe", 4], ["Nexus", 1] ] },
+        "Zerg Start State"      : { "race" : "Zerg",    "minerals" : 50, "gas" : 0, "units" : [ ["Drone", 4], ["Hatchery", 1], ["Overlord", 1] ] },
+        "Terran Start State"    : { "race" : "Terran",  "minerals" : 50, "gas" : 0, "units" : [ ["SCV", 4], ["CommandCenter", 1] ] }
+    },
+    
+    "Build Orders" :
+    {
+        "Empty"                 : [ ],        
+        "Protoss Opening Book"  : [ "Probe", "Probe", "Probe", "Probe", "Pylon"],
+        "Zerg Opening Book"     : [ "Drone", "Drone", "Drone", "Drone", "Overlord" ],
+        "Terran Opening Book"   : [ "SCV", "SCV", "SCV", "SCV", "SupplyDepot" ],
+        "3 Hatch Muta"          : [ "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk" ],
+        "3 Hatch Muta 2"        : [ "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk" ],
+        "8 Zealots"             : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Probe", "Gateway", "Probe", "Gateway", "Pylon",  "Pylon", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot" ],
+        "UAB Zealot Rush"       : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Gateway", "Probe", "Probe", "Zealot", "Pylon", "Zealot", "Zealot", "Probe", "Zealot", "Zealot", "Probe", "Pylon", "Zealot", "Gateway", "Probe", "Pylon", "Probe", "Zealot", "Probe", "Zealot", "Zealot", "Zealot", "Zealot", "Pylon", "Probe", "Zealot", "Zealot", "Zealot" ],
+        "UAB DT Rush"           : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "CyberneticsCore", "Probe", "CitadelofAdun", "Probe", "TemplarArchives", "Gateway", "DarkTemplar", "DarkTemplar", "Pylon", "DarkTemplar", "DarkTemplar", "Probe", "Pylon", "Probe"],
+        "UAB Dragoon Rush"      : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "Probe", "CyberneticsCore", "Probe", "Probe", "Gateway", "SingularityCharge", "Dragoon", "Gateway", "Pylon", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon"],
+        "Build Order"           : [ "SCV", "Barracks", "Marine", "Marine", "Refinery", "EngineeringBay", "Bunker"]
+    },
+
+    "Build Order Search Goals" :
+    {
+        "2 Dark Templars"       : { "race" : "Protoss", "goal" : [ ["Dark_Templar", 2] ], "goalMax" : [] },
+        "8 Zealots 2 Dragoons"  : { "race" : "Protoss", "goal" : [ ["Zealot", 8], ["Dragoon", 2] ], "goalMax" : [] },
+        "6 Mutalisks"           : { "race" : "Zerg", "goal" : [ ["Mutalisk", 6] ], "goalMax" : [] }
+    }
+}
