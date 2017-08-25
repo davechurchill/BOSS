@@ -1,5 +1,7 @@
 #include "BOSSAssert.h"
 #include "BOSSException.h"
+#include <iomanip>
+#include <ctime>
 
 using namespace BOSS;
 
@@ -9,21 +11,11 @@ namespace Assert
 {
     const std::string currentDateTime() 
     {
-        time_t     now = time(0);
-        struct tm  tstruct;
-        char       buf[80];
-        tstruct = *localtime(&now);
-        strftime(buf, sizeof(buf), "%Y-%m-%d_%X", &tstruct);
-
-        for (size_t i(0); i < strlen(buf); ++i)
-        {
-            if (buf[i] == ':')
-            {
-                buf[i] = '-';
-            }
-        }
-
-        return buf;
+        auto t = std::time(nullptr);
+        auto tm = *std::localtime(&t);
+        std::stringstream ss;
+        ss << std::put_time(&tm, "%d-%m-%Y %H-%M-%S");
+        return ss.str();
     }
 
     void ReportFailure(const GameState * state, const char * condition, const char * file, int line, const char * msg, ...)
@@ -35,7 +27,7 @@ namespace Assert
         {
             va_list args;
             va_start(args, msg);
-            vsprintf(messageBuffer, msg, args);
+            sprintf(messageBuffer, msg, args);
             va_end(args);
         }
 

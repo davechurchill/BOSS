@@ -27,7 +27,7 @@ void Experiments::RunExperiments(const std::string & experimentFilename)
 
             if (type == "CombatSearch")
             {
-                RunCombatExperiment(name, val);
+                //RunCombatExperiment(name, val);
             }
             else if (type == "BuildOrderPlot")
             {
@@ -43,11 +43,11 @@ void Experiments::RunExperiments(const std::string & experimentFilename)
     std::cout << "\n\n";
 }
 
-void Experiments::RunCombatExperiment(const std::string & name, const rapidjson::Value & val)
-{
-    CombatSearchExperiment exp(name, val);
-    exp.run();
-}
+//void Experiments::RunCombatExperiment(const std::string & name, const rapidjson::Value & val)
+//{
+//    CombatSearchExperiment exp(name, val);
+//    exp.run();
+//}
 
 void Experiments::RunBuildOrderPlot(const std::string & name, const rapidjson::Value & val)
 {

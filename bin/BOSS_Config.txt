@@ -10,7 +10,12 @@
             "OutputDir"     : "gnuplot/",
             "Scenarios"     :   
             [ 
-                { "State" : "Zerg Start State", "BuildOrder" : "3 Hatch Muta" }
+                { "State" : "Protoss Start State", "BuildOrder" : "UAB DT Rush" },
+                { "State" : "Protoss Start State", "BuildOrder" : "8 Zealots" },
+                { "State" : "Protoss Start State", "BuildOrder" : "UAB Dragoon Rush" },
+                { "State" : "Protoss Start State", "BuildOrder" : "UAB DT Rush" },
+                { "State" : "Protoss Start State", "BuildOrder" : "8 Zealots" },
+                { "State" : "Protoss Start State", "BuildOrder" : "UAB Dragoon Rush" }
             ] 
         },
     
@@ -63,13 +68,13 @@
         "8 Zealots"             : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Probe", "Gateway", "Probe", "Gateway", "Pylon",  "Pylon", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot" ],
         "UAB Zealot Rush"       : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Gateway", "Probe", "Probe", "Zealot", "Pylon", "Zealot", "Zealot", "Probe", "Zealot", "Zealot", "Probe", "Pylon", "Zealot", "Gateway", "Probe", "Pylon", "Probe", "Zealot", "Probe", "Zealot", "Zealot", "Zealot", "Zealot", "Pylon", "Probe", "Zealot", "Zealot", "Zealot" ],
         "UAB DT Rush"           : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "CyberneticsCore", "Probe", "CitadelofAdun", "Probe", "TemplarArchives", "Gateway", "DarkTemplar", "DarkTemplar", "Pylon", "DarkTemplar", "DarkTemplar", "Probe", "Pylon", "Probe"],
-        "UAB Dragoon Rush"      : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "Probe", "CyberneticsCore", "Probe", "Probe", "Gateway", "SingularityCharge", "Dragoon", "Gateway", "Pylon", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon"],
+        "UAB Dragoon Rush"      : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "Probe", "CyberneticsCore", "Probe", "Probe", "Gateway", "Dragoon", "Gateway", "Pylon", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon"],
         "Build Order"           : [ "SCV", "Barracks", "Marine", "Marine", "Refinery", "EngineeringBay", "Bunker"]
     },
 
     "Build Order Search Goals" :
     {
-        "2 Dark Templars"       : { "race" : "Protoss", "goal" : [ ["Dark_Templar", 2] ], "goalMax" : [] },
+        "2 Dark Templars"       : { "race" : "Protoss", "goal" : [ ["DarkTemplar", 2] ], "goalMax" : [] },
         "8 Zealots 2 Dragoons"  : { "race" : "Protoss", "goal" : [ ["Zealot", 8], ["Dragoon", 2] ], "goalMax" : [] },
         "6 Mutalisks"           : { "race" : "Zerg", "goal" : [ ["Mutalisk", 6] ], "goalMax" : [] }
     }

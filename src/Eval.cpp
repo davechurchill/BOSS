@@ -6,16 +6,14 @@ namespace Eval
 {
     double ArmyCompletedResourceSum(const GameState & state)
     {
-        ResourceCountType sum(0);
+        float sum(0);
 	    
-        const std::vector<ActionType> & allActions = ActionTypes::GetAllActionTypes(state.getRace());
-	    for (ActionID i(0); i<allActions.size(); ++i)
+	    for (auto & type : ActionTypes::GetAllActionTypes())
 	    {
-            const ActionType & a = allActions[i];
-	        if (!a.isBuilding() && !a.isWorker() && !a.isSupplyProvider())
+	        if (!type.isBuilding() && !type.isWorker() && !type.isSupplyProvider())
 	        {
-                sum += state.getUnitData().getNumCompleted(a)*a.mineralPrice();
-	            sum += 2*state.getUnitData().getNumCompleted(a)*a.gasPrice();
+                sum += state.getNumCompleted(type)*type.mineralPrice();
+	            sum += 2*state.getNumCompleted(type)*type.gasPrice();
 	        }
 	    }
 	    
@@ -24,16 +22,14 @@ namespace Eval
 
     double ArmyTotalResourceSum(const GameState & state)
     {
-        ResourceCountType sum(0);
+        float sum(0);
 	    
-	    const std::vector<ActionType> & allActions = ActionTypes::GetAllActionTypes(state.getRace());
-	    for (ActionID i(0); i<allActions.size(); ++i)
+	    for (auto & type : ActionTypes::GetAllActionTypes())
 	    {
-            const ActionType & a = allActions[i];
-	        if (!a.isBuilding() && !a.isWorker() && !a.isSupplyProvider())
+	        if (!type.isBuilding() && !type.isWorker() && !type.isSupplyProvider())
 	        {
-                sum += state.getUnitData().getNumTotal(a)*a.mineralPrice();
-	            sum += 2*state.getUnitData().getNumTotal(a)*a.gasPrice();
+                sum += state.getNumTotal(type)*type.mineralPrice();
+	            sum += 2*state.getNumTotal(type)*type.gasPrice();
 	        }
 	    }
 	    
@@ -86,16 +82,14 @@ namespace Eval
         }
 
         // if we have less of any unit than the other state we are not dominating it
-        for (size_t a(0); a < ActionTypes::GetAllActionTypes(state.getRace()).size(); ++a)
+        for (auto & action : ActionTypes::GetAllActionTypes())
         {
-            const ActionType & action = ActionTypes::GetActionType(state.getRace(), a);
-
-            if (state.getUnitData().getNumTotal(action) < other.getUnitData().getNumTotal(action))
+            if (state.getNumTotal(action) < other.getNumTotal(action))
             {
                 return false;
             }
 
-            if (state.getUnitData().getNumCompleted(action) < other.getUnitData().getNumCompleted(action))
+            if (state.getNumCompleted(action) < other.getNumCompleted(action))
             {
                 return false;
             }

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\src\ActionType.cpp" />
+    <ClCompile Include="..\src\ActionTypeData.cpp" />
+    <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\BuildOrder.cpp" />
+    <ClCompile Include="..\src\GameState.cpp" />
+    <ClCompile Include="..\src\Instance.cpp" />
+    <ClCompile Include="..\src\BOSS.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BOSSAssert.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BOSSException.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BOSSConfig.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Common.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\JSONTools.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Eval.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\ActionType.h" />
+    <ClInclude Include="..\src\ActionTypeData.h" />
+    <ClInclude Include="..\src\BuildOrder.h" />
+    <ClInclude Include="..\src\GameState.h" />
+    <ClInclude Include="..\src\Instance.h" />
+    <ClInclude Include="..\src\BOSS.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\BOSSAssert.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\BOSSException.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\BOSSConfig.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Common.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\JSONTools.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Timer.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Eval.h">
+      <Filter>util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="BuildOrder">
+      <UniqueIdentifier>{804d91b0-f4f3-4d83-9d93-27d0ef490532}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{a3b62d23-f83c-4f84-adbc-15fb2522a4cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{b4356788-9d1c-4810-9b88-bac65dbf6c46}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

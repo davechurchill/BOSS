@@ -344,18 +344,6 @@ int GameState::whenPrerequisitesReady(const ActionType & action) const
     return m_currentFrame;
 }
 
-bool GameState::haveBuilder(const ActionType & type) const
-{
-    return std::any_of(m_instances.begin(), m_instances.end(), 
-                      [&type](const Instance & i){ return i.whenCanBuild(type) != -1; });
-}
-
-bool GameState::havePrerequisites(const ActionType & type) const
-{
-    return std::all_of(type.required().begin(), type.required().end(), 
-                      [this](const ActionType & req) { return this->haveType(req); });
-}
-
 int GameState::getBuilderID(const ActionType & action) const
 {
     int minWhenReady = std::numeric_limits<int>::max();
@@ -385,28 +373,40 @@ int GameState::getBuilderID(const ActionType & action) const
     return builderID;
 }
 
+bool GameState::haveBuilder(const ActionType & type) const
+{
+    return std::any_of(m_instances.begin(), m_instances.end(), 
+           [&type](const Instance & i){ return i.whenCanBuild(type) != -1; });
+}
+
+bool GameState::havePrerequisites(const ActionType & type) const
+{
+    return std::all_of(type.required().begin(), type.required().end(), 
+           [this](const ActionType & req) { return this->haveType(req); });
+}
+
 size_t GameState::getNumInProgress(const ActionType & action) const
 {
     return std::count_if(m_instancesBeingBuilt.begin(), m_instancesBeingBuilt.end(),
-                        [this, &action](const size_t & id) { return action == this->getInstance(id).getType(); } );
+           [this, &action](const size_t & id) { return action == this->getInstance(id).getType(); } );
 }
 
 size_t GameState::getNumCompleted(const ActionType & action) const
 {
     return std::count_if(m_instances.begin(), m_instances.end(),
-                        [&action](const Instance & instance) { return action == instance.getType() && instance.getTimeUntilBuilt() == 0; } );
+           [&action](const Instance & instance) { return action == instance.getType() && instance.getTimeUntilBuilt() == 0; } );
 }
 
 size_t GameState::getNumTotal(const ActionType & action) const
 {
-    return std::count_if(m_instances.begin(), m_instances.end(),
-                        [&action](const Instance & instance) { return action == instance.getType(); } );
+    return std::count_if(m_instances.begin(), m_instances.end(), 
+           [&action](const Instance & instance) { return action == instance.getType(); } );
 }
 
 bool GameState::haveType(const ActionType & action) const
 {
     return std::any_of(m_instances.begin(), m_instances.end(), 
-                        [&action](const Instance & i){ return i.getType() == action; });
+           [&action](const Instance & i){ return i.getType() == action; });
 }
 
 int GameState::getSupplyInProgress() const
@@ -451,6 +451,21 @@ const int & GameState::getCurrentFrame() const
     return m_currentFrame;
 }
 
+void GameState::setMinerals(const float & minerals)
+{
+    m_minerals = minerals;
+}
+
+void GameState::setGas(const float & gas)
+{
+    m_gas = gas;
+}
+
+int GameState::getRace() const
+{
+    return m_race;
+}
+
 std::string GameState::toString() const
 {
 	std::stringstream ss;
@@ -476,14 +491,14 @@ std::string GameState::toString() const
     for (auto & id : m_instancesBeingBuilt) 
     {
         auto & instance = getInstance(id);
-        sprintf(buf, "%6d %6d %s\n", instance.getID(), instance.getTimeUntilBuilt(), instance.getType().getName().c_str());
+        sprintf(buf, "%5d %5d %s\n", instance.getID(), instance.getTimeUntilBuilt(), instance.getType().getName().c_str());
         ss << buf;
     }
 
     ss << "\nAll Instances:\n";
     for (auto & instance : m_instances) 
     {
-        sprintf(buf, "%6d %6d %s\n", instance.getID(), instance.getTimeUntilFree(), instance.getType().getName().c_str());
+        sprintf(buf, "%5d %5d %s\n", instance.getID(), instance.getTimeUntilFree(), instance.getType().getName().c_str());
         ss << buf;
     }
     
@@ -492,7 +507,7 @@ std::string GameState::toString() const
     getLegalActions(legalActions);
     for (auto & type : legalActions)
     {
-        sprintf(buf, "%6d %6d %6d %s\n", (whenCanBuild(type)-m_currentFrame), (whenBuilderReady(type)-m_currentFrame), (whenResourcesReady(type)-m_currentFrame), type.getName().c_str());
+        sprintf(buf, "%5d %5d %5d %s\n", (whenCanBuild(type)-m_currentFrame), (whenBuilderReady(type)-m_currentFrame), (whenResourcesReady(type)-m_currentFrame), type.getName().c_str());
         ss << buf;
     }
 

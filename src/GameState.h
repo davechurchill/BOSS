@@ -56,9 +56,14 @@ public:
     void getLegalActions(std::vector<ActionType> & legalActions) const;
     bool isLegal(const ActionType & type) const;
     bool haveType(const ActionType & action) const;
+    int getRace() const;
+
     void doAction(const ActionType & type);
     void fastForward(const int & frames);
     void addInstance(const ActionType & instance, int builderID = -1);
+    void setMinerals(const float & minerals);
+    void setGas(const float & gas);
+
     std::string toString() const;
 };
 }

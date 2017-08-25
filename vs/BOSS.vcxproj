@@ -16,6 +16,12 @@
     <ClCompile Include="..\src\BOSS.cpp" />
     <ClCompile Include="..\src\BOSSAssert.cpp" />
     <ClCompile Include="..\src\BOSSException.cpp" />
+    <ClCompile Include="..\src\BOSSConfig.cpp" />
+    <ClCompile Include="..\src\BOSSExperiments.cpp" />
+    <ClCompile Include="..\src\BOSSPlotBuildOrders.cpp" />
+    <ClCompile Include="..\src\BuildOrderPlot.cpp" />
+    <ClCompile Include="..\src\BuildOrderSearchGoal.cpp" />
+    <ClCompile Include="..\src\Eval.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\BuildOrder.cpp" />
     <ClCompile Include="..\src\Common.cpp" />
@@ -29,8 +35,14 @@
     <ClInclude Include="..\src\BOSS.h" />
     <ClInclude Include="..\src\BOSSAssert.h" />
     <ClInclude Include="..\src\BOSSException.h" />
+    <ClInclude Include="..\src\BOSSConfig.h" />
+    <ClInclude Include="..\src\BOSSExperiments.h" />
+    <ClInclude Include="..\src\BOSSPlotBuildOrders.h" />
     <ClInclude Include="..\src\BuildOrder.h" />
+    <ClInclude Include="..\src\BuildOrderPlot.h" />
+    <ClInclude Include="..\src\BuildOrderSearchGoal.h" />
     <ClInclude Include="..\src\Common.h" />
+    <ClInclude Include="..\src\Eval.h" />
     <ClInclude Include="..\src\GameState.h" />
     <ClInclude Include="..\src\JSONTools.h" />
     <ClInclude Include="..\src\Timer.hpp" />
@@ -89,6 +101,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

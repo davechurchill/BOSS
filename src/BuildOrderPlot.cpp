@@ -4,12 +4,12 @@
 using namespace BOSS;
 
 BuildOrderPlot::BuildOrderPlot(const GameState & initialState, const BuildOrder & buildOrder)
-    : _initialState(initialState)
-    , _buildOrder(buildOrder)
-    , _boxHeight(20)
-    , _boxHeightBuffer(3)
-    , _maxLayer(0)
-    , _maxFinishTime(0)
+    : m_initialState(initialState)
+    , m_buildOrder(buildOrder)
+    , m_boxHeight(20)
+    , m_boxHeightBuffer(3)
+    , m_maxLayer(0)
+    , m_maxFinishTime(0)
 {
     calculateStartEndTimes();
     calculatePlot();
@@ -17,28 +17,28 @@ BuildOrderPlot::BuildOrderPlot(const GameState & initialState, const BuildOrder 
 
 void BuildOrderPlot::calculateStartEndTimes()
 {
-    GameState state(_initialState);
+    GameState state(m_initialState);
 
-    BOSS_ASSERT(_buildOrder.isLegalFromState(state), "Build order isn't legal!");
+    //BOSS_ASSERT(_buildOrder.isLegalFromState(state), "Build order isn't legal!");
 
-    for (size_t i(0); i < _buildOrder.size(); ++i)
+    for (size_t i(0); i < m_buildOrder.size(); ++i)
     {
-        const ActionType & type = _buildOrder[i];
+        const ActionType & type = m_buildOrder[i];
         state.doAction(type);
 
-        _startTimes.push_back(state.getCurrentFrame());
+        m_startTimes.push_back(state.getCurrentFrame());
 
-        FrameCountType finish = state.getCurrentFrame() + type.buildTime();
+        int finish = state.getCurrentFrame() + type.buildTime();
         if (type.isBuilding() && !type.isAddon() && !type.isMorphed())
         {
-            finish += Constants::BUILDING_PLACEMENT;
+            finish += 0; // TODO: building constant walk time
         }
 
-        _finishTimes.push_back(finish);
+        m_finishTimes.push_back(finish);
 
-        _maxFinishTime = std::max(_maxFinishTime, finish);
+        m_maxFinishTime = std::max(m_maxFinishTime, finish);
 
-        _armyValues.push_back(Eval::ArmyTotalResourceSum(state));
+        m_armyValues.push_back(Eval::ArmyTotalResourceSum(state));
 
         std::pair<int, int> mineralsBefore(state.getCurrentFrame(), state.getMinerals() + type.mineralPrice());
         std::pair<int, int> mineralsAfter(state.getCurrentFrame(), state.getMinerals());
@@ -46,31 +46,31 @@ void BuildOrderPlot::calculateStartEndTimes()
         std::pair<int, int> gasBefore(state.getCurrentFrame(), state.getGas() + type.gasPrice());
         std::pair<int, int> gasAfter(state.getCurrentFrame(), state.getGas());
 
-        _minerals.push_back(mineralsBefore);
-        _minerals.push_back(mineralsAfter);
-        _gas.push_back(gasBefore);
-        _gas.push_back(gasAfter);
+        m_minerals.push_back(mineralsBefore);
+        m_minerals.push_back(mineralsAfter);
+        m_gas.push_back(gasBefore);
+        m_gas.push_back(gasAfter);
     }
 }
 
 void BuildOrderPlot::calculatePlot()
 {
-    _layers = std::vector<int>(_startTimes.size(), -1); 
+    m_layers = std::vector<int>(m_startTimes.size(), -1); 
 
     // determine the layers for each action
-    for (size_t i(0); i < _startTimes.size(); ++i)
+    for (size_t i(0); i < m_startTimes.size(); ++i)
     {
-        FrameCountType start    = _startTimes[i];
-        FrameCountType finish   = _finishTimes[i];
+        int start    = m_startTimes[i];
+        int finish   = m_finishTimes[i];
 
         std::vector<int> layerOverlap;
 
         // loop through everything up to this action and see which layers it can't be in
         for (size_t j(0); j < i; ++j)
         {
-            if (start < _finishTimes[j])
+            if (start < m_finishTimes[j])
             {
-                layerOverlap.push_back(_layers[j]);
+                layerOverlap.push_back(m_layers[j]);
             }
         }
 
@@ -80,10 +80,10 @@ void BuildOrderPlot::calculatePlot()
         {
             if (std::find(layerOverlap.begin(), layerOverlap.end(), layerTest) == layerOverlap.end())
             {
-                _layers[i] = layerTest;
-                if (layerTest > _maxLayer)
+                m_layers[i] = layerTest;
+                if (layerTest > m_maxLayer)
                 {
-                    _maxLayer = layerTest;
+                    m_maxLayer = layerTest;
                 }
                 break;
             }
@@ -92,18 +92,18 @@ void BuildOrderPlot::calculatePlot()
         }
     }
 
-    for (size_t i(0); i < _buildOrder.size(); ++i)
+    for (size_t i(0); i < m_buildOrder.size(); ++i)
     {
-        Position topLeft(_startTimes[i], _layers[i] * (_boxHeight + _boxHeightBuffer));
-        Position bottomRight(_finishTimes[i], topLeft.y() + _boxHeight);
+        Position topLeft(m_startTimes[i], m_layers[i] * (m_boxHeight + m_boxHeightBuffer));
+        Position bottomRight(m_finishTimes[i], topLeft.y() + m_boxHeight);
 
-        _rectangles.push_back(Rectangle(_buildOrder[i].getShortName(), topLeft, bottomRight));
+        m_rectangles.push_back(Rectangle(m_buildOrder[i].getName(), topLeft, bottomRight));
     }
 }
 
 void BuildOrderPlot::addPlot(const BuildOrderPlot & plot)
 {
-    _otherPlots.push_back(plot);
+    m_otherPlots.push_back(plot);
 }
 
 void BuildOrderPlot::writeResourcePlot(const std::string & filename)
@@ -111,16 +111,16 @@ void BuildOrderPlot::writeResourcePlot(const std::string & filename)
     std::string noext = RemoveFileExtension(filename);
     std::stringstream mineralss;
 
-    for (size_t i(0); i < _minerals.size(); ++i)
+    for (size_t i(0); i < m_minerals.size(); ++i)
     {
-        mineralss << _minerals[i].first << " " << _minerals[i].second/Constants::RESOURCE_SCALE << std::endl;
+        mineralss << m_minerals[i].first << " " << m_minerals[i].second << std::endl;
     }
 
     std::stringstream gasss;
 
-    for (size_t i(0); i < _gas.size(); ++i)
+    for (size_t i(0); i < m_gas.size(); ++i)
     {
-        gasss << _gas[i].first << " " << _gas[i].second/Constants::RESOURCE_SCALE << std::endl;
+        gasss << m_gas[i].first << " " << m_gas[i].second << std::endl;
     }
 
     WriteGnuPlot(noext + "_minerals", mineralss.str(), " with lines ");
@@ -130,102 +130,98 @@ void BuildOrderPlot::writeResourcePlot(const std::string & filename)
 void BuildOrderPlot::writeRectanglePlot(const std::string & filename)
 {
     std::stringstream ss;
-    int maxY = (_maxLayer + 1) * (_boxHeight + _boxHeightBuffer) + 15;
+    int maxY = (m_maxLayer + 1) * (m_boxHeight + m_boxHeightBuffer) + 15;
 
-    for (size_t p(0); p < _otherPlots.size(); ++p)
+    for (size_t p(0); p < m_otherPlots.size(); ++p)
     {
-        maxY += (_otherPlots[p]._maxLayer + 2) * (_boxHeight + _boxHeightBuffer) + 15;
+        maxY += (m_otherPlots[p].m_maxLayer + 2) * (m_boxHeight + m_boxHeightBuffer) + 15;
     }
 
     //ss << "set title \"Title Goes Here\"" << std::endl;
     //ss << "set xlabel \"Time (frames)\"" << std::endl;
     ss << "set style rect fc lt -1 fs transparent solid 0.15" << std::endl;
-    ss << "set xrange [" << -(_maxFinishTime*.03) << ":" << 1.03*_maxFinishTime << "]" << std::endl;
+    ss << "set xrange [" << -(m_maxFinishTime*.03) << ":" << 1.03*m_maxFinishTime << "]" << std::endl;
     ss << "set yrange [-15:" << maxY << "]" << std::endl;
     ss << "unset ytics" << std::endl;
     ss << "set grid xtics" << std::endl;
     ss << "set nokey" << std::endl;
-    //ss << "set size ratio " << (0.05 * _maxLayer) << std::endl;
+    //ss << "set size ratio " << (0.05 * m_maxLayer) << std::endl;
     ss << "set terminal wxt size 960,300" << std::endl;
     ss << "plotHeight = " << 1000 << std::endl;
-    ss << "boxHeight = " << _boxHeight << std::endl;
-    ss << "boxHeightBuffer = " << _boxHeightBuffer << std::endl;
+    ss << "boxHeight = " << m_boxHeight << std::endl;
+    ss << "boxHeightBuffer = " << m_boxHeightBuffer << std::endl;
     ss << "boxWidthScale = " << 1.0 << std::endl;
 
-    for (size_t i(0); i < _buildOrder.size(); ++i)
+    for (size_t i(0); i < m_buildOrder.size(); ++i)
     {
-        const Rectangle & rect = _rectangles[i];
+        const Rectangle & rect = m_rectangles[i];
         const int rectWidth = (rect.bottomRight.x() - rect.topLeft.x());
         const int rectCenterX = rect.bottomRight.x() - (rectWidth / 2);
         
         std::stringstream pos;
         pos << "(boxWidthScale * " << rectCenterX << "),";
-        pos << "((boxHeight + boxHeightBuffer) * " << _layers[i] << " + boxHeight/2)";
+        pos << "((boxHeight + boxHeightBuffer) * " << m_layers[i] << " + boxHeight/2)";
 
         ss << "set object " << (i+1) << " rect at ";
         ss << pos.str();
         ss << " size ";
         ss << "(boxWidthScale * " << (rectWidth) << "),";
         ss << "(boxHeight) ";
-        //ss << "(boxWidthScale * " << _finishTimes[i] << "),";
-        //ss << "((boxHeight + boxHeightBuffer) * " << _layers[i] << " + boxHeight) ";
+        //ss << "(boxWidthScale * " << m_finishTimes[i] << "),";
+        //ss << "((boxHeight + boxHeightBuffer) * " << m_layers[i] << " + boxHeight) ";
         ss << "lw 1";
 
-        if (_buildOrder[i].isWorker())
+        if (m_buildOrder[i].isWorker())
         {
             ss << " fc rgb \"cyan\"";
         }
-        else if (_buildOrder[i].isSupplyProvider())
+        else if (m_buildOrder[i].isSupplyProvider())
         {
             ss << " fc rgb \"gold\"";
         }
-        else if (_buildOrder[i].isRefinery())
+        else if (m_buildOrder[i].isRefinery())
         {
             ss << " fc rgb \"green\"";
         }
-        else if (_buildOrder[i].isBuilding())
+        else if (m_buildOrder[i].isBuilding())
         {
             ss << " fc rgb \"brown\"";
         }
-        else if (_buildOrder[i].isUpgrade())
+        else if (m_buildOrder[i].isUpgrade())
         {
             ss << " fc rgb \"purple\"";
         }
-        else if (_buildOrder[i].isTech())
-        {
-            ss << " fc rgb \"magenta\"";
-        }
 
         ss << std::endl;
 
-        ss << "set label " << (i+1) << " at " << pos.str() << " \"" << _buildOrder[i].getShortName() << "\" front center";
+        ss << "set label " << (i+1) << " at " << pos.str() << " \"" << m_buildOrder[i].getName() << "\" front center";
         ss << std::endl;
     }
 
-    int currentLayer = _maxLayer + 2;
-    int currentObject = _buildOrder.size();
+    int currentLayer = m_maxLayer + 2;
+    int currentObject = m_buildOrder.size();
 
-    for (size_t p(0); p < _otherPlots.size(); ++p)
+    for (size_t p(0); p < m_otherPlots.size(); ++p)
     {
-        const BuildOrder & buildOrder = _otherPlots[p]._buildOrder;
+        const BuildOrder & buildOrder = m_otherPlots[p].m_buildOrder;
 
         for (size_t i(0); i < buildOrder.size(); ++i)
         {
-            const Rectangle & rect = _otherPlots[p]._rectangles[i];
+            const Rectangle & rect = m_otherPlots[p].m_rectangles[i];
             const int rectWidth = (rect.bottomRight.x() - rect.topLeft.x());
             const int rectCenterX = rect.bottomRight.x() - (rectWidth / 2);
         
             std::stringstream pos;
             pos << "(boxWidthScale * " << rectCenterX << "),";
-            pos << "((boxHeight + boxHeightBuffer) * " << (_otherPlots[p]._layers[i] + currentLayer) << " + boxHeight/2)";
+            pos << "((boxHeight + boxHeightBuffer) * " << (m_otherPlots[p].m_layers[i] + currentLayer) << " + boxHeight/2)";
 
             ss << "set object " << (currentObject+i+1) << " rect at ";
             ss << pos.str();
             ss << " size ";
             ss << "(boxWidthScale * " << (rectWidth) << "),";
             ss << "(boxHeight) ";
-            //ss << "(boxWidthScale * " << _finishTimes[i] << "),";
-            //ss << "((boxHeight + boxHeightBuffer) * " << _layers[i] << " + boxHeight) ";
+            //ss << "(boxWidthScale * " << m_finishTimes[i] << "),";
+            //ss << "((boxHeight + boxHeightBuffer) * " << m_layers[i] << " + boxHeight) ";
             ss << "lw 1";
 
             if (buildOrder[i].isWorker())
@@ -248,18 +244,14 @@ void BuildOrderPlot::writeRectanglePlot(const std::string & filename)
             {
                 ss << " fc rgb \"purple\"";
             }
-            else if (buildOrder[i].isTech())
-            {
-                ss << " fc rgb \"magenta\"";
-            }
 
             ss << std::endl;
 
-            ss << "set label " << (currentObject+i+1) << " at " << pos.str() << " \"" << buildOrder[i].getShortName() << "\" front center";
+            ss << "set label " << (currentObject+i+1) << " at " << pos.str() << " \"" << buildOrder[i].getName() << "\" front center";
             ss << std::endl;
         }
 
-        currentLayer += _otherPlots[p]._maxLayer + 2;
+        currentLayer += m_otherPlots[p].m_maxLayer + 2;
         currentObject += buildOrder.size();
     }
 
@@ -273,9 +265,9 @@ void BuildOrderPlot::writeRectanglePlot(const std::string & filename)
 void BuildOrderPlot::writeArmyValuePlot(const std::string & filename)
 {
     std::stringstream datass;
-    for (size_t i(0); i < _buildOrder.size(); ++i)
+    for (size_t i(0); i < m_buildOrder.size(); ++i)
     {
-        datass << _startTimes[i] << " " << _armyValues[i]/Constants::RESOURCE_SCALE << std::endl;
+        datass << m_startTimes[i] << " " << m_armyValues[i] << std::endl;
     }
  
     WriteGnuPlot(filename, datass.str(), " with steps");

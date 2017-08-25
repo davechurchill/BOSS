@@ -1,19 +1,19 @@
-#include "BOSSParameters.h"
+#include "BOSSConfig.h"
 
 using namespace BOSS;
 
-BOSSParameters::BOSSParameters()
+BOSSConfig::BOSSConfig()
 {
 
 }
 
-BOSSParameters & BOSSParameters::Instance()
+BOSSConfig & BOSSConfig::Instance()
 {
-    static BOSSParameters params;
+    static BOSSConfig params;
     return params;
 }
 
-void BOSSParameters::ParseParameters(const std::string & configFile)
+void BOSSConfig::ParseParameters(const std::string & configFile)
 {
     _configFile = configFile;
 
@@ -58,21 +58,21 @@ void BOSSParameters::ParseParameters(const std::string & configFile)
     }
 }
 
-const GameState & BOSSParameters::GetState(const std::string & key)
+const GameState & BOSSConfig::GetState(const std::string & key)
 {
     BOSS_ASSERT(_stateMap.find(key) != _stateMap.end(), "Couldn't find state: %s", key.c_str());
 
     return _stateMap[key];
 }
 
-const BuildOrder & BOSSParameters::GetBuildOrder(const std::string & key)
+const BuildOrder & BOSSConfig::GetBuildOrder(const std::string & key)
 {
     BOSS_ASSERT(_buildOrderMap.find(key) != _buildOrderMap.end(), "Couldn't find build order: %s", key.c_str());
 
     return _buildOrderMap[key];
 }
 
-const BuildOrderSearchGoal & BOSSParameters::GetBuildOrderSearchGoalMap(const std::string & key)
+const BuildOrderSearchGoal & BOSSConfig::GetBuildOrderSearchGoalMap(const std::string & key)
 {
     BOSS_ASSERT(_buildOrderSearchGoalMap.find(key) != _buildOrderSearchGoalMap.end(), "Couldn't find state: %s", key.c_str());
 

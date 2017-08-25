@@ -1,6 +1,6 @@
 #include "BOSSPlotBuildOrders.h"
 #include "BuildOrderPlot.h"
-#include "BOSSParameters.h"
+#include "BOSSConfig.h"
 
 using namespace BOSS;
 
@@ -20,8 +20,8 @@ BOSSPlotBuildOrders::BOSSPlotBuildOrders(const std::string & name, const rapidjs
         BOSS_ASSERT(scenario.HasMember("State") && scenario["State"].IsString(), "Scenario has no 'state' string");
         BOSS_ASSERT(scenario.HasMember("BuildOrder") && scenario["BuildOrder"].IsString(), "Scenario has no 'buildOrder' string");
         
-        _states.push_back(BOSSParameters::Instance().GetState(scenario["State"].GetString()));
-        _buildOrders.push_back(BOSSParameters::Instance().GetBuildOrder(scenario["BuildOrder"].GetString()));
+        _states.push_back(BOSSConfig::Instance().GetState(scenario["State"].GetString()));
+        _buildOrders.push_back(BOSSConfig::Instance().GetBuildOrder(scenario["BuildOrder"].GetString()));
         _buildOrderNames.push_back(scenario["BuildOrder"].GetString());
     }
 }
@@ -44,5 +44,5 @@ void BOSSPlotBuildOrders::doPlots()
         allPlots.addPlot(plot);
     }
 
-    allPlots.writeRectanglePlot(_outputDir + "BOall");
+    allPlots.writeRectanglePlot(_outputDir + "AllBuildOrders.gpl");
 }

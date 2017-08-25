@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Common.h"
+#include "BOSSConfig.h"
+#include "GameState.h"
 
 namespace BOSS
 {

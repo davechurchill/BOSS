@@ -12,7 +12,7 @@ namespace BOSS
 class CombatSearchExperiment
 {
     std::string                 _name;
-    CombatSearchParameters      _params;
+    //CombatSearchParameters      _params;
     RaceID                      _race;
     std::vector<std::string>    _searchTypes;
 

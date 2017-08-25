@@ -3,6 +3,7 @@
 
 #include "BOSS.h"
 #include "GameState.h"
+#include "BOSSExperiments.h"
 #include <chrono>
 #include <thread>
 #include "CImg/CImg.h"
@@ -50,13 +51,10 @@ void cls( HANDLE hConsole )
    SetConsoleCursorPosition( hConsole, coordScreen );
 }
 
-int main(int argc, char *argv[])
+void testBuildOrder()
 {
     HANDLE hStdout;
     hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-
-    // Initialize all the BOSS internal data
-    BOSS::Init("BWData.json");
 
     GameState state;
     state.addInstance(ActionTypes::GetActionType("Nexus"));
@@ -94,7 +92,7 @@ int main(int argc, char *argv[])
     {
         if (progress || GetKey('D')) 
         { 
-            state.fastForward(state.getCurrentFrame() + 24); 
+            state.fastForward(state.getCurrentFrame() + 1); 
             
             CImg<unsigned char> image2;
             image2.draw_text(0, 0, state.toString().c_str(), color, 0, 1, font_full); 
@@ -117,6 +115,18 @@ int main(int argc, char *argv[])
 
         std::this_thread::sleep_for(std::chrono::milliseconds(0));
     }
+
+}
+
+int main(int argc, char *argv[])
+{
+    // Initialize all the BOSS internal data
+    BOSS::Init("BWData.json");
+
+    // Read in the config parameters that will be used for experiments
+    BOSS::BOSSConfig::Instance().ParseParameters("BOSS_Config.txt");
+
+    BOSS::Experiments::RunExperiments("BOSS_Config.txt");
 
     return 0;
 }

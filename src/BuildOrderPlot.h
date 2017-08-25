@@ -21,23 +21,23 @@ public:
 
 class BuildOrderPlot
 {
-    const GameState         _initialState;
-    const BuildOrder        _buildOrder;
+    const GameState         m_initialState;
+    const BuildOrder        m_buildOrder;
         
-    std::vector<int>        _startTimes;
-    std::vector<int>        _finishTimes;
-    std::vector<int>        _layers;
-    std::vector<double>     _armyValues;
-    std::vector< std::pair<int,int> > _minerals;
-    std::vector< std::pair<int,int> > _gas;
-    std::vector<Rectangle>  _rectangles;
+    std::vector<int>        m_startTimes;
+    std::vector<int>        m_finishTimes;
+    std::vector<int>        m_layers;
+    std::vector<double>     m_armyValues;
+    std::vector< std::pair<int,int> > m_minerals;
+    std::vector< std::pair<int,int> > m_gas;
+    std::vector<Rectangle>  m_rectangles;
 
-    std::vector<BuildOrderPlot> _otherPlots;
+    std::vector<BuildOrderPlot> m_otherPlots;
 
-    int                     _maxLayer;
-    int                     _maxFinishTime;
-    int                     _boxHeight;
-    int                     _boxHeightBuffer;
+    int                     m_maxLayer;
+    int                     m_maxFinishTime;
+    int                     m_boxHeight;
+    int                     m_boxHeightBuffer;
 
     void calculateStartEndTimes();
     void calculatePlot();
