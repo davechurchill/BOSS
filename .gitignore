@@ -10,3 +10,6 @@ bin/*.ilk
 bin/*.pdb
 bin/gnuplot
 *.gpl
+*.js
+emscripten/BOSS.data
+*.o

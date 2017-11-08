@@ -31,7 +31,7 @@ struct ActionTypeData
     bool                        isDepot         = false;
     bool                        isAddon         = false;
     ActionType                  whatBuilds      = 0;
-    ActionType                  whatBuildsCount = 1;
+    size_t                      whatBuildsCount = 1;
     ActionType                  whatBuildsAddon = 0;
     std::string                 whatBuildsStr;
     std::string                 whatBuildsStatus;

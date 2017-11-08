@@ -10,12 +10,9 @@ namespace BOSS
     {
         if (!isInit)
         {
-            std::cout << "Initializing BOSS...\n";
-
             ActionTypeData::Init(filename);
             ActionTypes::Init();
             isInit = true;
         }
     }
-
 }

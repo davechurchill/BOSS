@@ -1,29 +1,29 @@
 #include "BOSSExperiments.h"
 
-#include "CombatSearchExperiment.h"
-#include "BOSSPlotBuildOrders.h"
+//#include "CombatSearchExperiment.h"
+#include "BuildOrderPlotter.h"
 
 using namespace BOSS;
 
 void Experiments::RunExperiments(const std::string & experimentFilename)
 {
-    rapidjson::Document document;
-    JSONTools::ParseJSONFile(document, experimentFilename);
+    std::ifstream file(experimentFilename);
+    json j;
+    file >> j;
 
-    BOSS_ASSERT(document.HasMember("Experiments"), "No 'Experiments' member found");
+    BOSS_ASSERT(j.count("Experiments"), "No 'Experiments' member found");
 
-    const rapidjson::Value & experiments = document["Experiments"];
-    for (rapidjson::Value::ConstMemberIterator itr = experiments.MemberBegin(); itr != experiments.MemberEnd(); ++itr)
+    for (auto it = j["Experiments"].begin(); it != j["Experiments"].end(); ++it)
     {
-        const std::string &         name = itr->name.GetString();
-        const rapidjson::Value &    val  = itr->value;
+        const std::string &         name = it.key();
+        const json &                val  = it.value();
         
         //std::cout << "Found Experiment:   " << name << std::endl;
-        BOSS_ASSERT(val.HasMember("Type") && val["Type"].IsString(), "Experiment has no 'Type' string");
+        BOSS_ASSERT(val.count("Type") && val["Type"].is_string(), "Experiment has no 'Type' string");
 
-        if (val.HasMember("Run") && val["Run"].IsBool() && (val["Run"].GetBool() == true))
+        if (val.count("Run") && val["Run"].is_boolean() && (val["Run"] == true))
         {   
-            const std::string & type = val["Type"].GetString();
+            const std::string & type = val["Type"];
 
             if (type == "CombatSearch")
             {
@@ -49,8 +49,8 @@ void Experiments::RunExperiments(const std::string & experimentFilename)
 //    exp.run();
 //}
 
-void Experiments::RunBuildOrderPlot(const std::string & name, const rapidjson::Value & val)
+void Experiments::RunBuildOrderPlot(const std::string & name, const json & j)
 {
-    BOSSPlotBuildOrders plot(name, val);
+    BuildOrderPlotter plot(name, j);
     plot.doPlots();
 }

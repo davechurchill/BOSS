@@ -3,8 +3,6 @@
 #include "BOSS.h"
 #include "JSONTools.h"
 #include <memory>
-#include "rapidjson/rapidjson.h"
-#include "rapidjson/document.h"
 
 namespace BOSS
 {
@@ -22,7 +20,7 @@ class CombatSearchExperiment
 public:
 
     CombatSearchExperiment();
-    CombatSearchExperiment(const std::string & name, const rapidjson::Value & experimentVal);
+    CombatSearchExperiment(const std::string & name, const json & j);
 
     void run();
 };

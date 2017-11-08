@@ -11,6 +11,10 @@
 using namespace BOSS;
 using namespace cimg_library;
 
+#ifdef WIN32
+
+#include <Windows.h>
+
 bool GetKey(char key)
 {
     return GetKeyState(key) & 0x8000;
@@ -62,47 +66,55 @@ void testBuildOrder()
     state.addInstance(ActionTypes::GetActionType("Probe"));
     state.addInstance(ActionTypes::GetActionType("Probe"));
     state.addInstance(ActionTypes::GetActionType("Probe"));
+    state.setMinerals(50.0f);
+
+    std::vector<std::string> bos = 
+        {"Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", 
+        "Assimilator", "Probe", "Probe", "CyberneticsCore", "Probe", "Pylon", "Probe", "Gateway", 
+        "Dragoon", "Gateway", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon"};
 
     std::vector<ActionType> buildOrder;
-    buildOrder.push_back(ActionTypes::GetActionType("Probe"));
-    buildOrder.push_back(ActionTypes::GetActionType("Probe"));
-    buildOrder.push_back(ActionTypes::GetActionType("Probe"));
-    buildOrder.push_back(ActionTypes::GetActionType("Probe"));
-    buildOrder.push_back(ActionTypes::GetActionType("Pylon"));
-    buildOrder.push_back(ActionTypes::GetActionType("Probe"));
-    buildOrder.push_back(ActionTypes::GetActionType("Probe"));
-    buildOrder.push_back(ActionTypes::GetActionType("Gateway"));
-    buildOrder.push_back(ActionTypes::GetActionType("Gateway"));
-    buildOrder.push_back(ActionTypes::GetActionType("Probe"));
-    buildOrder.push_back(ActionTypes::GetActionType("Probe"));
-    buildOrder.push_back(ActionTypes::GetActionType("Zealot"));
-    buildOrder.push_back(ActionTypes::GetActionType("Zealot"));
+
+    for (auto & str : bos)
+    {
+        buildOrder.push_back(ActionTypes::GetActionType(str));
+    }
 
     size_t buildOrderIndex = 0;
     bool progress = true;
 
     CImg<> image;
-    CImgList<> font_full = CImgList<>::font(23, false);
+    CImgList<> font_full = CImgList<>::font(17, false);
     //font_full.remove(0,255);
-    unsigned char color[3] = {160, 160, 160};
+    unsigned char color[3] = {222, 222, 222};
     //image.draw_text(0, 0, state.toString().c_str(), &color, 0, 1, font_full); 
     CImgDisplay main_disp(image,"Click a point");
+
+    std::vector<GameState> states;
 
     while(true)
     {
         if (progress || GetKey('D')) 
         { 
-            state.fastForward(state.getCurrentFrame() + 1); 
-            
-            CImg<unsigned char> image2;
-            image2.draw_text(0, 0, state.toString().c_str(), color, 0, 1, font_full); 
-            
-            main_disp.display(image2);
-            main_disp.resize(image2);
+            state.fastForward(state.getCurrentFrame() + 2); 
+            states.push_back(state);
         }
+        else if (!progress && GetKey('A'))
+        {
+            if (states.size() > 1)
+            {
+                state = states.back();
+                states.pop_back();
+            }
+        }
+
+        CImg<unsigned char> image2;
+        image2.draw_text(0, 0, state.toString().c_str(), color, 0, 1, font_full); 
+        main_disp.display(image2);
+        main_disp.resize(image2);
         
         if (GetKey('S') && progress) { progress = false; }
-        if (GetKey('A') && !progress) { progress = true; }
+        if (GetKey('W') && !progress) { progress = true; }
 
         if (buildOrderIndex < buildOrder.size())
         {
@@ -118,15 +130,31 @@ void testBuildOrder()
 
 }
 
+#else
+void testBuildOrder() {}
+#endif
+
+#include "json/json.hpp"
+
+void testjson()
+{
+
+}
+
 int main(int argc, char *argv[])
 {
     // Initialize all the BOSS internal data
-    BOSS::Init("BWData.json");
+    BOSS::Init("bin/BWData.json");
 
     // Read in the config parameters that will be used for experiments
-    BOSS::BOSSConfig::Instance().ParseParameters("BOSS_Config.txt");
+    BOSS::BOSSConfig::Instance().ParseParameters("bin/BOSS_Config.txt");
 
-    BOSS::Experiments::RunExperiments("BOSS_Config.txt");
+    //BOSS::Experiments::RunExperiments("BOSS_Config.txt");
+
+    //testBuildOrder();
+    
+    std::cout << "Action Types: " << ActionTypes::GetAllActionTypes().size() << "\n";
+    std::cout << "BOSSInitComplete\n";
 
     return 0;
 }

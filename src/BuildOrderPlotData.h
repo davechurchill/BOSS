@@ -19,8 +19,10 @@ public:
     Rectangle(const std::string & label, Position & tl, const Position & br) : labelText(label), topLeft(tl), bottomRight(br) { }
 };
 
-class BuildOrderPlot
+class BuildOrderPlotData
 {
+    friend class BuildOrderPlotter;
+
     const GameState         m_initialState;
     const BuildOrder        m_buildOrder;
         
@@ -31,8 +33,6 @@ class BuildOrderPlot
     std::vector< std::pair<int,int> > m_minerals;
     std::vector< std::pair<int,int> > m_gas;
     std::vector<Rectangle>  m_rectangles;
-
-    std::vector<BuildOrderPlot> m_otherPlots;
 
     int                     m_maxLayer;
     int                     m_maxFinishTime;
@@ -45,18 +45,8 @@ class BuildOrderPlot
 
 public:
 
-    BuildOrderPlot(const GameState & initialState, const BuildOrder & buildOrder);
+    BuildOrderPlotData(const GameState & initialState, const BuildOrder & buildOrder);
 
-    void writeResourcePlot(const std::string & filename);
-    void writeRectanglePlot(const std::string & filename);
-    void writeArmyValuePlot(const std::string & filename);
-    void writeHybridPlot(const std::string & filename);
-
-    void addPlot(const BuildOrderPlot & plot);
-
-    static std::string GetFileNameFromPath(const std::string & path);
-    static std::string RemoveFileExtension(const std::string & path);
-    static void WriteGnuPlot(const std::string & filename, const std::string & data, const std::string & args);
 };
 
 }

@@ -12,8 +12,8 @@ class GameState
     std::vector<Instance>           m_instances;
     std::vector<size_t>             m_instancesBeingBuilt;
     int                             m_race;
-    float                           m_minerals;
-    float                           m_gas;
+    double                          m_minerals;
+    double                          m_gas;
     int                             m_currentSupply;
     int                             m_maxSupply;
     int                             m_currentFrame;
@@ -42,8 +42,8 @@ public:
 
     GameState();
 
-    const float & getMinerals() const;
-    const float & getGas() const;
+    const double & getMinerals() const;
+    const double & getGas() const;
     const int & getCurrentSupply() const;
     const int & getMaxSupply() const;
     const int & getCurrentFrame() const;
@@ -61,8 +61,8 @@ public:
     void doAction(const ActionType & type);
     void fastForward(const int & frames);
     void addInstance(const ActionType & instance, int builderID = -1);
-    void setMinerals(const float & minerals);
-    void setGas(const float & gas);
+    void setMinerals(const double & minerals);
+    void setGas(const double & gas);
 
     std::string toString() const;
 };

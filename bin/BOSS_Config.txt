@@ -11,10 +11,7 @@
             "Scenarios"     :   
             [ 
                 { "State" : "Protoss Start State", "BuildOrder" : "UAB DT Rush" },
-                { "State" : "Protoss Start State", "BuildOrder" : "8 Zealots" },
-                { "State" : "Protoss Start State", "BuildOrder" : "UAB Dragoon Rush" },
-                { "State" : "Protoss Start State", "BuildOrder" : "UAB DT Rush" },
-                { "State" : "Protoss Start State", "BuildOrder" : "8 Zealots" },
+                { "State" : "Protoss Start State", "BuildOrder" : "Protoss Opening Book" },
                 { "State" : "Protoss Start State", "BuildOrder" : "UAB Dragoon Rush" }
             ] 
         },
@@ -60,15 +57,15 @@
     "Build Orders" :
     {
         "Empty"                 : [ ],        
-        "Protoss Opening Book"  : [ "Probe", "Probe", "Probe", "Probe", "Pylon"],
+        "Protoss Opening Book"  : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway"],
         "Zerg Opening Book"     : [ "Drone", "Drone", "Drone", "Drone", "Overlord" ],
         "Terran Opening Book"   : [ "SCV", "SCV", "SCV", "SCV", "SupplyDepot" ],
         "3 Hatch Muta"          : [ "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk" ],
         "3 Hatch Muta 2"        : [ "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk" ],
         "8 Zealots"             : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Probe", "Gateway", "Probe", "Gateway", "Pylon",  "Pylon", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot" ],
         "UAB Zealot Rush"       : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Gateway", "Probe", "Probe", "Zealot", "Pylon", "Zealot", "Zealot", "Probe", "Zealot", "Zealot", "Probe", "Pylon", "Zealot", "Gateway", "Probe", "Pylon", "Probe", "Zealot", "Probe", "Zealot", "Zealot", "Zealot", "Zealot", "Pylon", "Probe", "Zealot", "Zealot", "Zealot" ],
-        "UAB DT Rush"           : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "CyberneticsCore", "Probe", "CitadelofAdun", "Probe", "TemplarArchives", "Gateway", "DarkTemplar", "DarkTemplar", "Pylon", "DarkTemplar", "DarkTemplar", "Probe", "Pylon", "Probe"],
-        "UAB Dragoon Rush"      : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "Probe", "CyberneticsCore", "Probe", "Probe", "Gateway", "Dragoon", "Gateway", "Pylon", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon"],
+        "UAB DT Rush"           : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "CyberneticsCore", "Probe", "Probe", "CitadelofAdun", "Probe", "Probe", "Probe", "TemplarArchives", "Gateway", "Pylon", "DarkTemplar", "DarkTemplar", "DarkTemplar", "DarkTemplar", "Probe", "Pylon", "Probe"],
+        "UAB Dragoon Rush"      : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "Probe", "CyberneticsCore", "Probe", "Pylon", "Probe", "Gateway", "Dragoon", "Gateway", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon"],
         "Build Order"           : [ "SCV", "Barracks", "Marine", "Marine", "Refinery", "EngineeringBay", "Bunker"]
     },
 

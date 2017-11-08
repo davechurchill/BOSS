@@ -2,8 +2,6 @@
 
 #include "BOSS.h"
 #include "JSONTools.h"
-#include "rapidjson/rapidjson.h"
-#include "rapidjson/document.h"
 #include "BuildOrderSearchGoal.h"
 
 namespace BOSS

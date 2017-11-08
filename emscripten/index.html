@@ -1,0 +1,139 @@
+
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="BOSS.js"></script>
+Warning: Experimental build, currently supports protoss units and terran non-addons<br>
+Please wait a few seconds before clicking the button, dealing with async js loading issues<br>
+Malformed config JSON will print an error in the JS console<br>
+<br>
+<textarea id='config' rows=17 cols=160 style='white-space:nowrap;'>
+{ "BuildOrders" : [ 
+    { "Name" : "Dragoon Rush", 
+      "State" : { "minerals" : 50, "gas" : 0, "units" : [ ["Probe", 4], ["Nexus", 1] ] },
+      "BuildOrder" : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "Probe", "CyberneticsCore", "Probe", "Pylon", "Probe", "Gateway", "Dragoon", "Gateway", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon"]
+    },
+    { "Name" : "Zealot Rush", 
+      "State" : { "minerals" : 50, "gas" : 0, "units" : [ ["Probe", 4], ["Nexus", 1] ] },
+      "BuildOrder" : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Gateway", "Probe", "Probe", "Zealot", "Pylon", "Zealot", "Zealot", "Probe", "Zealot", "Zealot", "Probe", "Pylon", "Zealot", "Gateway", "Probe", "Pylon", "Probe", "Zealot", "Probe", "Zealot", "Zealot", "Zealot", "Zealot", "Pylon", "Probe", "Zealot", "Zealot", "Zealot" ]
+    },
+    { "Name" : "Dark Templar Rush", 
+      "State" : { "minerals" : 50, "gas" : 0, "units" : [ ["Probe", 4], ["Nexus", 1] ] },
+      "BuildOrder" : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "CyberneticsCore", "Probe", "Probe", "CitadelofAdun", "Probe", "Probe", "Probe", "TemplarArchives", "Gateway", "Pylon", "DarkTemplar", "DarkTemplar", "DarkTemplar", "DarkTemplar", "Probe", "Pylon", "Probe"]
+    }
+]}
+</textarea>
+<br><br><button id='funcButton'>Draw Build Order(s)</button><br><br>
+
+BOSS stdout console:
+<div id='console' style='width:800;height:200;border:1px solid #000;overflow-y:scroll;'></div>
+<br>
+<div id='drawArea' style='position:relative;'></div>
+
+<script>
+
+Module['print'] = function(text) { 
+    $('#console').append(text + '<br>'); 
+    $("#console").scrollTop($("#console")[0].scrollHeight);
+    if (text === 'complete') {
+        alert('Boss Initialization Completed');
+    }
+};
+
+var bossInit = false;
+
+BOSS_Init = Module.cwrap('BOSS_JS_Init', 'string', ['string']);
+BOSS_GetPlot = Module.cwrap('BOSS_JS_GetBuildOrderPlot', 'string', ['string']);
+
+$( "#funcButton" ).click(function() {
+    if (!bossInit) {
+        var initReturnString = BOSS_Init("Hello BOSS!");
+        bossInit = true;
+    }
+    $('#drawArea').empty();
+    var returnString = BOSS_GetPlot($("#config").val());
+    eval(returnString);
+    draw(plots);
+});
+
+$( "#drawButton" ).click(function() {
+    draw();
+});
+
+var xScale = 0.15;
+var yScale = 1;
+var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+
+var getRectDiv = function (text, color, x, y, width, height) {
+    
+    var p = '<p style=\'position:absolute;\'>' + text + '</p>';
+    
+    var div = '<div style=\'';
+    div += 'box-sizing: border-box;';
+    div += 'font-family:"arial";';
+    div += 'font-size:12px;';
+    div += 'text-align:center;';
+    div += 'position:absolute;';
+    div += 'top:' + y + ';';
+    div += 'left:' + x + ';'
+    div += 'width:' + width + 'px;';
+    div += 'height:' + height + 'px;';
+    div += 'border:1px solid #000;';
+    div += 'background-color:' + color + ';';
+    div += '\'>';
+    div += text;
+    div += '</div>';
+    return div;
+}
+
+var drawDetails = function(x, y, item) {
+    
+
+}
+
+var draw = function(plots) {
+    console.log(plots);
+    var boxHeight = 30;
+    var boxHeightBuffer = 4;
+    var maxLayer = 0;
+    var currentY = 0;
+    for (var p = 0; p < plots.length; ++p)
+    {
+        var bo = plots[p].buildOrder;
+    
+        // figure out the dimensions of this plot
+        var maxX = 0;
+        var maxY = 0;
+        for (var i=0; i < bo.length; ++i) {
+            maxX = Math.max(maxX, bo[i][2]) * xScale;
+            maxY = Math.max(maxY, (bo[i][5] + 1) * (boxHeight + boxHeightBuffer) * yScale);
+        }
+    
+        var boDiv = '<div style=\'';
+        boDiv += 'width:' + maxX + ';';
+        boDiv += 'height:' + maxY + ';';
+        boDiv += 'position:absolute;';
+        boDiv += 'border:1px solid #ccc;';
+        boDiv += 'border-style:dashed;';
+        boDiv += 'top:' + currentY + '\'>';
+        
+        currentY += (maxY + 50);
+        for (var i=0; i < bo.length; ++i) {
+            
+            var x = bo[i][1] * xScale;
+            var y = bo[i][5] * (boxHeight + boxHeightBuffer) * yScale;
+            var w = (bo[i][2] - bo[i][1]) * xScale;
+            var h = boxHeight * yScale;
+            
+            boDiv += getRectDiv(bo[i][0], bo[i][6], x, y, w, h);
+        }
+        
+        boDiv += '</div>';
+        $('#drawArea').append(boDiv);
+    }
+}
+   
+   
+
+</script>
+
+</body>

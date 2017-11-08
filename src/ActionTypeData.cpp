@@ -1,5 +1,4 @@
 #include "ActionTypeData.h"
-#include "rapidjson/document.h"
 #include "JSONTools.h"
 
 using namespace BOSS;
@@ -31,22 +30,13 @@ void ActionTypeData::Init(const std::string & filename)
     // add the None type for error returns
     AllActionTypeData.push_back(ActionTypeData());
     ActionTypeNameMap["None"] = 0;
-
-    std::string config = JSONTools::ReadFile(filename);
-
-    // read the JSON file and report an error if the file couldn't be read
-    if (config.length() == 0)
-    {
-        std::cerr << "Error: Config File Not Found or is Empty\n";
-        std::cerr << "Config Filename: " << filename << "\n";
-        std::cerr << "The bot will not run without its configuration file\n";
-        std::cerr << "Please check that the file exists and is not empty. Incomplete paths are relative to the BOSS .exe file\n";
-        return;
-    }
-
+    
     // parse the JSON file and report an error if the parsing failed
-    rapidjson::Document doc;
-    bool parsingFailed = doc.Parse(config.c_str()).HasParseError();
+    std::ifstream file(filename);
+    json j;
+    file >> j;
+
+    bool parsingFailed = false;
     if (parsingFailed)
     {
         std::cerr << "Error: Config File Found, but could not be parsed\n";
@@ -57,10 +47,10 @@ void ActionTypeData::Init(const std::string & filename)
     }
 
     // read all of the action types in the file
-    if (doc.HasMember("Types") && doc["Types"].IsArray())
+    if (j.count("Types") && j["Types"].is_array())
     {
-        const rapidjson::Value & actions = doc["Types"];
-        for (size_t a(0); a < actions.Size(); ++a)
+        const json & actions = j["Types"];
+        for (size_t a(0); a < actions.size(); ++a)
         {
             ActionTypeData data;
 
@@ -87,23 +77,23 @@ void ActionTypeData::Init(const std::string & filename)
             JSONTools::ReadBool("isResourceDepot",  actions[a], data.isDepot);
             JSONTools::ReadBool("isAddon",          actions[a], data.isAddon);
 
-            BOSS_ASSERT(actions[a].HasMember("whatBuilds"), "no 'whatBuilds' member");
+            BOSS_ASSERT(actions[a].count("whatBuilds"), "no 'whatBuilds' member");
             auto & whatBuilds = actions[a]["whatBuilds"];
-            data.whatBuildsStr = whatBuilds[0].GetString();
-            data.whatBuildsCount = whatBuilds[1].GetInt();
-            data.whatBuildsStatus = whatBuilds[2].GetString();
-            if (whatBuilds.Size() == 4) { data.whatBuildsAddonStr = whatBuilds[3].GetString(); }
+            data.whatBuildsStr = whatBuilds[0].get<std::string>();
+            data.whatBuildsCount = whatBuilds[1];
+            data.whatBuildsStatus = whatBuilds[2].get<std::string>();
+            if (whatBuilds.size() == 4) { data.whatBuildsAddonStr = whatBuilds[3].get<std::string>(); }
 
-            BOSS_ASSERT(actions[a].HasMember("required"), "no 'required' member");
-            for (size_t i(0); i < actions[a]["required"].Size(); ++i)
+            BOSS_ASSERT(actions[a].count("required"), "no 'required' member");
+            for (auto & req : actions[a]["required"])
             {
-                data.requiredStrings.push_back(actions[a]["required"][i].GetString());
+                data.requiredStrings.push_back(req);
             }
 
-            BOSS_ASSERT(actions[a].HasMember("equivalent"), "no 'equivalent' member");
-            for (size_t i(0); i < actions[a]["equivalent"].Size(); ++i)
+            BOSS_ASSERT(actions[a].count("equivalent"), "no 'equivalent' member");
+            for (auto & equiv : actions[a]["equivalent"])
             {
-                data.equivalentStrings.push_back(actions[a]["equivalent"][i].GetString());
+                data.equivalentStrings.push_back(equiv);
             }
 
             // the name map stores the index that will hold this data, which is the current size
@@ -112,7 +102,7 @@ void ActionTypeData::Init(const std::string & filename)
             // then we add the data to the vector
             AllActionTypeData.push_back(data);
              
-            std::cout << AllActionTypeData.back().name << " " << AllActionTypeData.back().mineralCost << "\n";
+            //std::cout << AllActionTypeData.back().name << " " << AllActionTypeData.back().mineralCost << "\n";
         }
     }
 

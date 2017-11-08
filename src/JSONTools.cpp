@@ -11,56 +11,30 @@ std::string JSONTools::ReadFile(const std::string & filename)
     return buffer.str();
 }
 
-void JSONTools::ParseJSONString(rapidjson::Document & document, const std::string & json)
+GameState JSONTools::GetGameState(const json & j)
 {
-    bool parsingFailed = document.Parse<0>(json.c_str()).HasParseError();
-
-    if (parsingFailed)
-    {
-        int errorPos = document.GetErrorOffset();
-
-        std::stringstream ss;
-        ss << std::endl << "JSON Parse Error: " << document.GetParseError() << std::endl;
-        ss << "Error Position:   " << errorPos << std::endl;
-        ss << "Error Substring:  " << json.substr(errorPos-5, 10) << std::endl;
-
-        BOSS_ASSERT(!parsingFailed, "Error parsing JSON config file: %s", ss.str().c_str());
-    }
-
-    BOSS_ASSERT(!parsingFailed, "Parsing of the JSON string failed");
-}
-
-GameState JSONTools::GetGameState(const rapidjson::Value & stateVal)
-{
-    BOSS_ASSERT(stateVal.HasMember("race") && stateVal["race"].IsString(), "State doesn't have a race");
-    
-    const RaceID race = Races::GetRaceID(stateVal["race"].GetString());
-
-    BOSS_ASSERT(race != Races::None, "Unknown race (make sure to use a single upper case): %s", stateVal["race"].GetString());
-
     GameState state;
 
-    if (stateVal.HasMember("minerals") && stateVal["minerals"].IsInt())
+    if (j.count("minerals") && j["minerals"].is_number_integer())
     {   
-        state.setMinerals(stateVal["minerals"].GetInt());
+        state.setMinerals(j["minerals"]);
     }
 
-    if (stateVal.HasMember("gas") && stateVal["gas"].IsInt())
+    if (j.count("gas") && j["gas"].is_number_integer())
     {   
-        state.setGas(stateVal["gas"].GetInt());
+        state.setGas(j["gas"]);
     }
 
-    if (stateVal.HasMember("units") && stateVal["units"].IsArray())
+    if (j.count("units") && j["units"].is_array())
     {
-        const rapidjson::Value & units = stateVal["units"];
-        for (size_t i(0); i < units.Size(); ++i)
+        const auto & units = j["units"];
+        for (auto & unit : units)
         {
-            const rapidjson::Value & unit = units[i];
-            BOSS_ASSERT(unit.IsArray() && unit.Size() == 2 && unit[0u].IsString() && unit[1u].IsInt(), "Unit has to be array of size 2");
+            BOSS_ASSERT(unit.is_array() && unit.size() == 2 && unit[0].is_string() && unit[1].is_number_integer(), "Unit has to be array of size 2");
 
-            for (int n(0); n < unit[1u].GetInt(); ++n)
+            for (int n(0); n < unit[1]; ++n)
             {
-                state.addInstance(ActionTypes::GetActionType(unit[0u].GetString()));
+                state.addInstance(ActionTypes::GetActionType(unit[0]));
             }
         }
     }
@@ -68,101 +42,70 @@ GameState JSONTools::GetGameState(const rapidjson::Value & stateVal)
     return state;
 }
 
-BuildOrderSearchGoal JSONTools::GetBuildOrderSearchGoal(const std::string & jsonString)
+BuildOrderSearchGoal JSONTools::GetBuildOrderSearchGoal(const json & j)
 {
-    rapidjson::Document document;
-    JSONTools::ParseJSONString(document, jsonString);
-    return GetBuildOrderSearchGoal(document);
-}
-
-GameState JSONTools::GetGameState(const std::string & jsonString)
-{
-    rapidjson::Document document;
-    JSONTools::ParseJSONString(document, jsonString);
-    return GetGameState(document);
-}
-
-BuildOrderSearchGoal JSONTools::GetBuildOrderSearchGoal(const rapidjson::Value & val)
-{
-    BOSS_ASSERT(val.HasMember("race") && val["race"].IsString(), "State doesn't have a race");
+    BOSS_ASSERT(j.count("race") && j["race"].is_string(), "State doesn't have a race");
     
-    const RaceID race = Races::GetRaceID(val["race"].GetString());
+    const RaceID race = Races::GetRaceID(j["race"]);
 
-    BOSS_ASSERT(race != Races::None, "Unknown race (make sure to use a single upper case): %s", val["race"].GetString());
+    BOSS_ASSERT(race != Races::None, "Unknown race (make sure to use a single upper case): %s", j["race"].get<std::string>().c_str());
 
     BuildOrderSearchGoal goal;
 
-    if (val.HasMember("goal") && val["goal"].IsArray())
+    if (j.count("goal") && j["goal"].is_array())
     {
-        const rapidjson::Value & goalUnits = val["goal"];
-        for (size_t i(0); i < goalUnits.Size(); ++i)
+        for (auto & unit : j["goal"])
         {
-            const rapidjson::Value & unit = goalUnits[i];
-            BOSS_ASSERT(unit.IsArray() && unit.Size() == 2 && unit[0u].IsString() && unit[1u].IsInt(), "Goal entry has to be array of size 2");
+            BOSS_ASSERT(unit.is_array() && unit.size() == 2 && unit[0].is_string() && unit[1].is_number_integer(), "Goal entry has to be array of size 2");
 
-            goal.setGoal(ActionTypes::GetActionType(unit[0u].GetString()), unit[1u].GetInt());
+            goal.setGoal(ActionTypes::GetActionType(unit[0]), unit[1]);
         }
     }
 
-    if (val.HasMember("goalMax") && val["goalMax"].IsArray())
+    if (j.count("goalMax") && j["goalMax"].is_array())
     {
-        const rapidjson::Value & goalMax = val["goalMax"];
-        for (size_t i(0); i < goalMax.Size(); ++i)
+        for (auto & unit : j["goalMax"])
         {
-            const rapidjson::Value & unit = goalMax[i];
-            BOSS_ASSERT(unit.IsArray() && unit.Size() == 2 && unit[0u].IsString() && unit[1u].IsInt(), "Goal max entry has to be array of size 2");
+            BOSS_ASSERT(unit.is_array() && unit.size() == 2 && unit[0].is_string() && unit[1].is_number_integer(), "Goal max entry has to be array of size 2");
 
-            goal.setGoalMax(ActionTypes::GetActionType(unit[0u].GetString()), unit[1u].GetInt());
+            goal.setGoalMax(ActionTypes::GetActionType(unit[0u]), unit[1u]);
         }
     }
 
     return goal;
 }
 
-
-void JSONTools::ParseJSONFile(rapidjson::Document & document, const std::string & filename)
+BuildOrder JSONTools::GetBuildOrder(const json & j)
 {
-    JSONTools::ParseJSONString(document, JSONTools::ReadFile(filename));
-}
-
-BuildOrder JSONTools::GetBuildOrder(const std::string & jsonString)
-{
-    rapidjson::Document document;
-    JSONTools::ParseJSONString(document, jsonString);
-    return GetBuildOrder(document);
-}
-
-BuildOrder JSONTools::GetBuildOrder(const rapidjson::Value & stateVal)
-{
-    BOSS_ASSERT(stateVal.IsArray(), "Build order isn't an array");
+    BOSS_ASSERT(j.is_array(), "Build order isn't an array");
     
     BuildOrder buildOrder;
 
-    for (size_t i(0); i < stateVal.Size(); ++i)
+    for (auto & type : j)
     {
-        BOSS_ASSERT(stateVal[i].IsString(), "Build order item is not a string");
+        BOSS_ASSERT(type.is_string(), "Build order item is not a string");
 
-        buildOrder.add(ActionTypes::GetActionType(stateVal[i].GetString()));
+        buildOrder.add(ActionTypes::GetActionType(type));
     }
     
     return buildOrder;
 }
 
-void JSONTools::ReadBool(const char * key, const rapidjson::Value & value, bool & dest)
+void JSONTools::ReadBool(const char * key, const json & j, bool & dest)
 {
-    if (value.HasMember(key))
+    if (j.count(key))
     {
-        BOSS_ASSERT(value[key].IsBool(), "%s should be a bool", key);
-        dest = value[key].GetBool();
+        BOSS_ASSERT(j[key].is_boolean(), "%s should be a bool", key);
+        dest = j[key];
     }
 }
 
-void JSONTools::ReadString(const char * key, const rapidjson::Value & value, std::string & dest)
+void JSONTools::ReadString(const char * key, const json & j, std::string & dest)
 {
-    if (value.HasMember(key))
+    if (j.count(key))
     {
-        BOSS_ASSERT(value[key].IsString(), "%s should be a string", key);
-        dest = value[key].GetString();
+        BOSS_ASSERT(j[key].is_string(), "%s should be a string", key);
+        dest = j[key].get<std::string>();
     }
 }
 

@@ -6,7 +6,7 @@ namespace Eval
 {
     double ArmyCompletedResourceSum(const GameState & state)
     {
-        float sum(0);
+        double sum(0);
 	    
 	    for (auto & type : ActionTypes::GetAllActionTypes())
 	    {
@@ -22,7 +22,7 @@ namespace Eval
 
     double ArmyTotalResourceSum(const GameState & state)
     {
-        float sum(0);
+        double sum(0);
 	    
 	    for (auto & type : ActionTypes::GetAllActionTypes())
 	    {

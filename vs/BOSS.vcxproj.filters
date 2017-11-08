@@ -28,6 +28,17 @@
     <ClCompile Include="..\src\Eval.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\BOSSExperiments.cpp" />
+    <ClCompile Include="..\src\BuildOrderSearchGoal.cpp" />
+    <ClCompile Include="..\src\BuildOrderPlotter.cpp">
+      <Filter>plot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BuildOrderPlotData.cpp">
+      <Filter>plot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ExternalInterface.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ActionType.h" />
@@ -59,6 +70,17 @@
     <ClInclude Include="..\src\Eval.h">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\BOSSExperiments.h" />
+    <ClInclude Include="..\src\BuildOrderSearchGoal.h" />
+    <ClInclude Include="..\src\json\json.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\BuildOrderPlotter.h">
+      <Filter>plot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\BuildOrderPlotData.h">
+      <Filter>plot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="BuildOrder">
@@ -69,6 +91,9 @@
     </Filter>
     <Filter Include="util">
       <UniqueIdentifier>{b4356788-9d1c-4810-9b88-bac65dbf6c46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="plot">
+      <UniqueIdentifier>{1ec219dc-6f14-48ad-a5f4-3a13a73f6132}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

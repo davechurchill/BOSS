@@ -18,10 +18,11 @@
     <ClCompile Include="..\src\BOSSException.cpp" />
     <ClCompile Include="..\src\BOSSConfig.cpp" />
     <ClCompile Include="..\src\BOSSExperiments.cpp" />
-    <ClCompile Include="..\src\BOSSPlotBuildOrders.cpp" />
-    <ClCompile Include="..\src\BuildOrderPlot.cpp" />
+    <ClCompile Include="..\src\BuildOrderPlotter.cpp" />
+    <ClCompile Include="..\src\BuildOrderPlotData.cpp" />
     <ClCompile Include="..\src\BuildOrderSearchGoal.cpp" />
     <ClCompile Include="..\src\Eval.cpp" />
+    <ClCompile Include="..\src\ExternalInterface.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\BuildOrder.cpp" />
     <ClCompile Include="..\src\Common.cpp" />
@@ -37,14 +38,15 @@
     <ClInclude Include="..\src\BOSSException.h" />
     <ClInclude Include="..\src\BOSSConfig.h" />
     <ClInclude Include="..\src\BOSSExperiments.h" />
-    <ClInclude Include="..\src\BOSSPlotBuildOrders.h" />
+    <ClInclude Include="..\src\BuildOrderPlotter.h" />
     <ClInclude Include="..\src\BuildOrder.h" />
-    <ClInclude Include="..\src\BuildOrderPlot.h" />
+    <ClInclude Include="..\src\BuildOrderPlotData.h" />
     <ClInclude Include="..\src\BuildOrderSearchGoal.h" />
     <ClInclude Include="..\src\Common.h" />
     <ClInclude Include="..\src\Eval.h" />
     <ClInclude Include="..\src\GameState.h" />
     <ClInclude Include="..\src\JSONTools.h" />
+    <ClInclude Include="..\src\json\json.hpp" />
     <ClInclude Include="..\src\Timer.hpp" />
     <ClInclude Include="..\src\Instance.h" />
   </ItemGroup>

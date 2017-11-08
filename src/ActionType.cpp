@@ -89,8 +89,6 @@ namespace ActionTypes
 
     void Init()
     {
-        allActionTypes.push_back(ActionType(0));
-
         for (size_t i(0); i < ActionTypeData::GetAllActionTypeData().size(); ++i)
         {
             allActionTypes.push_back(ActionType(i));
@@ -132,14 +130,7 @@ namespace ActionTypes
     {
         return resourceDepotActionTypes[raceID];
     }
-
-    const ActionType & GetActionType(const ActionID & id)
-    {
-        BOSS_ASSERT(id < allActionTypes.size(), "Race / Action does not exist");
-
-        return allActionTypes[id];
-    }
-
+    
     const ActionType & GetActionType(const std::string & name)
     {
         BOSS_ASSERT(TypeExists(name), "ActionType name not found: %s", name.c_str());

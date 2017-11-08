@@ -4,8 +4,8 @@
 
 using namespace BOSS;
 
-const float MPWPF = 0.045f;
-const float GPWPF = 0.070f;
+const double MPWPF = 0.045f;
+const double GPWPF = 0.070f;
 const int WorkersPerRefinery = 3;
 
 GameState::GameState()
@@ -249,10 +249,10 @@ int GameState::whenResourcesReady(const ActionType & action) const
     int currentGasWorkers       = m_gasWorkers;
     int lastActionFinishFrame   = m_currentFrame;
     int addedTime               = 0;
-    float addedMinerals         = 0;
-    float addedGas              = 0;
-    float mineralDifference     = action.mineralPrice() - m_minerals;
-    float gasDifference         = action.gasPrice() - m_gas;
+    double addedMinerals        = 0;
+    double addedGas             = 0;
+    double mineralDifference    = action.mineralPrice() - m_minerals;
+    double gasDifference        = action.gasPrice() - m_gas;
 
     // loop through each action in progress, adding the minerals we would gather from each interval
     for (size_t i(0); i < m_instancesBeingBuilt.size(); ++i)
@@ -264,8 +264,8 @@ int GameState::whenResourcesReady(const ActionType & action) const
         int elapsed = actionCompletionTime - lastActionFinishFrame;
 
         // the amount of minerals that would be added this time step
-        float tempAddMinerals = elapsed * currentMineralWorkers * MPWPF;
-        float tempAddGas      = elapsed * currentGasWorkers * GPWPF;
+        double tempAddMinerals = elapsed * currentMineralWorkers * MPWPF;
+        double tempAddGas      = elapsed * currentGasWorkers * GPWPF;
 
         // if this amount isn't enough, update the amount added for this interval
         if (addedMinerals + tempAddMinerals < mineralDifference || addedGas + tempAddGas < gasDifference)
@@ -341,7 +341,30 @@ int GameState::whenSupplyReady(const ActionType & action) const
 
 int GameState::whenPrerequisitesReady(const ActionType & action) const
 {
-    return m_currentFrame;
+    // if this action requires no prerequisites, then they are ready right now
+    if (action.required().empty())
+    {
+        return m_currentFrame;
+    }
+
+    // if it has prerequisites, we need to find the max-min time that any of the prereqs are free
+    int whenPrereqReady = 0;
+    for (auto & req : action.required())
+    {
+        // find the minimum time that this particular prereq will be ready
+        int minReady = std::numeric_limits<int>::max();
+        for (auto & instance : m_instances)
+        {
+            if (instance.getType() != req) { continue; }
+            minReady = std::min(minReady, instance.getTimeUntilFree());
+            if (instance.getTimeUntilFree() == 0) { break; }
+        }
+        // we can only build the type after the LAST of the prereqs are ready
+        whenPrereqReady = std::max(whenPrereqReady, minReady);
+        BOSS_ASSERT(whenPrereqReady != std::numeric_limits<int>::max(), "Did not find a prerequisite required to build %s", action.getName().c_str());
+    }
+      
+    return m_currentFrame + whenPrereqReady;
 }
 
 int GameState::getBuilderID(const ActionType & action) const
@@ -363,7 +386,7 @@ int GameState::getBuilderID(const ActionType & action) const
         // if the instance can build the unit, set the new min
         if (whenReady != -1 && whenReady < minWhenReady)
         {
-            minWhenReady = m_currentFrame + whenReady;
+            minWhenReady = whenReady;
             builderID = instance.getID();
         }
     }
@@ -426,12 +449,12 @@ Instance & GameState::getInstance(const size_t & id)
     return m_instances[id];
 }
 
-const float & GameState::getMinerals() const
+const double & GameState::getMinerals() const
 {
     return m_minerals;
 }
 
-const float & GameState::getGas() const
+const double & GameState::getGas() const
 {
     return m_gas;
 }
@@ -451,12 +474,12 @@ const int & GameState::getCurrentFrame() const
     return m_currentFrame;
 }
 
-void GameState::setMinerals(const float & minerals)
+void GameState::setMinerals(const double & minerals)
 {
     m_minerals = minerals;
 }
 
-void GameState::setGas(const float & gas)
+void GameState::setGas(const double & gas)
 {
     m_gas = gas;
 }
@@ -469,7 +492,7 @@ int GameState::getRace() const
 std::string GameState::toString() const
 {
 	std::stringstream ss;
-    char buf[256];
+    char buf[1024];
     ss << std::setfill('0') << std::setw(7);
 	ss << "\n--------------------------------------\n";
     
@@ -505,9 +528,13 @@ std::string GameState::toString() const
     ss << "\nLegal Actions:\n";
     std::vector<ActionType> legalActions;
     getLegalActions(legalActions);
+    ss << "--------------------------------------\n";
+    sprintf(buf, "%5s %5s %5s %5s\n", "total", "build", "res", "pre");
+    ss << buf;
+    ss << "--------------------------------------\n";
     for (auto & type : legalActions)
     {
-        sprintf(buf, "%5d %5d %5d %s\n", (whenCanBuild(type)-m_currentFrame), (whenBuilderReady(type)-m_currentFrame), (whenResourcesReady(type)-m_currentFrame), type.getName().c_str());
+        sprintf(buf, "%5d %5d %5d %5d %s\n", (whenCanBuild(type)-m_currentFrame), (whenBuilderReady(type)-m_currentFrame), (whenResourcesReady(type)-m_currentFrame), (whenPrerequisitesReady(type)-m_currentFrame), type.getName().c_str());
         ss << buf;
     }
 

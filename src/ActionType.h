@@ -52,7 +52,6 @@ namespace ActionTypes
 {
     void Init();
     const std::vector<ActionType> & GetAllActionTypes();
-    const ActionType & GetActionType(const ActionID & id);
     const ActionType & GetWorker(const RaceID raceID);
     const ActionType & GetSupplyProvider(const RaceID raceID);
     const ActionType & GetRefinery(const RaceID raceID);

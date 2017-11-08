@@ -15,7 +15,7 @@ void BuildOrderSearchGoal::calculateSupplyRequired()
     m_supplyRequiredVal = 0;
     for (ActionID a(0); a<m_goalUnits.size(); ++a)
     {
-        m_supplyRequiredVal += m_goalUnits[a] * ActionTypes::GetActionType(a).supplyCost();
+        m_supplyRequiredVal += m_goalUnits[a] * ActionType(a).supplyCost();
     }
 }
 
@@ -89,7 +89,7 @@ std::string BuildOrderSearchGoal::toString() const
     {
         if (m_goalUnits[a] > 0)
         {
-            ss << "        REQ " << m_goalUnits[a] << " " <<  ActionTypes::GetActionType(a).getName() << "\n";
+            ss << "        REQ " << m_goalUnits[a] << " " <<  ActionType(a).getName() << "\n";
         }
     }
 
@@ -97,7 +97,7 @@ std::string BuildOrderSearchGoal::toString() const
     {
         if (m_goalUnitsMax[a] > 0)
         {
-            ss << "        MAX " << m_goalUnitsMax[a]  << " " << ActionTypes::GetActionType(a).getName() << "\n";
+            ss << "        MAX " << m_goalUnitsMax[a]  << " " << ActionType(a).getName() << "\n";
         }
     }
 

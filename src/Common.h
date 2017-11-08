@@ -10,6 +10,9 @@
 #include <limits>
 #include <map>
 #include <algorithm>
+#include "json/json.hpp"
+
+using json = nlohmann::json;
 
 #include "BOSSAssert.h"
 
