@@ -34,7 +34,7 @@ GameState JSONTools::GetGameState(const json & j)
 
             for (int n(0); n < unit[1]; ++n)
             {
-                state.addInstance(ActionTypes::GetActionType(unit[0]));
+                state.addUnit(ActionTypes::GetActionType(unit[0]));
             }
         }
     }

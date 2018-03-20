@@ -28,7 +28,7 @@
     <ClCompile Include="..\src\Common.cpp" />
     <ClCompile Include="..\src\GameState.cpp" />
     <ClCompile Include="..\src\JSONTools.cpp" />
-    <ClCompile Include="..\src\Instance.cpp" />
+    <ClCompile Include="..\src\Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ActionType.h" />
@@ -48,7 +48,7 @@
     <ClInclude Include="..\src\JSONTools.h" />
     <ClInclude Include="..\src\json\json.hpp" />
     <ClInclude Include="..\src\Timer.hpp" />
-    <ClInclude Include="..\src\Instance.h" />
+    <ClInclude Include="..\src\Unit.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9F8709E3-AC4F-45F2-8105-4A99D8E2A127}</ProjectGuid>

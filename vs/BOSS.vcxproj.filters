@@ -6,7 +6,6 @@
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\BuildOrder.cpp" />
     <ClCompile Include="..\src\GameState.cpp" />
-    <ClCompile Include="..\src\Instance.cpp" />
     <ClCompile Include="..\src\BOSS.cpp">
       <Filter>common</Filter>
     </ClCompile>
@@ -39,13 +38,13 @@
     <ClCompile Include="..\src\ExternalInterface.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ActionType.h" />
     <ClInclude Include="..\src\ActionTypeData.h" />
     <ClInclude Include="..\src\BuildOrder.h" />
     <ClInclude Include="..\src\GameState.h" />
-    <ClInclude Include="..\src\Instance.h" />
     <ClInclude Include="..\src\BOSS.h">
       <Filter>common</Filter>
     </ClInclude>
@@ -81,6 +80,7 @@
     <ClInclude Include="..\src\BuildOrderPlotData.h">
       <Filter>plot</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Unit.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="BuildOrder">

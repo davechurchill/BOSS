@@ -80,7 +80,7 @@ void GameState::doAction(const ActionType & type)
     int previousFrame = m_currentFrame;
 
     // figure out when this action can be done and fast forward to it
-    int timeWhenReady = whenCanBuild(type);
+    const int timeWhenReady = whenCanBuild(type);
     fastForward(timeWhenReady);
 
     // subtract the resource cost
@@ -101,7 +101,7 @@ void GameState::doAction(const ActionType & type)
     }
 
     // get a builder for this type and start building it
-    addInstance(type, getBuilderID(type));
+    addUnit(type, getBuilderID(type));
 }
 
 void GameState::fastForward(const int & toFrame)
@@ -116,17 +116,17 @@ void GameState::fastForward(const int & toFrame)
     
     // iterate backward over actions in progress since they're sorted
     // that way for ease of deleting the finished ones
-    while (!m_instancesBeingBuilt.empty())
+    while (!m_unitsBeingBuilt.empty())
     {
-        Instance & instance = getInstance(m_instancesBeingBuilt.back());
-        ActionType type = instance.getType();
+        Unit & unit = getUnit(m_unitsBeingBuilt.back());
+        ActionType type = unit.getType();
 
         // if the current action in progress will finish after the ff time, we can stop
-        int actionCompletionTime = previousFrame + instance.getTimeUntilBuilt();
+        const int actionCompletionTime = previousFrame + unit.getTimeUntilBuilt();
         if (actionCompletionTime > toFrame) { break; }
 
         // add the resources we gathered during this time period
-        int timeElapsed         = actionCompletionTime - lastActionFinishTime;
+        const int timeElapsed	= actionCompletionTime - lastActionFinishTime;
         m_minerals              += timeElapsed * MPWPF * m_mineralWorkers;
         m_gas                   += timeElapsed * GPWPF * m_gasWorkers;
         lastActionFinishTime    = actionCompletionTime;
@@ -138,8 +138,8 @@ void GameState::fastForward(const int & toFrame)
         }
 
         // complete the action and remove it from the list
-        completeInstance(instance);
-        m_instancesBeingBuilt.pop_back();
+        completeUnit(unit);
+        m_unitsBeingBuilt.pop_back();
     }
 
     // update resources from the last action finished to the ff frame
@@ -148,21 +148,21 @@ void GameState::fastForward(const int & toFrame)
     m_gas           += timeElapsed * GPWPF * m_gasWorkers;
 
     // update all the intances to the ff time
-    for (auto & instance : m_instances)
+    for (auto & unit : m_units)
     {
-        instance.fastForward(toFrame - previousFrame);
+        unit.fastForward(toFrame - previousFrame);
     }
 
     m_currentFrame = toFrame;
 }
 
-void GameState::completeInstance(Instance & instance)
+void GameState::completeUnit(Unit & unit)
 {
-    instance.complete();
-    m_maxSupply += instance.getType().supplyProvided();
+	unit.complete();
+    m_maxSupply += unit.getType().supplyProvided();
 
     // if it's a worker, assign it to the correct job
-    if (instance.getType().isWorker())
+    if (unit.getType().isWorker())
     {
         m_mineralWorkers++;
         int needGasWorkers = std::max(0, (WorkersPerRefinery*m_numRefineries - m_gasWorkers));
@@ -170,7 +170,7 @@ void GameState::completeInstance(Instance & instance)
         m_mineralWorkers -= needGasWorkers;
         m_gasWorkers += needGasWorkers;
     }
-    else if (instance.getType().isRefinery())
+    else if (unit.getType().isRefinery())
     {
         m_numRefineries++;
         BOSS_ASSERT(m_numRefineries <= m_numDepots, "Shouldn't have more refineries than depots");
@@ -179,37 +179,46 @@ void GameState::completeInstance(Instance & instance)
         m_mineralWorkers -= needGasWorkers;
         m_gasWorkers += needGasWorkers;
     }
-    else if (instance.getType().isDepot())
+    else if (unit.getType().isDepot())
     {
         m_numDepots++;
     }
 }
 
-void GameState::addInstance(const ActionType & type, int builderID)
+// add a unit of the given type to the state
+// if builderID is -1 (default) the unit is added as completed, otherwise it begins construction with the builder
+void GameState::addUnit(const ActionType & type, int builderID)
 {
-    BOSS_ASSERT(m_race == Races::None || type.getRace() == m_race, "Adding an instance of a different race");
+    BOSS_ASSERT(m_race == Races::None || type.getRace() == m_race, "Adding an Unit of a different race");
 
     m_race = type.getRace();
-    Instance instance(type, m_instances.size(), builderID);
+    Unit unit(type, m_units.size(), builderID);
 
-    m_instances.push_back(instance);
-    m_currentSupply += instance.getType().supplyCost();
+    m_units.push_back(unit);
+    m_currentSupply += unit.getType().supplyCost();
     
-    // if we have a valid builder for this object, add it to the instances being built
+    // if we have a valid builder for this object, add it to the Units being built
     if (builderID != -1)
     {
-        getInstance(builderID).startBuilding(m_instances.back());
+        getUnit(builderID).startBuilding(m_units.back());
 
-        // add the instance ID being built and sort the list of all actions in progress in reverse finish time order
-        m_instancesBeingBuilt.push_back(instance.getID());
-        std::sort(m_instancesBeingBuilt.begin(), m_instancesBeingBuilt.end(), 
-            [this](const size_t & id1, const size_t & id2)
-            { return this->getInstance(id1).getTimeUntilBuilt() > this->getInstance(id2).getTimeUntilBuilt(); });
+        // add the Unit ID being built and sort the list
+        m_unitsBeingBuilt.push_back(unit.getID());
+
+		// we know the list is already sorted when we add this unit, so we just swap it until it's in the right place
+		for (size_t i = m_unitsBeingBuilt.size() - 1; i > 0; i--) 
+		{
+			if (getUnit(m_unitsBeingBuilt[i]).getTimeUntilBuilt() > getUnit(m_unitsBeingBuilt[i - 1]).getTimeUntilBuilt())
+			{ 
+				std::swap(m_unitsBeingBuilt[i], m_unitsBeingBuilt[i - 1]); 
+			}
+			else { break; }
+		}
     }
-    // otherwise just complete the instance now and skip the instance in progress step
+    // if there's no builder, complete the unit now and skip the unit in progress step
     else
     {
-        completeInstance(m_instances.back());
+        completeUnit(m_units.back());
     }
 }
 
@@ -232,16 +241,13 @@ int GameState::whenCanBuild(const ActionType & action) const
     return maxTime;
 }
 
+// returns the game frame that we will have the resources available to construction given action type
+// this function assumes the action is legal (must be checked beforehand)
 int GameState::whenResourcesReady(const ActionType & action) const
 {
     if (m_minerals >= action.mineralPrice() && m_gas >= action.gasPrice())
     {
         return getCurrentFrame();
-    }
-
-    if (action.isDepot())
-    {
-        int a = 6;
     }
 
     int previousFrame           = m_currentFrame;
@@ -255,10 +261,10 @@ int GameState::whenResourcesReady(const ActionType & action) const
     double gasDifference        = action.gasPrice() - m_gas;
 
     // loop through each action in progress, adding the minerals we would gather from each interval
-    for (size_t i(0); i < m_instancesBeingBuilt.size(); ++i)
+    for (size_t i(0); i < m_unitsBeingBuilt.size(); ++i)
     {
-        const Instance & instance = getInstance(m_instancesBeingBuilt[m_instancesBeingBuilt.size() - 1 - i]);
-        int actionCompletionTime = previousFrame + instance.getTimeUntilBuilt();
+        const Unit & unit = getUnit(m_unitsBeingBuilt[m_unitsBeingBuilt.size() - 1 - i]);
+        int actionCompletionTime = previousFrame + unit.getTimeUntilBuilt();
 
         // the time elapsed and the current minerals per frame
         int elapsed = actionCompletionTime - lastActionFinishFrame;
@@ -277,17 +283,17 @@ int GameState::whenResourcesReady(const ActionType & action) const
         else { break; }
 
         // finishing a building as terran gives you a mineral worker back
-        if (instance.getType().isBuilding() && !instance.getType().isAddon() && (instance.getType().getRace() == Races::Terran))
+        if (unit.getType().isBuilding() && !unit.getType().isAddon() && (unit.getType().getRace() == Races::Terran))
         {
             currentMineralWorkers++;
         }
         // finishing a worker gives us another mineral worker
-        else if (instance.getType().isWorker())
+        else if (unit.getType().isWorker())
         {
             currentMineralWorkers++;
         }
         // finishing a refinery adjusts the worker count
-        else if (instance.getType().isRefinery())
+        else if (unit.getType().isRefinery())
         {
             BOSS_ASSERT(currentMineralWorkers > WorkersPerRefinery, "Not enough mineral workers \n");
             currentMineralWorkers -= WorkersPerRefinery; 
@@ -317,7 +323,7 @@ int GameState::whenBuilderReady(const ActionType & action) const
 
     BOSS_ASSERT(builderID != -1, "Didn't find when builder ready for %s", action.getName().c_str());
 
-    return m_currentFrame + getInstance(builderID).getTimeUntilFree();
+    return m_currentFrame + getUnit(builderID).getTimeUntilFree();
 }
 
 int GameState::whenSupplyReady(const ActionType & action) const
@@ -326,12 +332,12 @@ int GameState::whenSupplyReady(const ActionType & action) const
     if (supplyNeeded <= 0) { return m_currentFrame; }
 
     // search the actions in progress in reverse for the first supply provider
-    for (size_t i(0); i < m_instancesBeingBuilt.size(); ++i)
+    for (size_t i(0); i < m_unitsBeingBuilt.size(); ++i)
     {
-        const Instance & instance = getInstance(m_instancesBeingBuilt[m_instancesBeingBuilt.size() - 1 - i]);   
-        if (instance.getType().supplyProvided() > supplyNeeded)
+        const Unit & unit = getUnit(m_unitsBeingBuilt[m_unitsBeingBuilt.size() - 1 - i]);   
+        if (unit.getType().supplyProvided() > supplyNeeded)
         {
-            return m_currentFrame + instance.getTimeUntilBuilt();
+            return m_currentFrame + unit.getTimeUntilBuilt();
         }
     }
 
@@ -353,11 +359,11 @@ int GameState::whenPrerequisitesReady(const ActionType & action) const
     {
         // find the minimum time that this particular prereq will be ready
         int minReady = std::numeric_limits<int>::max();
-        for (auto & instance : m_instances)
+        for (auto & unit : m_units)
         {
-            if (instance.getType() != req) { continue; }
-            minReady = std::min(minReady, instance.getTimeUntilFree());
-            if (instance.getTimeUntilFree() == 0) { break; }
+            if (unit.getType() != req) { continue; }
+            minReady = std::min(minReady, unit.getTimeUntilFree());
+            if (unit.getTimeUntilFree() == 0) { break; }
         }
         // we can only build the type after the LAST of the prereqs are ready
         whenPrereqReady = std::max(whenPrereqReady, minReady);
@@ -373,21 +379,21 @@ int GameState::getBuilderID(const ActionType & action) const
     int builderID = -1;
 
     // look over all our units and get when the next builder type is free
-    for (auto & instance : m_instances)
+    for (auto & unit : m_units)
     {
-        int whenReady = instance.whenCanBuild(action);
+        int whenReady = unit.whenCanBuild(action);
         
         // shortcut return if we found something that can build now
         if (whenReady == 0)
         {
-            return instance.getID();
+            return unit.getID();
         }
 
-        // if the instance can build the unit, set the new min
+        // if the Unit can build the unit, set the new min
         if (whenReady != -1 && whenReady < minWhenReady)
         {
             minWhenReady = whenReady;
-            builderID = instance.getID();
+            builderID = unit.getID();
         }
     }
 
@@ -398,8 +404,8 @@ int GameState::getBuilderID(const ActionType & action) const
 
 bool GameState::haveBuilder(const ActionType & type) const
 {
-    return std::any_of(m_instances.begin(), m_instances.end(), 
-           [&type](const Instance & i){ return i.whenCanBuild(type) != -1; });
+    return std::any_of(m_units.begin(), m_units.end(), 
+           [&type](const Unit & i){ return i.whenCanBuild(type) != -1; });
 }
 
 bool GameState::havePrerequisites(const ActionType & type) const
@@ -410,43 +416,43 @@ bool GameState::havePrerequisites(const ActionType & type) const
 
 size_t GameState::getNumInProgress(const ActionType & action) const
 {
-    return std::count_if(m_instancesBeingBuilt.begin(), m_instancesBeingBuilt.end(),
-           [this, &action](const size_t & id) { return action == this->getInstance(id).getType(); } );
+    return std::count_if(m_unitsBeingBuilt.begin(), m_unitsBeingBuilt.end(),
+           [this, &action](const size_t & id) { return action == this->getUnit(id).getType(); } );
 }
 
 size_t GameState::getNumCompleted(const ActionType & action) const
 {
-    return std::count_if(m_instances.begin(), m_instances.end(),
-           [&action](const Instance & instance) { return action == instance.getType() && instance.getTimeUntilBuilt() == 0; } );
+    return std::count_if(m_units.begin(), m_units.end(),
+           [&action](const Unit & unit) { return action == unit.getType() && unit.getTimeUntilBuilt() == 0; } );
 }
 
 size_t GameState::getNumTotal(const ActionType & action) const
 {
-    return std::count_if(m_instances.begin(), m_instances.end(), 
-           [&action](const Instance & instance) { return action == instance.getType(); } );
+    return std::count_if(m_units.begin(), m_units.end(), 
+           [&action](const Unit & unit) { return action == unit.getType(); } );
 }
 
 bool GameState::haveType(const ActionType & action) const
 {
-    return std::any_of(m_instances.begin(), m_instances.end(), 
-           [&action](const Instance & i){ return i.getType() == action; });
+    return std::any_of(m_units.begin(), m_units.end(), 
+           [&action](const Unit & i){ return i.getType() == action; });
 }
 
 int GameState::getSupplyInProgress() const
 {
     int sum = 0;
-    for (auto & id : m_instancesBeingBuilt) { sum += getInstance(id).getType().supplyProvided(); }
+    for (auto & id : m_unitsBeingBuilt) { sum += getUnit(id).getType().supplyProvided(); }
     return sum;
 }
 
-const Instance & GameState::getInstance(const size_t & id) const
+const Unit & GameState::getUnit(const size_t & id) const
 {
-    return m_instances[id];
+    return m_units[id];
 }
 
-Instance & GameState::getInstance(const size_t & id)
+Unit & GameState::getUnit(const size_t & id)
 {
-    return m_instances[id];
+    return m_units[id];
 }
 
 const double & GameState::getMinerals() const
@@ -489,6 +495,11 @@ int GameState::getRace() const
     return m_race;
 }
 
+bool GameState::canBuildNow(const ActionType & action) const
+{
+	return whenCanBuild(action) == getCurrentFrame();
+}
+
 std::string GameState::toString() const
 {
 	std::stringstream ss;
@@ -511,17 +522,17 @@ std::string GameState::toString() const
     }
 
 	ss << "\nUnits In Progress:\n";
-    for (auto & id : m_instancesBeingBuilt) 
+    for (auto & id : m_unitsBeingBuilt) 
     {
-        auto & instance = getInstance(id);
-        sprintf(buf, "%5d %5d %s\n", instance.getID(), instance.getTimeUntilBuilt(), instance.getType().getName().c_str());
+        auto & unit = getUnit(id);
+        sprintf(buf, "%5d %5d %s\n", unit.getID(), unit.getTimeUntilBuilt(), unit.getType().getName().c_str());
         ss << buf;
     }
 
-    ss << "\nAll Instances:\n";
-    for (auto & instance : m_instances) 
+    ss << "\nAll Units:\n";
+    for (auto & unit : m_units) 
     {
-        sprintf(buf, "%5d %5d %s\n", instance.getID(), instance.getTimeUntilFree(), instance.getType().getName().c_str());
+        sprintf(buf, "%5d %5d %s\n", unit.getID(), unit.getTimeUntilFree(), unit.getType().getName().c_str());
         ss << buf;
     }
     

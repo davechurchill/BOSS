@@ -61,11 +61,11 @@ void testBuildOrder()
     hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 
     GameState state;
-    state.addInstance(ActionTypes::GetActionType("Nexus"));
-    state.addInstance(ActionTypes::GetActionType("Probe"));
-    state.addInstance(ActionTypes::GetActionType("Probe"));
-    state.addInstance(ActionTypes::GetActionType("Probe"));
-    state.addInstance(ActionTypes::GetActionType("Probe"));
+    state.addUnit(ActionTypes::GetActionType("Nexus"));
+    state.addUnit(ActionTypes::GetActionType("Probe"));
+    state.addUnit(ActionTypes::GetActionType("Probe"));
+    state.addUnit(ActionTypes::GetActionType("Probe"));
+    state.addUnit(ActionTypes::GetActionType("Probe"));
     state.setMinerals(50.0f);
 
     std::vector<std::string> bos = 
@@ -96,7 +96,7 @@ void testBuildOrder()
     {
         if (progress || GetKey('D')) 
         { 
-            state.fastForward(state.getCurrentFrame() + 2); 
+            state.fastForward(state.getCurrentFrame() + 4); 
             states.push_back(state);
         }
         else if (!progress && GetKey('A'))
@@ -108,6 +108,8 @@ void testBuildOrder()
             }
         }
 
+
+
         CImg<unsigned char> image2;
         image2.draw_text(0, 0, state.toString().c_str(), color, 0, 1, font_full); 
         main_disp.display(image2);
@@ -118,7 +120,7 @@ void testBuildOrder()
 
         if (buildOrderIndex < buildOrder.size())
         {
-            if (state.whenCanBuild(buildOrder[buildOrderIndex]) == state.getCurrentFrame())
+            if (state.canBuildNow(buildOrder[buildOrderIndex]))
             {
                 state.doAction(buildOrder[buildOrderIndex]);
                 buildOrderIndex++;
@@ -144,14 +146,14 @@ void testjson()
 int main(int argc, char *argv[])
 {
     // Initialize all the BOSS internal data
-    BOSS::Init("bin/BWData.json");
+    BOSS::Init("BWData.json");
 
     // Read in the config parameters that will be used for experiments
-    BOSS::BOSSConfig::Instance().ParseParameters("bin/BOSS_Config.txt");
+    BOSS::BOSSConfig::Instance().ParseParameters("BOSS_Config.txt");
 
     //BOSS::Experiments::RunExperiments("BOSS_Config.txt");
 
-    //testBuildOrder();
+    testBuildOrder();
     
     std::cout << "Action Types: " << ActionTypes::GetAllActionTypes().size() << "\n";
     std::cout << "BOSSInitComplete\n";

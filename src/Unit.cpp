@@ -1,9 +1,9 @@
-#include "Instance.h"
+#include "Unit.h"
 
 using namespace BOSS;
 
-Instance::Instance(const ActionType & type, const size_t & id, int builderID)
-    : m_job             (InstanceJobs::None)
+Unit::Unit(const ActionType & type, const size_t & id, int builderID)
+    : m_job             (UnitJobs::None)
     , m_id              (id)
     , m_type            (type)
     , m_addon           (ActionTypes::None)
@@ -17,32 +17,32 @@ Instance::Instance(const ActionType & type, const size_t & id, int builderID)
     
 }
 
-void Instance::startBuilding(const Instance & instance)
+void Unit::startBuilding(const Unit & Unit)
 {
-    // if it's not a probe, this instance won't be free until the build time is done
+    // if it's not a probe, this Unit won't be free until the build time is done
     if (!m_type.isWorker() || !m_type.getRace() == Races::Protoss)
     {
-        m_timeUntilFree = instance.getType().buildTime();
+        m_timeUntilFree = Unit.getType().buildTime();
     }
     
-    m_buildType = instance.getType();
-    m_buildID = instance.getID();
+    m_buildType = Unit.getType();
+    m_buildID = Unit.getID();
 
-    if (instance.getType().isMorphed())
+    if (Unit.getType().isMorphed())
     {
-        m_type = instance.getType();
+        m_type = Unit.getType();
     }
 }
 
-void Instance::complete()
+void Unit::complete()
 {
     m_timeUntilFree = 0;
     m_timeUntilBuilt = 0;
 }
 
-void Instance::fastForward(const int & frames)
+void Unit::fastForward(const int & frames)
 {
-    // if we are completing the thing that this instance is building
+    // if we are completing the thing that this Unit is building
     if ((m_buildType != ActionTypes::None) && frames >= m_timeUntilFree)
     {
         if (m_buildType.isAddon())
@@ -52,15 +52,15 @@ void Instance::fastForward(const int & frames)
 
         m_buildType = ActionTypes::None;
         m_buildID = 0;
-        m_job = m_type.isWorker() ? InstanceJobs::Minerals : InstanceJobs::None;
+        m_job = m_type.isWorker() ? UnitJobs::Minerals : UnitJobs::None;
     }
 
     m_timeUntilFree = std::max(0, m_timeUntilFree - frames);
     m_timeUntilBuilt = std::max(0, m_timeUntilBuilt - frames);
 }
 
-// returns when this instance can build a given type, -1 if it can't
-int Instance::whenCanBuild(const ActionType & type) const
+// returns when this Unit can build a given type, -1 if it can't
+int Unit::whenCanBuild(const ActionType & type) const
 {
     // check to see if this type can build the given type
     // TODO: check equivalent types (hatchery gspire etc)
@@ -73,7 +73,7 @@ int Instance::whenCanBuild(const ActionType & type) const
     }
 
     // if this is a worker and it's harvesting gas, it can't build
-    if (m_type.isWorker() && (m_job == InstanceJobs::Gas))
+    if (m_type.isWorker() && (m_job == UnitJobs::Gas))
     {
         return -1;
     }
@@ -81,37 +81,37 @@ int Instance::whenCanBuild(const ActionType & type) const
     return m_timeUntilFree;
 }
 
-const int & Instance::getTimeUntilBuilt() const
+const int & Unit::getTimeUntilBuilt() const
 {
     return m_timeUntilBuilt;
 }
 
-const int & Instance::getTimeUntilFree() const
+const int & Unit::getTimeUntilFree() const
 {
     return m_timeUntilFree;
 }
 
-const ActionType & Instance::getType() const
+const ActionType & Unit::getType() const
 {
     return m_type;
 }
 
-const ActionType & Instance::getAddon() const
+const ActionType & Unit::getAddon() const
 {
     return m_addon;
 }
 
-const ActionType & Instance::getBuildType() const
+const ActionType & Unit::getBuildType() const
 {
     return m_buildType;
 }
 
-const size_t & Instance::getID() const
+const size_t & Unit::getID() const
 {
     return m_id;
 }
 
-void Instance::setBuilderID(const int & id)
+void Unit::setBuilderID(const int & id)
 {
     m_builderID = id;
 }

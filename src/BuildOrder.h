@@ -9,8 +9,8 @@ namespace BOSS
 
 class BuildOrder
 {
-    std::vector<ActionType>     m_buildOrder;
-    std::vector<size_t>         m_typeCount;
+    std::vector<ActionType>	m_buildOrder;
+    std::vector<size_t>		m_typeCount;
 
 public:
 
