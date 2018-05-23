@@ -10,7 +10,7 @@ namespace BOSS
 class GameState 
 {
     std::vector<Unit>	m_units;
-    std::vector<size_t>	m_unitsBeingBuilt;
+    std::vector<size_t>	m_unitsBeingBuilt;  // indices of m_units which are not completed, sorted descending by finish time
     int					m_race;
     double				m_minerals;
     double				m_gas;
@@ -33,7 +33,6 @@ class GameState
     int			whenPrerequisitesReady(const ActionType & action)   const;
     int			whenResourcesReady(const ActionType & action)       const;
     int			whenBuilderReady(const ActionType & action)         const;
-    int			getSupplyInProgress() const;
 
     Unit &		getUnit(const size_t & id);
     void		completeUnit(Unit & Unit);
@@ -50,7 +49,12 @@ public:
     const Unit &	getUnit(const size_t & id) const;
 	bool			canBuildNow(const ActionType & action) const;
     int				whenCanBuild(const ActionType & action) const;
+    int			    getSupplyInProgress() const;
+    int             getLastActionFinishTime() const;
+    int             getNextFinishTime(const ActionType & type) const;
     
+    size_t			getNumMineralWorkers() const;
+    size_t			getNumGasWorkers() const;
     size_t			getNumInProgress(const ActionType & action) const;
     size_t			getNumCompleted(const ActionType & action) const;
     size_t			getNumTotal(const ActionType & action) const;

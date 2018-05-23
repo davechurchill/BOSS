@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.h"
+#include "ActionSet.h"
 
 namespace BOSS
 {
@@ -42,6 +43,8 @@ public:
     ActionType whatBuildsAddon() const;
     const std::vector<ActionType> & required() const;
     const std::vector<ActionType> & equivalent() const;
+    const ActionSet & getPrerequisiteActionCount() const;
+    const ActionSet & getRecursivePrerequisiteActionCount() const;
 
     const bool operator == (const ActionType & rhs)     const;
     const bool operator != (const ActionType & rhs)     const;
@@ -58,6 +61,9 @@ namespace ActionTypes
     const ActionType & GetResourceDepot(const RaceID raceID);
     const ActionType & GetActionType(const std::string & name);
     const bool         TypeExists(const std::string & name);
+
+    ActionSet CalculatePrerequisites(const ActionType & action);
+    void CalculateRecursivePrerequisites(ActionSet & count, const ActionType & action);
 
     extern ActionType None;
 }

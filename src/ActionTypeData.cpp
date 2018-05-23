@@ -137,3 +137,4 @@ void ActionTypeData::Init(const std::string & filename)
         }
     }
 }
+

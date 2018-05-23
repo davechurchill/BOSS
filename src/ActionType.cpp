@@ -1,7 +1,11 @@
 #include "ActionType.h"
 #include "ActionTypeData.h"
+#include "ActionSet.h"
 
 using namespace BOSS;
+
+std::vector<ActionSet> allActionPrerequisites;
+std::vector<ActionSet> allActionRecursivePrerequisites;
 
 ActionType::ActionType()
     : m_id(0)
@@ -72,6 +76,17 @@ const std::vector<ActionType> & ActionType::equivalent() const
     return ActionTypeData::GetActionTypeData(m_id).equivalent;
 }
 
+
+const ActionSet & ActionType::getPrerequisiteActionCount() const
+{
+    return allActionPrerequisites[m_id];
+}
+
+const ActionSet & ActionType::getRecursivePrerequisiteActionCount() const
+{
+    return allActionRecursivePrerequisites[m_id];
+}
+
 const bool ActionType::operator == (const ActionType & rhs)     const { return m_id == rhs.m_id; }
 const bool ActionType::operator != (const ActionType & rhs)     const { return m_id != rhs.m_id; }
 const bool ActionType::operator <  (const ActionType & rhs)     const { return m_id < rhs.m_id; }
@@ -109,6 +124,20 @@ namespace ActionTypes
         refineryActionTypes.push_back(ActionTypes::GetActionType("Extractor"));
         supplyProviderActionTypes.push_back(ActionTypes::GetActionType("Overlord"));
         resourceDepotActionTypes.push_back(ActionTypes::GetActionType("Hatchery"));
+
+        // calculate all action prerequisites
+        for (size_t i(0); i < allActionTypes.size(); ++i)
+        {
+            allActionPrerequisites.push_back(CalculatePrerequisites(allActionTypes[i]));
+        }
+
+        // calculate all action recursive prerequisites
+        for (size_t i(0); i < allActionTypes.size(); ++i)
+        {
+            ActionSet recursivePrerequisites;
+            CalculateRecursivePrerequisites(recursivePrerequisites, allActionTypes[i]);
+            allActionRecursivePrerequisites.push_back(recursivePrerequisites);
+        }
     }
 
     const ActionType & GetWorker(const RaceID raceID)
@@ -149,6 +178,37 @@ namespace ActionTypes
     }
 
     ActionType None(0);
+
+    ActionSet CalculatePrerequisites(const ActionType & action)
+    {
+        ActionSet count;
+
+        // add everything from whatBuilds and required
+
+        //printf("Finish Prerequisites\n");
+        return count;
+    }
+
+    void CalculateRecursivePrerequisites(ActionSet & allActions, const ActionType & action)
+    {
+        ActionSet pre = action.getPrerequisiteActionCount();
+
+        if (action.gasPrice() > 0)
+        {
+            pre.add(ActionTypes::GetRefinery(action.getRace()));
+        }
+
+        for (size_t a(0); a < pre.size(); ++a)
+        {
+            const ActionType & actionType(a);
+            
+            if (pre.contains(actionType) && !allActions.contains(actionType))
+            {
+                allActions.add(actionType);
+                CalculateRecursivePrerequisites(allActions, actionType);
+            }
+        }
+    }
 
 }
 }

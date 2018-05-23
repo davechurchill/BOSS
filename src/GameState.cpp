@@ -205,7 +205,7 @@ void GameState::addUnit(const ActionType & type, int builderID)
         // add the Unit ID being built and sort the list
         m_unitsBeingBuilt.push_back(unit.getID());
 
-		// we know the list is already sorted when we add this unit, so we just swap it until it's in the right place
+		// we know the list is already sorted when we add this unit, so we just swap it from the end until it's in the right place
 		for (size_t i = m_unitsBeingBuilt.size() - 1; i > 0; i--) 
 		{
 			if (getUnit(m_unitsBeingBuilt[i]).getTimeUntilBuilt() > getUnit(m_unitsBeingBuilt[i - 1]).getTimeUntilBuilt())
@@ -498,6 +498,37 @@ int GameState::getRace() const
 bool GameState::canBuildNow(const ActionType & action) const
 {
 	return whenCanBuild(action) == getCurrentFrame();
+}
+
+size_t GameState::getNumMineralWorkers() const
+{
+    return m_mineralWorkers;
+}
+
+size_t GameState::getNumGasWorkers() const
+{
+    return m_gasWorkers;
+}
+
+int GameState::getLastActionFinishTime() const
+{
+    return m_unitsBeingBuilt.empty() ? getCurrentFrame() : m_units[m_unitsBeingBuilt.front()].getTimeUntilBuilt();
+}
+
+int GameState::getNextFinishTime(const ActionType & type) const
+{
+    for (size_t i(0); i < m_unitsBeingBuilt.size(); ++i)
+    {
+        const size_t index = m_unitsBeingBuilt.size() - i - 1;
+
+        if (m_units[m_unitsBeingBuilt[index]].getType() == type)
+        {
+            return m_units[m_unitsBeingBuilt[index]].getTimeUntilBuilt();
+        }
+    }
+
+    std::cerr << "Warning: Called getNextFinishTime of unit not in progress" << std::endl;
+    return getCurrentFrame();
 }
 
 std::string GameState::toString() const

@@ -21,6 +21,7 @@ public:
     void                    add(const BuildOrder & other);
     void                    clear();
     void                    pop_back();
+    void                    sortByPrerequisites();
     
     const ActionType &      operator [] (const size_t & i) const;
     ActionType &            operator [] (const size_t & i);

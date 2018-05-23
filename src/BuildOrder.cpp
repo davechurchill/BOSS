@@ -76,6 +76,22 @@ const size_t BuildOrder::size() const
     return m_buildOrder.size();
 }
 
+void BuildOrder::sortByPrerequisites()
+{
+    for (size_t i(0); i < m_buildOrder.size() - 1; ++i)
+    {
+        for (size_t j(i + 1); j < m_buildOrder.size(); ++j)
+        {
+            const auto & recursivePre = m_buildOrder[i].getRecursivePrerequisiteActionCount();
+
+            if (recursivePre.contains(m_buildOrder[j]))
+            {
+                std::swap(m_buildOrder[i], m_buildOrder[j]);
+            }
+        }
+    }
+}
+
 std::string BuildOrder::getJSONString() const
 {
     std::stringstream ss;

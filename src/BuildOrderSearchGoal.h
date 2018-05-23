@@ -23,7 +23,6 @@ public:
     bool                isAchievedBy(const GameState & state);
 
     size_t              supplyRequired() const;
-    size_t              operator [] (const ActionID & a) const;
     size_t              getGoal(const ActionType & a) const;
     size_t              getGoalMax(const ActionType & a) const;
 
