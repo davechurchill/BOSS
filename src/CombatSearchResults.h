@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Common.h"
-#include "PrerequisiteSet.h"
 #include "GameState.h"
 #include "ActionType.h"
 #include "Timer.hpp"
@@ -33,10 +32,10 @@ public:
 
     double              highestEval;
 
-    ResourceCountType   minerals;
-    ResourceCountType   gas;
+    double              minerals;
+    double              gas;
 
-    FrameCountType      frameCompleted;
+    int                 frameCompleted;
 
     CombatSearchResults();
     CombatSearchResults(bool s,int len,unsigned long long n,double t,std::vector<ActionType> solution);

@@ -23,14 +23,14 @@ public:
 
 class CombatSearch_BucketData
 {
-    std::vector<BucketData>     _buckets;
-    FrameCountType              _frameLimit;
+    std::vector<BucketData>     m_buckets;
+    int                         m_frameLimit;
 
     BucketData & getBucketData(const GameState & state);
 
 public:
 
-    CombatSearch_BucketData(const FrameCountType frameLimit, const size_t numBuckets);
+    CombatSearch_BucketData(const int frameLimit, const size_t numBuckets);
 
     const BucketData & getBucket(const size_t index) const;
     const size_t numBuckets() const;

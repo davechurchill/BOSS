@@ -16,9 +16,9 @@ class CombatSearch_BestResponse : public CombatSearch
 {
 	virtual void                    recurse(const GameState & s, size_t depth);
 
-    CombatSearch_BestResponseData   _bestResponseData;
+    CombatSearch_BestResponseData   m_bestResponseData;
 
-    BuildOrder                      _bestBuildOrder;
+    BuildOrder                      m_bestBuildOrder;
 
     double                          compareBuildOrders(const GameState & selfState, const BuildOrder & selfBuildOrder, const GameState & enemyState, const BuildOrder & enemyBuildOrder);
 

@@ -3,11 +3,11 @@
 using namespace BOSS;
 
 CombatSearch_BestResponse::CombatSearch_BestResponse(const CombatSearchParameters p)
-    : _bestResponseData(p.getEnemyInitialState(), p.getEnemyBuildOrder())
+    : m_bestResponseData(p.getEnemyInitialState(), p.getEnemyBuildOrder())
 {
-    _params = p;
+    m_params = p;
 
-    BOSS_ASSERT(_params.getInitialState().getRace() != Races::None, "Combat search initial state is invalid");
+    BOSS_ASSERT(m_params.getInitialState().getRace() != Races::None, "Combat search initial state is invalid");
 }
 
 void CombatSearch_BestResponse::recurse(const GameState & state, size_t depth)
@@ -17,7 +17,7 @@ void CombatSearch_BestResponse::recurse(const GameState & state, size_t depth)
         throw BOSS_COMBATSEARCH_TIMEOUT;
     }
 
-    _bestResponseData.update(_params.getInitialState(), state, _buildOrder);
+    m_bestResponseData.update(m_params.getInitialState(), state, m_buildOrder);
     updateResults(state);
 
     if (isTerminalNode(state, depth))
@@ -26,19 +26,19 @@ void CombatSearch_BestResponse::recurse(const GameState & state, size_t depth)
     }
 
     ActionSet legalActions;
-    generateLegalActions(state, legalActions, _params);
+    generateLegalActions(state, legalActions, m_params);
     
-    for (UnitCountType a(0); a < legalActions.size(); ++a)
+    for (size_t a(0); a < legalActions.size(); ++a)
     {
         size_t ri = legalActions.size() - 1 - a;
 
         GameState child(state);
         child.doAction(legalActions[ri]);
-        _buildOrder.add(legalActions[ri]);
+        m_buildOrder.add(legalActions[ri]);
         
         recurse(child,depth+1);
 
-        _buildOrder.pop_back();
+        m_buildOrder.pop_back();
     }
 }
 
@@ -47,16 +47,14 @@ void CombatSearch_BestResponse::printResults()
 
 }
 
-#include "BuildOrderPlot.h"
+#include "BuildOrderPlotter.h"
 void CombatSearch_BestResponse::writeResultsFile(const std::string & filename)
 {
-    BuildOrderPlot plot(_params.getInitialState(), _bestResponseData.getBestBuildOrder());
+    BuildOrderPlotter plot;
+    plot.addPlot("BestResponseSelf", m_params.getInitialState(), m_bestResponseData.getBestBuildOrder());
+    plot.doPlots();
 
-    plot.writeRectanglePlot(filename + "_BestBuildOrder");
-    plot.writeArmyValuePlot(filename + "_BestArmyValue");
-
-    BuildOrderPlot plot2(_params.getEnemyInitialState(), _params.getEnemyBuildOrder());
-
-    plot2.writeRectanglePlot(filename + "_EnemyBuildOrder");
-    plot2.writeArmyValuePlot(filename + "_EnemyArmyValue");
+    BuildOrderPlotter plot2;
+    plot2.addPlot("BestResponseEnemy", m_params.getEnemyInitialState(), m_params.getEnemyBuildOrder());
+    plot2.doPlots();
 }

@@ -18,13 +18,13 @@ class CombatSearch
 {
 protected:
 
-    CombatSearchParameters      _params;            // parameters that will be used in this search
-    CombatSearchResults         _results;			// the results of the search so far
+    CombatSearchParameters      m_params;            // parameters that will be used in this search
+    CombatSearchResults         m_results;			// the results of the search so far
 
-    FrameCountType              _upperBound; 		// the current upper bound for search
-    Timer                       _searchTimer;
+    int                         m_upperBound; 		// the current upper bound for search
+    Timer                       m_searchTimer;
 
-    BuildOrder                  _buildOrder;
+    BuildOrder                  m_buildOrder;
 
     virtual void                recurse(const GameState & s,size_t depth);
     virtual void                generateLegalActions(const GameState & state,ActionSet & legalActions,const CombatSearchParameters & params);

@@ -447,15 +447,14 @@ int Tools::CalculatePrerequisitesLowerBound(const GameState & state, const Actio
 int Tools::GetBuildOrderCompletionTime(const GameState & state, const BuildOrder & buildOrder)
 {
     GameState stateCopy(state);
+    DoBuildOrder(stateCopy, buildOrder);
+    return stateCopy.getLastActionFinishTime();
+}
+
+void Tools::DoBuildOrder(GameState & state, const BuildOrder & buildOrder)
+{
     for (size_t i(0); i < buildOrder.size(); ++i)
     {
-        if (!stateCopy.isLegal(buildOrder[i]))
-        {
-            std::cerr << "WARNING: Trying to get completion time of illegal build order" << std::endl;
-        }
-
-        stateCopy.doAction(buildOrder[i]);
+        state.doAction(buildOrder[i]);
     }
-
-    return stateCopy.getLastActionFinishTime();
 }

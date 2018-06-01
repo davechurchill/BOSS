@@ -405,7 +405,7 @@ int GameState::getBuilderID(const ActionType & action) const
 bool GameState::haveBuilder(const ActionType & type) const
 {
     return std::any_of(m_units.begin(), m_units.end(), 
-           [&type](const Unit & i){ return i.whenCanBuild(type) != -1; });
+           [&type](const Unit & u){ return u.whenCanBuild(type) != -1; });
 }
 
 bool GameState::havePrerequisites(const ActionType & type) const
@@ -440,9 +440,8 @@ bool GameState::haveType(const ActionType & action) const
 
 int GameState::getSupplyInProgress() const
 {
-    int sum = 0;
-    for (auto & id : m_unitsBeingBuilt) { sum += getUnit(id).getType().supplyProvided(); }
-    return sum;
+    return std::accumulate(m_unitsBeingBuilt.begin(), m_unitsBeingBuilt.end(), 0, 
+           [this](size_t lhs, size_t rhs) { return lhs + this->getUnit(rhs).getType().supplyProvided(); });
 }
 
 const Unit & GameState::getUnit(const size_t & id) const
@@ -517,18 +516,10 @@ int GameState::getLastActionFinishTime() const
 
 int GameState::getNextFinishTime(const ActionType & type) const
 {
-    for (size_t i(0); i < m_unitsBeingBuilt.size(); ++i)
-    {
-        const size_t index = m_unitsBeingBuilt.size() - i - 1;
+    auto it = std::find_if(m_unitsBeingBuilt.rbegin(), m_unitsBeingBuilt.rend(),
+              [this, &type](const size_t & uid) { return this->getUnit(uid).getType() == type; });
 
-        if (m_units[m_unitsBeingBuilt[index]].getType() == type)
-        {
-            return m_units[m_unitsBeingBuilt[index]].getTimeUntilBuilt();
-        }
-    }
-
-    std::cerr << "Warning: Called getNextFinishTime of unit not in progress" << std::endl;
-    return getCurrentFrame();
+    return it == m_unitsBeingBuilt.rend() ? getCurrentFrame() : m_units[*it].getTimeUntilFree();
 }
 
 std::string GameState::toString() const
@@ -585,6 +576,8 @@ std::string GameState::toString() const
     ss << buf;
 
     ss << "--------------------------------------\n";
+    ss << "Supply In Progress: " << getSupplyInProgress() << "\n";
+    ss << "Next Probe Finish: " << getNextFinishTime(ActionTypes::GetActionType("Probe")) << "\n";
     //printPath();
 
     return ss.str();

@@ -25,7 +25,7 @@ public:
 
     void writeResourcePlot(const BuildOrderPlotData & plot, const std::string & filename);
     void writeArmyValuePlot(const BuildOrderPlotData & plot, const std::string & filename);
-    void writeRectanglePlot(const std::vector<BuildOrderPlotData> & plots, const std::string & filename);
+    void writeBuildOrderPlot(const std::vector<BuildOrderPlotData> & plots, const std::string & filename);
 
     std::string getPlotJSON(const std::vector<BuildOrderPlotData> & plots);
     

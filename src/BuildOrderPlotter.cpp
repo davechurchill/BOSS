@@ -33,7 +33,24 @@ void BuildOrderPlotter::addPlot(const std::string & name, const GameState & stat
 
 void BuildOrderPlotter::doPlots()
 {
-    writeRectanglePlot(m_allPlots, m_outputDir + "AllBuildOrders.gpl");
+    writeBuildOrderPlot(m_allPlots, m_outputDir + "AllBuildOrders.gpl");
+    
+    // write resource plots
+    for (size_t i(0); i < m_allPlots.size(); i++)
+    {
+        std::stringstream rss;
+        rss << m_outputDir << m_buildOrderNames[i] << "_ResourcePlot.gpl";
+        writeResourcePlot(m_allPlots[i], rss.str());
+    }
+
+    // write army plots
+    for (size_t i(0); i < m_allPlots.size(); i++)
+    {
+        std::stringstream rss;
+        rss << m_outputDir << m_buildOrderNames[i] << "_ArmyPlot.gpl";
+        writeArmyValuePlot(m_allPlots[i], rss.str());
+    }
+
     getPlotJSON(m_allPlots);
 }
 
@@ -58,7 +75,7 @@ void BuildOrderPlotter::writeResourcePlot(const BuildOrderPlotData & plot, const
     WriteGnuPlot(noext + "_gas", gasss.str(), " with lines ");
 }
 
-void BuildOrderPlotter::writeRectanglePlot(const std::vector<BuildOrderPlotData> & plots, const std::string & filename)
+void BuildOrderPlotter::writeBuildOrderPlot(const std::vector<BuildOrderPlotData> & plots, const std::string & filename)
 {
     std::stringstream ss;
     int maxY = 0;

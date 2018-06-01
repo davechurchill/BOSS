@@ -87,7 +87,7 @@ std::string DFBB_BuildOrderSearchParameters::toString() const
         ss << "Relevant:   " << m_relevantActions[i].getName() << "\n";
     }
 
-    //ss << "\n\n" << m_initialState.getUnitData().getBuildingData().toString();
+    //ss << "\n\n" << m_initialState.getBuildingData().toString();
 
     return ss.str();
 }

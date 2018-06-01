@@ -62,6 +62,36 @@
     <ClCompile Include="..\src\NaiveBuildOrderSearch.cpp">
       <Filter>search\goal</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\CombatSearch.cpp">
+      <Filter>search\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CombatSearch_BestResponse.cpp">
+      <Filter>search\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CombatSearch_BestResponseData.cpp">
+      <Filter>search\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CombatSearch_Bucket.cpp">
+      <Filter>search\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CombatSearch_BucketData.cpp">
+      <Filter>search\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CombatSearch_Integral.cpp">
+      <Filter>search\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CombatSearch_IntegralData.cpp">
+      <Filter>search\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CombatSearchExperiment.cpp">
+      <Filter>search\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CombatSearchParameters.cpp">
+      <Filter>search\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CombatSearchResults.cpp">
+      <Filter>search\combat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ActionType.h" />
@@ -126,6 +156,36 @@
     </ClInclude>
     <ClInclude Include="..\src\NaiveBuildOrderSearch.h">
       <Filter>search\goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CombatSearch.h">
+      <Filter>search\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CombatSearch_BestResponse.h">
+      <Filter>search\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CombatSearch_BestResponseData.h">
+      <Filter>search\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CombatSearch_Bucket.h">
+      <Filter>search\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CombatSearch_BucketData.h">
+      <Filter>search\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CombatSearch_Integral.h">
+      <Filter>search\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CombatSearch_IntegralData.h">
+      <Filter>search\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CombatSearchExperiment.h">
+      <Filter>search\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CombatSearchParameters.h">
+      <Filter>search\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CombatSearchResults.h">
+      <Filter>search\combat</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

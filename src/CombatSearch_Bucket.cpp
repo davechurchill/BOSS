@@ -3,11 +3,11 @@
 using namespace BOSS;
 
 CombatSearch_Bucket::CombatSearch_Bucket(const CombatSearchParameters p)
-    : _bucket(p.getFrameTimeLimit(), 200)
+    : m_bucket(p.getFrameTimeLimit(), 200)
 {
-    _params = p;
+    m_params = p;
    
-    BOSS_ASSERT(_params.getInitialState().getRace() != Races::None, "Combat search initial state is invalid");
+    BOSS_ASSERT(m_params.getInitialState().getRace() != Races::None, "Combat search initial state is invalid");
 }
 void CombatSearch_Bucket::doSearch(const GameState & state, size_t depth)
 {
@@ -17,45 +17,45 @@ void CombatSearch_Bucket::doSearch(const GameState & state, size_t depth)
     }
 
     updateResults(state);
-    _bucket.update(state, _buildOrder);
+    m_bucket.update(state, m_buildOrder);
 
     if (isTerminalNode(state, depth))
     {
         return;
     }
 
-    if (_bucket.isDominated(state))
+    if (m_bucket.isDominated(state))
     {
         //return;
     }
 
     ActionSet legalActions;
-    generateLegalActions(state, legalActions, _params);
+    generateLegalActions(state, legalActions, m_params);
     
-    for (UnitCountType a(0); a < legalActions.size(); ++a)
+    for (size_t a(0); a < legalActions.size(); ++a)
     {
         GameState child(state);
         child.doAction(legalActions[a]);
-        _buildOrder.add(legalActions[a]);
+        m_buildOrder.add(legalActions[a]);
         
         doSearch(child,depth+1);
 
-        _buildOrder.pop_back();
+        m_buildOrder.pop_back();
     }
 }
 
 void CombatSearch_Bucket::printResults()
 {
-    _bucket.print();
+    m_bucket.print();
 }
 
-#include "BuildOrderPlot.h"
+#include "BuildOrderPlotter.h"
 void CombatSearch_Bucket::writeResultsFile(const std::string & filename)
 {
-    BuildOrderPlot::WriteGnuPlot(filename + "_BucketResults", _bucket.getBucketResultsString(), " with steps");
+    BuildOrderPlotter::WriteGnuPlot(filename + "_BucketResults", m_bucket.getBucketResultsString(), " with steps");
 
     // write the final build order data
-    BuildOrderPlot plot(_params.getInitialState(), _bucket.getBucket(_bucket.numBuckets()-1).buildOrder);
-    plot.writeArmyValuePlot(filename + "_FinalBucketArmyPlot");
-    plot.writeRectanglePlot(filename + "_FinalBucketBuildOrder");
+    BuildOrderPlotter plot;
+    plot.addPlot("Bucket", m_params.getInitialState(), m_bucket.getBucket(m_bucket.numBuckets() - 1).buildOrder);
+    plot.doPlots();
 }

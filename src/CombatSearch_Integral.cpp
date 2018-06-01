@@ -4,9 +4,9 @@ using namespace BOSS;
 
 CombatSearch_Integral::CombatSearch_Integral(const CombatSearchParameters p)
 {
-    _params = p;
+    m_params = p;
 
-    BOSS_ASSERT(_params.getInitialState().getRace() != Races::None, "Combat search initial state is invalid");
+    BOSS_ASSERT(m_params.getInitialState().getRace() != Races::None, "Combat search initial state is invalid");
 }
 
 void CombatSearch_Integral::doSearch(const GameState & state, size_t depth)
@@ -24,35 +24,33 @@ void CombatSearch_Integral::doSearch(const GameState & state, size_t depth)
     }
 
     ActionSet legalActions;
-    generateLegalActions(state, legalActions, _params);
+    generateLegalActions(state, legalActions, m_params);
     
-    for (UnitCountType a(0); a < legalActions.size(); ++a)
+    for (size_t a(0); a < legalActions.size(); ++a)
     {
-        const UnitCountType index = legalActions.size()-1-a;
+        const size_t index = legalActions.size()-1-a;
 
         GameState child(state);
         child.doAction(legalActions[index]);
-        _buildOrder.add(legalActions[index]);
-        _integral.update(state, _buildOrder);
+        m_buildOrder.add(legalActions[index]);
+        m_integral.update(state, m_buildOrder);
         
         doSearch(child,depth+1);
 
-        _buildOrder.pop_back();
-        _integral.pop();
+        m_buildOrder.pop_back();
+        m_integral.pop();
     }
 }
 
 void CombatSearch_Integral::printResults()
 {
-    _integral.print();
+    m_integral.print();
 }
 
-#include "BuildOrderPlot.h"
+#include "BuildOrderPlotter.h"
 void CombatSearch_Integral::writeResultsFile(const std::string & filename)
 {
-    BuildOrderPlot plot(_params.getInitialState(), _integral.getBestBuildOrder());
-
-    plot.writeResourcePlot(filename + "_Resources");
-    plot.writeRectanglePlot(filename + "_BuildOrder");
-    plot.writeArmyValuePlot(filename + "_ArmyValue");
+    BuildOrderPlotter plot;
+    plot.addPlot("IntegralPlot", m_params.getInitialState(), m_integral.getBestBuildOrder());
+    plot.doPlots();
 }

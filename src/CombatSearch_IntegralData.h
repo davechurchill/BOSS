@@ -11,11 +11,11 @@ namespace BOSS
 class IntegralData
 {
 public:
-    double              eval;
-    double              integral;
-    FrameCountType      timeAdded;
+    double  eval;
+    double  integral;
+    int     timeAdded;
 
-    IntegralData(double e, double i, FrameCountType t)
+    IntegralData(double e, double i, int t)
         : eval(e)
         , integral(i)
         , timeAdded(t)
@@ -34,11 +34,11 @@ public:
 
 class CombatSearch_IntegralData
 {
-    std::vector<IntegralData>       _integralStack;
+    std::vector<IntegralData>       m_integralStack;
 
-    std::vector<IntegralData>       _bestIntegralStack;
-    double                          _bestIntegralValue;
-    BuildOrder                      _bestIntegralBuildOrder;
+    std::vector<IntegralData>       m_bestIntegralStack;
+    double                          m_bestIntegralValue;
+    BuildOrder                      m_bestIntegralBuildOrder;
 
 public:
 

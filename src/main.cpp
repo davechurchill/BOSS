@@ -69,7 +69,7 @@ void testBuildOrder()
     state.setMinerals(50.0f);
 
     std::vector<std::string> bos = 
-        {"Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", 
+        {"Probe", "Probe", "Probe", "Probe", "Pylon", "Pylon", "Pylon", "Probe", "Probe", "Gateway", "Probe",
         "Assimilator", "Probe", "Probe", "CyberneticsCore", "Probe", "Pylon", "Probe", "Gateway", 
         "Dragoon", "Gateway", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon"};
 
@@ -145,6 +145,11 @@ void testjson()
 
 int main(int argc, char *argv[])
 {
+    std::vector<size_t> test = { 1, 2, 3, 4, 5, 6 };
+    size_t result = std::accumulate(test.begin(), test.end(), 0,
+        [](size_t lhs, size_t rhs) { return lhs * 2 + rhs; });
+    std::cout << result << std::endl;
+
     // Initialize all the BOSS internal data
     BOSS::Init("BWData.json");
 

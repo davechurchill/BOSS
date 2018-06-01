@@ -1,4 +1,5 @@
 #include "CombatSearch.h"
+#include "Tools.h"
 
 using namespace BOSS;
 
@@ -6,28 +7,28 @@ using namespace BOSS;
 // function which is called to do the actual search
 void CombatSearch::search()
 {
-    _searchTimer.start();
+    m_searchTimer.start();
 
     // apply the opening build order to the initial state
-    GameState initialState(_params.getInitialState());
-    _buildOrder = _params.getOpeningBuildOrder();
-    _buildOrder.doActions(initialState);
+    GameState initialState(m_params.getInitialState());
+    m_buildOrder = m_params.getOpeningBuildOrder();
+    Tools::DoBuildOrder(initialState, m_buildOrder);
 
     try
     {
         recurse(initialState, 0);
     
-        _results.solved = true;
+        m_results.solved = true;
     }
     catch (int e)
     {
         if (e == BOSS_COMBATSEARCH_TIMEOUT)
         {
-            _results.timedOut = true;
+            m_results.timedOut = true;
         }
     }
 
-    _results.timeElapsed = _searchTimer.getElapsedTimeInMilliSec();
+    m_results.timeElapsed = m_searchTimer.getElapsedTimeInMilliSec();
 }
 
 // This functio generates the legal actions from a GameState based on the input search parameters
@@ -46,7 +47,7 @@ void CombatSearch::generateLegalActions(const GameState & state, ActionSet & leg
         }
 
         // prune the action if we have too many of them already
-        if ((params.getMaxActions(action) != -1) && (state.getUnitData().getNumTotal(action) >= params.getMaxActions(action)))
+        if ((params.getMaxActions(action) != -1) && ((int)state.getNumTotal(action) >= params.getMaxActions(action)))
         {
             continue;
         }
@@ -56,12 +57,12 @@ void CombatSearch::generateLegalActions(const GameState & state, ActionSet & leg
 
     // if we enabled the always make workers flag, and workers are legal
     const ActionType & worker = ActionTypes::GetWorker(state.getRace());
-    if (_params.getAlwaysMakeWorkers() && legalActions.contains(worker))
+    if (m_params.getAlwaysMakeWorkers() && legalActions.contains(worker))
     {
         bool actionLegalBeforeWorker = false;
 
         // when can we make a worker
-        FrameCountType workerReady = state.whenCanPerform(worker);
+        int workerReady = state.whenCanBuild(worker);
         
         // if we can make a worker in the next couple of frames, do it
         if (workerReady <= state.getCurrentFrame() + 2)
@@ -75,7 +76,7 @@ void CombatSearch::generateLegalActions(const GameState & state, ActionSet & leg
         for (size_t a(0); a < legalActions.size(); ++a)
         {
             const ActionType & actionType = legalActions[a];
-            const FrameCountType whenCanPerformAction = state.whenCanPerform(actionType);
+            const int whenCanPerformAction = state.whenCanBuild(actionType);
             if (whenCanPerformAction < workerReady)
             {
                 actionLegalBeforeWorker = true;
@@ -99,17 +100,17 @@ void CombatSearch::generateLegalActions(const GameState & state, ActionSet & leg
 
 const CombatSearchResults & CombatSearch::getResults() const
 {
-    return _results;
+    return m_results;
 }
 
 bool CombatSearch::timeLimitReached()
 {
-    return (_params.getSearchTimeLimit() && (_results.nodesExpanded % 100 == 0) && (_searchTimer.getElapsedTimeInMilliSec() > _params.getSearchTimeLimit()));
+    return (m_params.getSearchTimeLimit() && (m_results.nodesExpanded % 100 == 0) && (m_searchTimer.getElapsedTimeInMilliSec() > m_params.getSearchTimeLimit()));
 }
 
 bool CombatSearch::isTerminalNode(const GameState & s, int depth)
 {
-    if (s.getCurrentFrame() >= _params.getFrameTimeLimit())
+    if (s.getCurrentFrame() >= m_params.getFrameTimeLimit())
     {
         return true;
     }
@@ -139,7 +140,7 @@ void CombatSearch::recurse(const GameState & state, size_t depth)
     //ActionSet legalActions;
     //generateLegalActions(state, legalActions, _params);
     //
-    //for (UnitCountType a(0); a < legalActions.size(); ++a)
+    //for (size_t a(0); a < legalActions.size(); ++a)
     //{
     //    GameState child(state);
     //    child.doAction(legalActions[a]);
@@ -153,7 +154,7 @@ void CombatSearch::recurse(const GameState & state, size_t depth)
 
 void CombatSearch::updateResults(const GameState & state)
 {
-    _results.nodesExpanded++;
+    m_results.nodesExpanded++;
 }
 
 void CombatSearch::printResults()

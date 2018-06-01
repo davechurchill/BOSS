@@ -14,7 +14,7 @@ namespace BOSS
 
 class CombatSearch_Bucket : public CombatSearch
 {
-    CombatSearch_BucketData     _bucket;
+    CombatSearch_BucketData     m_bucket;
 
 	virtual void                doSearch(const GameState & s, size_t depth);
 

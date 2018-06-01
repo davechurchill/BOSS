@@ -14,7 +14,7 @@ namespace BOSS
 
 class CombatSearch_Integral : public CombatSearch
 {
-    CombatSearch_IntegralData   _integral;
+    CombatSearch_IntegralData   m_integral;
 
 	virtual void                doSearch(const GameState & s, size_t depth);
 

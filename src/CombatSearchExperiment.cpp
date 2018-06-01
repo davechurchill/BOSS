@@ -1,130 +1,133 @@
 #include "CombatSearchExperiment.h"
-#include "BOSSParameters.h"
+#include "CombatSearch.h"
+#include "CombatSearch_Bucket.h"
+#include "CombatSearch_Integral.h"
+#include "CombatSearch_BestResponse.h"
 
 using namespace BOSS;
 
 CombatSearchExperiment::CombatSearchExperiment()
-    : _race(Races::None)
+    : m_race(Races::None)
 {
 
 }
 
-CombatSearchExperiment::CombatSearchExperiment(const std::string & name, const rapidjson::Value & val)
-    : _race(Races::None)
-    , _name(name)
+CombatSearchExperiment::CombatSearchExperiment(const std::string & name, const json & val)
+    : m_race(Races::None)
+    , m_name(name)
 {
-    BOSS_ASSERT(val.HasMember("SearchTypes") && val["SearchTypes"].IsArray(), "CombatSearchExperiment must have a 'SearchTypes' array");
-    for (size_t i(0); i < val["SearchTypes"].Size(); ++i)
+    BOSS_ASSERT(val.count("SearchTypes") && val["SearchTypes"].is_array(), "CombatSearchExperiment must have a 'SearchTypes' array");
+    for (size_t i(0); i < val["SearchTypes"].size(); ++i)
     {
-        BOSS_ASSERT(val["SearchTypes"][i].IsString(), "searchTypes element is not a string");
+        BOSS_ASSERT(val["SearchTypes"][i].is_string(), "searchTypes element is not a string");
         
-        _searchTypes.push_back(val["SearchTypes"][i].GetString());
+        m_searchTypes.push_back(val["SearchTypes"][i]);
     }
 
-    BOSS_ASSERT(val.HasMember("Race") && val["Race"].IsString(), "CombatSearchExperiment must have a 'Race' string");
-    _race = Races::GetRaceID(val["Race"].GetString());
+    BOSS_ASSERT(val.count("Race") && val["Race"].is_string(), "CombatSearchExperiment must have a 'Race' string");
+    m_race = Races::GetRaceID(val["Race"]);
 
-    BOSS_ASSERT(val.HasMember("State") && val["State"].IsString(), "CombatSearchExperiment must have a 'State' string");
-    _params.setInitialState(BOSSParameters::Instance().GetState(val["State"].GetString()));
+    BOSS_ASSERT(val.count("State") && val["State"].is_string(), "CombatSearchExperiment must have a 'State' string");
+    m_params.setInitialState(BOSSConfig::Instance().GetState(val["State"]));
 
-    BOSS_ASSERT(val.HasMember("FrameTimeLimit") && val["FrameTimeLimit"].IsInt(), "CombatSearchExperiment must have a 'FrameTimeLimit' int");
-    _params.setFrameTimeLimit(val["FrameTimeLimit"].GetInt());
+    BOSS_ASSERT(val.count("FrameTimeLimit") && val["FrameTimeLimit"].is_number_integer(), "CombatSearchExperiment must have a 'FrameTimeLimit' int");
+    m_params.setFrameTimeLimit(val["FrameTimeLimit"]);
 
-    BOSS_ASSERT(val.HasMember("SearchTimeLimitMS") && val["SearchTimeLimitMS"].IsInt(), "CombatSearchExperiment must have a 'SearchTimeLimitMS' int");
-    _params.setSearchTimeLimit(val["SearchTimeLimitMS"].GetInt());
+    BOSS_ASSERT(val.count("SearchTimeLimitMS") && val["SearchTimeLimitMS"].is_number_integer(), "CombatSearchExperiment must have a 'SearchTimeLimitMS' int");
+    m_params.setSearchTimeLimit(val["SearchTimeLimitMS"]);
 
-    if (val.HasMember("MaxActions"))
+    if (val.count("MaxActions"))
     {
-        const rapidjson::Value & maxActions = val["MaxActions"];
-        BOSS_ASSERT(maxActions.IsArray(), "MaxActions is not an array");
+        const json & maxActions = val["MaxActions"];
+        BOSS_ASSERT(maxActions.is_array(), "MaxActions is not an array");
 
-        for (size_t i(0); i < maxActions.Size(); ++i)
+        for (size_t i(0); i < maxActions.size(); ++i)
         {
-            BOSS_ASSERT(maxActions[i].IsArray(), "MaxActions element must be array of size 2");
+            BOSS_ASSERT(maxActions[i].is_array(), "MaxActions element must be array of size 2");
 
-            BOSS_ASSERT(maxActions[i].Size() == 2 && maxActions[i][0u].IsString() && maxActions[i][1u].IsInt(), "MaxActions element must be [\"Action\", Count]");
+            BOSS_ASSERT(maxActions[i].size() == 2 && maxActions[i][0u].is_string() && maxActions[i][1u].is_number_integer(), "MaxActions element must be [\"Action\", Count]");
 
-            BOSS_ASSERT(ActionTypes::TypeExists(maxActions[i][0u].GetString()), "Action Type doesn't exist: %s", maxActions[i][0u].GetString());
+            BOSS_ASSERT(ActionTypes::TypeExists(maxActions[i][0u]), "Action Type doesn't exist: %s", maxActions[i][0u]);
 
-            _params.setMaxActions(ActionTypes::GetActionType(maxActions[i][0u].GetString()), maxActions[i][1].GetInt());
+            m_params.setMaxActions(ActionTypes::GetActionType(maxActions[i][0u]), maxActions[i][1]);
         }
     }
 
-    if (val.HasMember("RelevantActions"))
+    if (val.count("RelevantActions"))
     {
-        const rapidjson::Value & relevantActions = val["RelevantActions"];
-        BOSS_ASSERT(relevantActions.IsArray(), "RelevantActions is not an array");
+        const json & relevantActions = val["RelevantActions"];
+        BOSS_ASSERT(relevantActions.is_array(), "RelevantActions is not an array");
 
         ActionSet relevantActionSet;
 
-        for (size_t i(0); i < relevantActions.Size(); ++i)
+        for (size_t i(0); i < relevantActions.size(); ++i)
         {
-            BOSS_ASSERT(relevantActions[i].IsString(), "RelvantActions element must be action type string");
-            BOSS_ASSERT(ActionTypes::TypeExists(relevantActions[i].GetString()), "Action Type doesn't exist: %s", relevantActions[i].GetString());
+            BOSS_ASSERT(relevantActions[i].is_string(), "RelvantActions element must be action type string");
+            BOSS_ASSERT(ActionTypes::TypeExists(relevantActions[i]), "Action Type doesn't exist: %s", relevantActions[i]);
             
-            relevantActionSet.add(ActionTypes::GetActionType(relevantActions[i].GetString()));
+            relevantActionSet.add(ActionTypes::GetActionType(relevantActions[i]));
         }
 
-        _params.setRelevantActions(relevantActionSet);
+        m_params.setRelevantActions(relevantActionSet);
     }
 
-    if (val.HasMember("AlwaysMakeWorkers"))
+    if (val.count("AlwaysMakeWorkers"))
     {
-        BOSS_ASSERT(val["AlwaysMakeWorkers"].IsBool(), "AlwaysMakeWorkers should be a bool");
+        BOSS_ASSERT(val["AlwaysMakeWorkers"].is_boolean(), "AlwaysMakeWorkers should be a bool");
 
-        _params.setAlwaysMakeWorkers(val["AlwaysMakeWorkers"].GetBool());
+        m_params.setAlwaysMakeWorkers(val["AlwaysMakeWorkers"]);
     }
 
-    if (val.HasMember("OpeningBuildOrder"))
+    if (val.count("OpeningBuildOrder"))
     {
-        BOSS_ASSERT(val["OpeningBuildOrder"].IsString(), "OpeningBuildOrder should be a string");
-        _params.setOpeningBuildOrder(BOSSParameters::Instance().GetBuildOrder(val["OpeningBuildOrder"].GetString()));
+        BOSS_ASSERT(val["OpeningBuildOrder"].is_string(), "OpeningBuildOrder should be a string");
+        m_params.setOpeningBuildOrder(BOSSConfig::Instance().GetBuildOrder(val["OpeningBuildOrder"]));
     }
 
-    if (val.HasMember("BestResponseParams"))
+    if (val.count("BestResponseParams"))
     {
-        const rapidjson::Value & brVal = val["BestResponseParams"];
+        const json & brVal = val["BestResponseParams"];
 
-        BOSS_ASSERT(brVal.IsObject(), "BestResponseParams not an object");
-        BOSS_ASSERT(brVal.HasMember("EnemyState"), "bestResponseParams must have 'enemyState' string");
-        BOSS_ASSERT(brVal.HasMember("EnemyBuildOrder"), "bestResponseParams must have 'enemyBuildOrder' string");
+        BOSS_ASSERT(brVal.is_object(), "BestResponseParams not an object");
+        BOSS_ASSERT(brVal.count("EnemyState"), "bestResponseParams must have 'enemyState' string");
+        BOSS_ASSERT(brVal.count("EnemyBuildOrder"), "bestResponseParams must have 'enemyBuildOrder' string");
 
-        BOSS_ASSERT(brVal.HasMember("EnemyState") && brVal["EnemyState"].IsString(), "bestResponseParams must have a 'EnemyState' string");
-        _params.setEnemyInitialState(BOSSParameters::Instance().GetState(brVal["EnemyState"].GetString()));
+        BOSS_ASSERT(brVal.count("EnemyState") && brVal["EnemyState"].is_string(), "bestResponseParams must have a 'EnemyState' string");
+        m_params.setEnemyInitialState(BOSSConfig::Instance().GetState(brVal["EnemyState"]));
 
-        BOSS_ASSERT(brVal.HasMember("EnemyBuildOrder") && brVal["EnemyBuildOrder"].IsString(), "BestResponseParams must have a 'EnemyBuildOrder' string");
-        _params.setEnemyBuildOrder(BOSSParameters::Instance().GetBuildOrder(brVal["EnemyBuildOrder"].GetString()));
+        BOSS_ASSERT(brVal.count("EnemyBuildOrder") && brVal["EnemyBuildOrder"].is_string(), "BestResponseParams must have a 'EnemyBuildOrder' string");
+        m_params.setEnemyBuildOrder(BOSSConfig::Instance().GetBuildOrder(brVal["EnemyBuildOrder"]));
     }
 }
 
 void CombatSearchExperiment::run()
 {
     static std::string stars = "************************************************";
-    for (size_t i(0); i < _searchTypes.size(); ++i)
+    for (size_t i(0); i < m_searchTypes.size(); ++i)
     {
         std::shared_ptr<CombatSearch> combatSearch;
-        std::string resultsFile = "gnuplot/" + _name;
+        std::string resultsFile = "gnuplot/" + m_name;
 
-        std::cout << "\n" << stars << "\n* Running Experiment: " << _name << " [" << _searchTypes[i] << "]\n" << stars << "\n";
+        std::cout << "\n" << stars << "\n* Running Experiment: " << m_name << " [" << m_searchTypes[i] << "]\n" << stars << "\n";
 
-        if (_searchTypes[i].compare("Integral") == 0)
+        if (m_searchTypes[i] == "Integral")
         {
-            combatSearch = std::shared_ptr<CombatSearch>(new CombatSearch_Integral(_params));
+            combatSearch = std::shared_ptr<CombatSearch>(new CombatSearch_Integral(m_params));
             resultsFile += "_Integral"; 
         }
-        else if (_searchTypes[i].compare("Bucket") == 0)
+        else if (m_searchTypes[i] == "Bucket")
         {
-            combatSearch = std::shared_ptr<CombatSearch>(new CombatSearch_Bucket(_params));
+            combatSearch = std::shared_ptr<CombatSearch>(new CombatSearch_Bucket(m_params));
             resultsFile += "_Bucket"; 
         }
-        else if (_searchTypes[i].compare("BestResponse") == 0)
+        else if (m_searchTypes[i] == "BestResponse")
         {
-            combatSearch = std::shared_ptr<CombatSearch>(new CombatSearch_BestResponse(_params));
+            combatSearch = std::shared_ptr<CombatSearch>(new CombatSearch_BestResponse(m_params));
             resultsFile += "_BestResponse"; 
         }
         else
         {
-            BOSS_ASSERT(false, "CombatSearch type not found: %s", _searchTypes[i].c_str());
+            BOSS_ASSERT(false, "CombatSearch type not found: %s", m_searchTypes[i].c_str());
         }
 
         combatSearch->search();

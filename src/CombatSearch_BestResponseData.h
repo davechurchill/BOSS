@@ -10,16 +10,16 @@ namespace BOSS
     
 class CombatSearch_BestResponseData
 {
-    GameState               _enemyInitialState;
-    BuildOrder              _enemyBuildOrder;
+    GameState               m_enemyInitialState;
+    BuildOrder              m_enemyBuildOrder;
 
-    std::vector<GameState>  _enemyStates;
-    std::vector< std::pair<double, double> >     _enemyArmyValues;
-    std::vector< std::pair<double, double> >     _selfArmyValues;
+    std::vector<GameState>  m_enemyStates;
+    std::vector< std::pair<double, double> >     m_enemyArmyValues;
+    std::vector< std::pair<double, double> >     m_selfArmyValues;
 
-    double                  _bestEval;
-    BuildOrder              _bestBuildOrder;
-    GameState               _bestState;
+    double                  m_bestEval;
+    BuildOrder              m_bestBuildOrder;
+    GameState               m_bestState;
 
     double compareBuildOrder(const GameState & state, const BuildOrder & buildOrder);
     size_t getStateIndex(const GameState & state);
