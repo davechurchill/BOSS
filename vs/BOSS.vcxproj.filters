@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="..\src\ActionType.cpp" />
     <ClCompile Include="..\src\ActionTypeData.cpp" />
-    <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\BuildOrder.cpp" />
     <ClCompile Include="..\src\GameState.cpp" />
     <ClCompile Include="..\src\BOSS.cpp">
@@ -15,9 +14,6 @@
     <ClCompile Include="..\src\BOSSException.cpp">
       <Filter>common</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\BOSSConfig.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Common.cpp">
       <Filter>common</Filter>
     </ClCompile>
@@ -27,7 +23,6 @@
     <ClCompile Include="..\src\Eval.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\BOSSExperiments.cpp" />
     <ClCompile Include="..\src\BuildOrderPlotter.cpp">
       <Filter>plot</Filter>
     </ClCompile>
@@ -39,19 +34,19 @@
     </ClCompile>
     <ClCompile Include="..\src\Unit.cpp" />
     <ClCompile Include="..\src\DFBB_BuildOrderSearchParameters.cpp">
-      <Filter>search\goal</Filter>
+      <Filter>search\BuildOrderSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\DFBB_BuildOrderSearchResults.cpp">
-      <Filter>search\goal</Filter>
+      <Filter>search\BuildOrderSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\DFBB_BuildOrderSmartSearch.cpp">
-      <Filter>search\goal</Filter>
+      <Filter>search\BuildOrderSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\DFBB_BuildOrderStackSearch.cpp">
-      <Filter>search\goal</Filter>
+      <Filter>search\BuildOrderSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\BuildOrderSearchGoal.cpp">
-      <Filter>search\goal</Filter>
+      <Filter>search\BuildOrderSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Tools.cpp">
       <Filter>util</Filter>
@@ -59,38 +54,35 @@
     <ClCompile Include="..\src\ActionSet.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\NaiveBuildOrderSearch.cpp">
-      <Filter>search\goal</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\CombatSearch.cpp">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\CombatSearch_BestResponse.cpp">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\CombatSearch_BestResponseData.cpp">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\CombatSearch_Bucket.cpp">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\CombatSearch_BucketData.cpp">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\CombatSearch_Integral.cpp">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\CombatSearch_IntegralData.cpp">
-      <Filter>search\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CombatSearchExperiment.cpp">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\CombatSearchParameters.cpp">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\CombatSearchResults.cpp">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NaiveBuildOrderSearch.cpp">
+      <Filter>search\NaiveSearch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,9 +99,6 @@
     <ClInclude Include="..\src\BOSSException.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\BOSSConfig.h">
-      <Filter>common</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Common.h">
       <Filter>common</Filter>
     </ClInclude>
@@ -122,7 +111,6 @@
     <ClInclude Include="..\src\Eval.h">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\BOSSExperiments.h" />
     <ClInclude Include="..\src\json\json.hpp">
       <Filter>util</Filter>
     </ClInclude>
@@ -134,19 +122,19 @@
     </ClInclude>
     <ClInclude Include="..\src\Unit.h" />
     <ClInclude Include="..\src\DFBB_BuildOrderSearchParameters.h">
-      <Filter>search\goal</Filter>
+      <Filter>search\BuildOrderSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\DFBB_BuildOrderSearchResults.h">
-      <Filter>search\goal</Filter>
+      <Filter>search\BuildOrderSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\DFBB_BuildOrderSmartSearch.h">
-      <Filter>search\goal</Filter>
+      <Filter>search\BuildOrderSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\DFBB_BuildOrderStackSearch.h">
-      <Filter>search\goal</Filter>
+      <Filter>search\BuildOrderSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\BuildOrderSearchGoal.h">
-      <Filter>search\goal</Filter>
+      <Filter>search\BuildOrderSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Tools.h">
       <Filter>util</Filter>
@@ -154,38 +142,35 @@
     <ClInclude Include="..\src\ActionSet.h">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\NaiveBuildOrderSearch.h">
-      <Filter>search\goal</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\CombatSearch.h">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\CombatSearch_BestResponse.h">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\CombatSearch_BestResponseData.h">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\CombatSearch_Bucket.h">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\CombatSearch_BucketData.h">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\CombatSearch_Integral.h">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\CombatSearch_IntegralData.h">
-      <Filter>search\combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\CombatSearchExperiment.h">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\CombatSearchParameters.h">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\CombatSearchResults.h">
-      <Filter>search\combat</Filter>
+      <Filter>search\CombatSearch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NaiveBuildOrderSearch.h">
+      <Filter>search\NaiveSearch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -204,11 +189,14 @@
     <Filter Include="search">
       <UniqueIdentifier>{9f663566-5e60-4903-af7c-205746d622b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="search\combat">
+    <Filter Include="search\CombatSearch">
       <UniqueIdentifier>{b2a4390b-818e-47b8-8b48-668754778cd6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="search\goal">
+    <Filter Include="search\BuildOrderSearch">
       <UniqueIdentifier>{2bfef9e3-4bdb-4d3f-9af7-d2d2a282bcf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search\NaiveSearch">
+      <UniqueIdentifier>{46760ebb-f942-4939-b674-67be8c427428}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

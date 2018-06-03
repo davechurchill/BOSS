@@ -16,12 +16,14 @@ class BuildOrderPlotter
 public:
 
     BuildOrderPlotter();
-    BuildOrderPlotter(const std::string & name, const json & j);
+    //BuildOrderPlotter(const std::string & name, const json & j);
     
     void addPlot(const std::string & name, const GameState & state, const BuildOrder & buildOrder);
     void doPlots();
 
     const std::vector<BuildOrderPlotData> & getPlots() const;
+
+    void setOutputDir(const std::string & dir);
 
     void writeResourcePlot(const BuildOrderPlotData & plot, const std::string & filename);
     void writeArmyValuePlot(const BuildOrderPlotData & plot, const std::string & filename);

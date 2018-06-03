@@ -1,9 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BOSS", "BOSS.vcxproj", "{9F8709E3-AC4F-45F2-8105-4A99D8E2A127}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BOSS_main", "BOSS_main.vcxproj", "{BD4AD06D-B208-433D-B340-DDAF56A6D050}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9F8709E3-AC4F-45F2-8105-4A99D8E2A127} = {9F8709E3-AC4F-45F2-8105-4A99D8E2A127}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +20,15 @@ Global
 		{9F8709E3-AC4F-45F2-8105-4A99D8E2A127}.Debug|x86.Build.0 = Debug|Win32
 		{9F8709E3-AC4F-45F2-8105-4A99D8E2A127}.Release|x86.ActiveCfg = Release|Win32
 		{9F8709E3-AC4F-45F2-8105-4A99D8E2A127}.Release|x86.Build.0 = Release|Win32
+		{BD4AD06D-B208-433D-B340-DDAF56A6D050}.Debug|x86.ActiveCfg = Debug|Win32
+		{BD4AD06D-B208-433D-B340-DDAF56A6D050}.Debug|x86.Build.0 = Debug|Win32
+		{BD4AD06D-B208-433D-B340-DDAF56A6D050}.Release|x86.ActiveCfg = Release|Win32
+		{BD4AD06D-B208-433D-B340-DDAF56A6D050}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CAAD3648-559B-4ABC-A07A-4C750692285E}
 	EndGlobalSection
 EndGlobal

@@ -13,9 +13,9 @@ BOSSConfig & BOSSConfig::Instance()
     return params;
 }
 
-void BOSSConfig::ParseParameters(const std::string & configFile)
+void BOSSConfig::ParseConfig(const std::string & configFile)
 {
-    _configFile = configFile;
+    m_configFile = configFile;
 
     std::ifstream file(configFile);
     json j;
@@ -27,13 +27,13 @@ void BOSSConfig::ParseParameters(const std::string & configFile)
     // Parse all the States
     for (auto it = j["States"].begin(); it != j["States"].end(); ++it)
     {           
-        _stateMap[it.key()] = JSONTools::GetGameState(it.value());
+        m_stateMap[it.key()] = JSONTools::GetGameState(it.value());
     }
 
     // Parse the build orders
     for (auto it = j["Build Orders"].begin(); it != j["Build Orders"].end(); ++it)
     {          
-        _buildOrderMap[it.key()] = JSONTools::GetBuildOrder(it.value());
+        m_buildOrderMap[it.key()] = JSONTools::GetBuildOrder(it.value());
     }
 
     // Parse all the Build Order Goals
@@ -41,28 +41,28 @@ void BOSSConfig::ParseParameters(const std::string & configFile)
     {
         for (auto it = j["Build Order Search Goals"].begin(); it != j["Build Order Search Goals"].end(); ++it)
         {          
-            _buildOrderSearchGoalMap[it.key()] = JSONTools::GetBuildOrderSearchGoal(it.value());
+            m_buildOrderSearchGoalMap[it.key()] = JSONTools::GetBuildOrderSearchGoal(it.value());
         }
     }
 }
 
 const GameState & BOSSConfig::GetState(const std::string & key)
 {
-    BOSS_ASSERT(_stateMap.find(key) != _stateMap.end(), "Couldn't find state: %s", key.c_str());
+    BOSS_ASSERT(m_stateMap.find(key) != m_stateMap.end(), "Couldn't find state: %s", key.c_str());
 
-    return _stateMap[key];
+    return m_stateMap[key];
 }
 
 const BuildOrder & BOSSConfig::GetBuildOrder(const std::string & key)
 {
-    BOSS_ASSERT(_buildOrderMap.find(key) != _buildOrderMap.end(), "Couldn't find build order: %s", key.c_str());
+    BOSS_ASSERT(m_buildOrderMap.find(key) != m_buildOrderMap.end(), "Couldn't find build order: %s", key.c_str());
 
-    return _buildOrderMap[key];
+    return m_buildOrderMap[key];
 }
 
 const BuildOrderSearchGoal & BOSSConfig::GetBuildOrderSearchGoalMap(const std::string & key)
 {
-    BOSS_ASSERT(_buildOrderSearchGoalMap.find(key) != _buildOrderSearchGoalMap.end(), "Couldn't find state: %s", key.c_str());
+    BOSS_ASSERT(m_buildOrderSearchGoalMap.find(key) != m_buildOrderSearchGoalMap.end(), "Couldn't find state: %s", key.c_str());
 
-    return _buildOrderSearchGoalMap[key];
+    return m_buildOrderSearchGoalMap[key];
 }

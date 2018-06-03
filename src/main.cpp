@@ -145,23 +145,15 @@ void testjson()
 
 int main(int argc, char *argv[])
 {
-    std::vector<size_t> test = { 1, 2, 3, 4, 5, 6 };
-    size_t result = std::accumulate(test.begin(), test.end(), 0,
-        [](size_t lhs, size_t rhs) { return lhs * 2 + rhs; });
-    std::cout << result << std::endl;
-
     // Initialize all the BOSS internal data
     BOSS::Init("BWData.json");
 
     // Read in the config parameters that will be used for experiments
-    BOSS::BOSSConfig::Instance().ParseParameters("BOSS_Config.txt");
+    BOSS::BOSSConfig::Instance().ParseConfig("BOSS_Config.txt");
 
-    //BOSS::Experiments::RunExperiments("BOSS_Config.txt");
+    BOSS::Experiments::RunExperiments("BOSS_Config.txt");
 
-    testBuildOrder();
+    //testBuildOrder();
     
-    std::cout << "Action Types: " << ActionTypes::GetAllActionTypes().size() << "\n";
-    std::cout << "BOSSInitComplete\n";
-
     return 0;
 }

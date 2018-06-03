@@ -11,88 +11,32 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\ActionType.cpp" />
-    <ClCompile Include="..\src\ActionTypeData.cpp" />
-    <ClCompile Include="..\src\BOSS.cpp" />
-    <ClCompile Include="..\src\BOSSAssert.cpp" />
-    <ClCompile Include="..\src\BOSSException.cpp" />
-    <ClCompile Include="..\src\BuildOrderPlotter.cpp" />
-    <ClCompile Include="..\src\BuildOrderPlotData.cpp" />
-    <ClCompile Include="..\src\BuildOrderSearchGoal.cpp" />
-    <ClCompile Include="..\src\CombatSearch.cpp" />
-    <ClCompile Include="..\src\CombatSearchParameters.cpp" />
-    <ClCompile Include="..\src\CombatSearchResults.cpp" />
-    <ClCompile Include="..\src\CombatSearch_BestResponse.cpp" />
-    <ClCompile Include="..\src\CombatSearch_BestResponseData.cpp" />
-    <ClCompile Include="..\src\CombatSearch_Bucket.cpp" />
-    <ClCompile Include="..\src\CombatSearch_BucketData.cpp" />
-    <ClCompile Include="..\src\CombatSearch_Integral.cpp" />
-    <ClCompile Include="..\src\CombatSearch_IntegralData.cpp" />
-    <ClCompile Include="..\src\DFBB_BuildOrderSearchParameters.cpp" />
-    <ClCompile Include="..\src\DFBB_BuildOrderSearchResults.cpp" />
-    <ClCompile Include="..\src\DFBB_BuildOrderSmartSearch.cpp" />
-    <ClCompile Include="..\src\DFBB_BuildOrderStackSearch.cpp" />
-    <ClCompile Include="..\src\Eval.cpp" />
-    <ClCompile Include="..\src\ExternalInterface.cpp" />
-    <ClCompile Include="..\src\BuildOrder.cpp" />
-    <ClCompile Include="..\src\Common.cpp" />
-    <ClCompile Include="..\src\GameState.cpp" />
-    <ClCompile Include="..\src\JSONTools.cpp" />
-    <ClCompile Include="..\src\ActionSet.cpp" />
-    <ClCompile Include="..\src\NaiveBuildOrderSearch.cpp" />
-    <ClCompile Include="..\src\Tools.cpp" />
-    <ClCompile Include="..\src\Unit.cpp" />
+    <ClCompile Include="..\src\BOSSConfig.cpp" />
+    <ClCompile Include="..\src\BOSSExperiments.cpp" />
+    <ClCompile Include="..\src\CombatSearchExperiment.cpp" />
+    <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\ActionType.h" />
-    <ClInclude Include="..\src\ActionTypeData.h" />
-    <ClInclude Include="..\src\BOSS.h" />
-    <ClInclude Include="..\src\BOSSAssert.h" />
-    <ClInclude Include="..\src\BOSSException.h" />
-    <ClInclude Include="..\src\BuildOrderPlotter.h" />
-    <ClInclude Include="..\src\BuildOrder.h" />
-    <ClInclude Include="..\src\BuildOrderPlotData.h" />
-    <ClInclude Include="..\src\BuildOrderSearchGoal.h" />
-    <ClInclude Include="..\src\CombatSearch.h" />
-    <ClInclude Include="..\src\CombatSearchParameters.h" />
-    <ClInclude Include="..\src\CombatSearchResults.h" />
-    <ClInclude Include="..\src\CombatSearch_BestResponse.h" />
-    <ClInclude Include="..\src\CombatSearch_BestResponseData.h" />
-    <ClInclude Include="..\src\CombatSearch_Bucket.h" />
-    <ClInclude Include="..\src\CombatSearch_BucketData.h" />
-    <ClInclude Include="..\src\CombatSearch_Integral.h" />
-    <ClInclude Include="..\src\CombatSearch_IntegralData.h" />
-    <ClInclude Include="..\src\Common.h" />
-    <ClInclude Include="..\src\DFBB_BuildOrderSearchParameters.h" />
-    <ClInclude Include="..\src\DFBB_BuildOrderSearchResults.h" />
-    <ClInclude Include="..\src\DFBB_BuildOrderSmartSearch.h" />
-    <ClInclude Include="..\src\DFBB_BuildOrderStackSearch.h" />
-    <ClInclude Include="..\src\Eval.h" />
-    <ClInclude Include="..\src\GameState.h" />
-    <ClInclude Include="..\src\JSONTools.h" />
-    <ClInclude Include="..\src\json\json.hpp" />
-    <ClInclude Include="..\src\ActionSet.h" />
-    <ClInclude Include="..\src\NaiveBuildOrderSearch.h" />
-    <ClInclude Include="..\src\Timer.hpp" />
-    <ClInclude Include="..\src\Tools.h" />
-    <ClInclude Include="..\src\Unit.h" />
+    <ClInclude Include="..\src\BOSSConfig.h" />
+    <ClInclude Include="..\src\BOSSExperiments.h" />
+    <ClInclude Include="..\src\CombatSearchExperiment.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9F8709E3-AC4F-45F2-8105-4A99D8E2A127}</ProjectGuid>
+    <ProjectGuid>{BD4AD06D-B208-433D-B340-DDAF56A6D050}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>StarcraftBuildOrderSearch</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>BOSS</ProjectName>
+    <ProjectName>BOSS_main</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -112,14 +56,13 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)/../bin/</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>
-    <TargetExt>.lib</TargetExt>
+    <TargetExt>.exe</TargetExt>
     <IntDir>$(SolutionDir)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)/../bin/</OutDir>
     <IntDir>$(SolutionDir)\$(Configuration)\$(ProjectName)\</IntDir>
-    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -136,7 +79,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)/../bin/BOSS_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -160,7 +103,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)/../bin/BOSS.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateMapFile>true</GenerateMapFile>
     </Link>
     <Bscmake>

@@ -1,6 +1,6 @@
 #include "BOSSExperiments.h"
 
-//#include "CombatSearchExperiment.h"
+#include "CombatSearchExperiment.h"
 #include "BuildOrderPlotter.h"
 
 using namespace BOSS;
@@ -43,14 +43,27 @@ void Experiments::RunExperiments(const std::string & experimentFilename)
     std::cout << "\n\n";
 }
 
-//void Experiments::RunCombatExperiment(const std::string & name, const rapidjson::Value & val)
-//{
-//    CombatSearchExperiment exp(name, val);
-//    exp.run();
-//}
+void Experiments::RunCombatExperiment(const std::string & name, const json & val)
+{
+    CombatSearchExperiment exp(name, val);
+    exp.run();
+}
 
 void Experiments::RunBuildOrderPlot(const std::string & name, const json & j)
 {
-    BuildOrderPlotter plot(name, j);
-    plot.doPlots();
+    BOSS_ASSERT(j.count("Scenarios") && j["Scenarios"].is_array(), "Experiment has no Scenarios array");
+    BOSS_ASSERT(j.count("OutputDir") && j["OutputDir"].is_string(), "Experiment has no OutputFile string");
+    
+    BuildOrderPlotter plotter;
+    plotter.setOutputDir(j["OutputDir"].get<std::string>());
+    
+    for (auto & scenario : j["Scenarios"])
+    {
+        BOSS_ASSERT(scenario.count("State") && scenario["State"].is_string(), "Scenario has no 'state' string");
+        BOSS_ASSERT(scenario.count("BuildOrder") && scenario["BuildOrder"].is_string(), "Scenario has no 'buildOrder' string");
+    
+        plotter.addPlot(scenario["BuildOrder"], BOSSConfig::Instance().GetState(scenario["State"]), BOSSConfig::Instance().GetBuildOrder(scenario["BuildOrder"]));
+    }
+
+    plotter.doPlots();
 }

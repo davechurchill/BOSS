@@ -9,18 +9,18 @@ namespace BOSS
 
 class BOSSConfig
 {
-    std::string                                 _configFile;
+    std::string                                 m_configFile;
 
-    std::map<std::string, GameState>            _stateMap;
-    std::map<std::string, BuildOrder>           _buildOrderMap;
-    std::map<std::string, BuildOrderSearchGoal> _buildOrderSearchGoalMap;
+    std::map<std::string, GameState>            m_stateMap;
+    std::map<std::string, BuildOrder>           m_buildOrderMap;
+    std::map<std::string, BuildOrderSearchGoal> m_buildOrderSearchGoalMap;
     
     BOSSConfig();
 
 public:
 
     static BOSSConfig & Instance();
-    void ParseParameters(const std::string & configFile);
+    void ParseConfig(const std::string & configFile);
 
     const GameState &               GetState(const std::string & key);
     const BuildOrder &              GetBuildOrder(const std::string & key);

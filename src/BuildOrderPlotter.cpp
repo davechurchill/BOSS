@@ -8,21 +8,9 @@ BuildOrderPlotter::BuildOrderPlotter()
 
 }
 
-BuildOrderPlotter::BuildOrderPlotter(const std::string & name, const json & j)
+void BuildOrderPlotter::setOutputDir(const std::string & dir)
 {
-    BOSS_ASSERT(j.count("Scenarios") && j["Scenarios"].is_array(), "Experiment has no Scenarios array");
-    BOSS_ASSERT(j.count("OutputDir") && j["OutputDir"].is_string(), "Experiment has no OutputFile string");
-
-    m_outputDir = j["OutputDir"].get<std::string>();
-
-    for (auto & scenario : j["Scenarios"])
-    {
-        BOSS_ASSERT(scenario.count("State") && scenario["State"].is_string(), "Scenario has no 'state' string");
-        BOSS_ASSERT(scenario.count("BuildOrder") && scenario["BuildOrder"].is_string(), "Scenario has no 'buildOrder' string");
-        
-        m_buildOrderNames.push_back(scenario["BuildOrder"]);
-        m_allPlots.push_back(BuildOrderPlotData(BOSSConfig::Instance().GetState(scenario["State"]), BOSSConfig::Instance().GetBuildOrder(scenario["BuildOrder"])));
-    }
+    m_outputDir = dir;
 }
 
 void BuildOrderPlotter::addPlot(const std::string & name, const GameState & state, const BuildOrder & buildOrder)

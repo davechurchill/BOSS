@@ -8,6 +8,11 @@ bin/CommandCenter
 bin/*.exe
 bin/*.ilk
 bin/*.pdb
+bin/*.lib
+bin/*.bsc
+bin/*obj
+bin/*map
+bin/*pdb
 bin/gnuplot
 *.gpl
 *.js

@@ -1,3 +1,5 @@
+#ifdef EMSCRIPTEN
+
 #include "BOSS.h"
 #include "BuildOrderPlotter.h"
 
@@ -56,3 +58,5 @@ const char * BOSS_JS_GetBuildOrderPlot(char * text)
     }
 }
 }
+
+#endif
