@@ -20,8 +20,6 @@ class CombatSearch_BestResponse : public CombatSearch
 
     BuildOrder                      m_bestBuildOrder;
 
-    double                          compareBuildOrders(const GameState & selfState, const BuildOrder & selfBuildOrder, const GameState & enemyState, const BuildOrder & enemyBuildOrder);
-
 public:
 	
 	CombatSearch_BestResponse(const CombatSearchParameters p = CombatSearchParameters());

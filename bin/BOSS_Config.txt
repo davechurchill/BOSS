@@ -16,7 +16,7 @@
             ] 
         },
     
-        "TestCombatSearch" :
+        "CombatSearch" :
         {
             "Run"               : true,
             "Type"              : "CombatSearch",

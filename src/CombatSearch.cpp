@@ -31,7 +31,7 @@ void CombatSearch::search()
     m_results.timeElapsed = m_searchTimer.getElapsedTimeInMilliSec();
 }
 
-// This functio generates the legal actions from a GameState based on the input search parameters
+// This function generates the legal actions from a GameState based on the input search parameters
 void CombatSearch::generateLegalActions(const GameState & state, ActionSet & legalActions, const CombatSearchParameters & params)
 {
     // prune actions we have too many of already

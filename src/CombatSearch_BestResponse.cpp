@@ -10,6 +10,7 @@ CombatSearch_BestResponse::CombatSearch_BestResponse(const CombatSearchParameter
     BOSS_ASSERT(m_params.getInitialState().getRace() != Races::None, "Combat search initial state is invalid");
 }
 
+// Recursive DFS search through all possible build orders given the parameters
 void CombatSearch_BestResponse::recurse(const GameState & state, size_t depth)
 {
     if (timeLimitReached())
