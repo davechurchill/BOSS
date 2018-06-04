@@ -123,7 +123,7 @@ void CombatSearch::recurse(const GameState & state, size_t depth)
     // This base class function should never be called, leaving the code
     // here as a basis to form child classes
 
-    BOSS_ASSERT(false, "Base CombatSearch doSearch() should never be called");
+    BOSS_ASSERT(false, "Base CombatSearch recurse() should never be called");
 
     //if (timeLimitReached())
     //{
@@ -162,7 +162,7 @@ void CombatSearch::printResults()
     std::cout << "Printing base class CombatSearch results!\n\n";
 }
 
-void CombatSearch::writeResultsFile(const std::string & prefix)
+void CombatSearch::writeResultsFile(const std::string & dir, const std::string & prefix)
 {
     std::cout << "Writing base class CombatSearch results!\n\n";
 }

@@ -9,7 +9,7 @@ CombatSearch_Integral::CombatSearch_Integral(const CombatSearchParameters p)
     BOSS_ASSERT(m_params.getInitialState().getRace() != Races::None, "Combat search initial state is invalid");
 }
 
-void CombatSearch_Integral::doSearch(const GameState & state, size_t depth)
+void CombatSearch_Integral::recurse(const GameState & state, size_t depth)
 {
     if (timeLimitReached())
     {
@@ -35,7 +35,7 @@ void CombatSearch_Integral::doSearch(const GameState & state, size_t depth)
         m_buildOrder.add(legalActions[index]);
         m_integral.update(state, m_buildOrder);
         
-        doSearch(child,depth+1);
+        recurse(child,depth+1);
 
         m_buildOrder.pop_back();
         m_integral.pop();
@@ -48,9 +48,10 @@ void CombatSearch_Integral::printResults()
 }
 
 #include "BuildOrderPlotter.h"
-void CombatSearch_Integral::writeResultsFile(const std::string & filename)
+void CombatSearch_Integral::writeResultsFile(const std::string & dir, const std::string & filename)
 {
     BuildOrderPlotter plot;
+    plot.setOutputDir(dir);
     plot.addPlot("IntegralPlot", m_params.getInitialState(), m_integral.getBestBuildOrder());
     plot.doPlots();
 }

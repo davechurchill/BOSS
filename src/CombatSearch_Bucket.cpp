@@ -9,7 +9,7 @@ CombatSearch_Bucket::CombatSearch_Bucket(const CombatSearchParameters p)
    
     BOSS_ASSERT(m_params.getInitialState().getRace() != Races::None, "Combat search initial state is invalid");
 }
-void CombatSearch_Bucket::doSearch(const GameState & state, size_t depth)
+void CombatSearch_Bucket::recurse(const GameState & state, size_t depth)
 {
     if (timeLimitReached())
     {
@@ -38,7 +38,7 @@ void CombatSearch_Bucket::doSearch(const GameState & state, size_t depth)
         child.doAction(legalActions[a]);
         m_buildOrder.add(legalActions[a]);
         
-        doSearch(child,depth+1);
+        recurse(child,depth+1);
 
         m_buildOrder.pop_back();
     }
@@ -50,12 +50,13 @@ void CombatSearch_Bucket::printResults()
 }
 
 #include "BuildOrderPlotter.h"
-void CombatSearch_Bucket::writeResultsFile(const std::string & filename)
+void CombatSearch_Bucket::writeResultsFile(const std::string & dir, const std::string & filename)
 {
-    BuildOrderPlotter::WriteGnuPlot(filename + "_BucketResults", m_bucket.getBucketResultsString(), " with steps");
+    BuildOrderPlotter::WriteGnuPlot(dir + "/" + filename + "_BucketResults", m_bucket.getBucketResultsString(), " with steps");
 
     // write the final build order data
     BuildOrderPlotter plot;
+    plot.setOutputDir(dir);
     plot.addPlot("Bucket", m_params.getInitialState(), m_bucket.getBucket(m_bucket.numBuckets() - 1).buildOrder);
     plot.doPlots();
 }

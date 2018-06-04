@@ -21,13 +21,21 @@ void BuildOrderPlotter::addPlot(const std::string & name, const GameState & stat
 
 void BuildOrderPlotter::doPlots()
 {
-    writeBuildOrderPlot(m_allPlots, m_outputDir + "AllBuildOrders.gpl");
+    std::string buildOrderFilename = "AllBuildOrders.gpl";
+
+    // if we only have one build order, name the file after it
+    if (m_allPlots.size() == 1)
+    {
+        buildOrderFilename = m_buildOrderNames[0] + "_BuildOrder.gpl";
+    }
+
+    writeBuildOrderPlot(m_allPlots, m_outputDir + "/" + buildOrderFilename);
     
     // write resource plots
     for (size_t i(0); i < m_allPlots.size(); i++)
     {
         std::stringstream rss;
-        rss << m_outputDir << m_buildOrderNames[i] << "_ResourcePlot.gpl";
+        rss << m_outputDir << "/" << m_buildOrderNames[i] << "_ResourcePlot.gpl";
         writeResourcePlot(m_allPlots[i], rss.str());
     }
 
@@ -35,7 +43,7 @@ void BuildOrderPlotter::doPlots()
     for (size_t i(0); i < m_allPlots.size(); i++)
     {
         std::stringstream rss;
-        rss << m_outputDir << m_buildOrderNames[i] << "_ArmyPlot.gpl";
+        rss << m_outputDir << "/" << m_buildOrderNames[i] << "_ArmyPlot.gpl";
         writeArmyValuePlot(m_allPlots[i], rss.str());
     }
 

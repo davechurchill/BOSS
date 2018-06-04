@@ -26,7 +26,7 @@ protected:
 
     BuildOrder                  m_buildOrder;
 
-    virtual void                recurse(const GameState & s,size_t depth);
+    virtual void                recurse(const GameState & s, size_t depth);
     virtual void                generateLegalActions(const GameState & state,ActionSet & legalActions,const CombatSearchParameters & params);
 
     //virtual double              eval(const GameState & state) const;
@@ -39,7 +39,7 @@ public:
 
     virtual void                search();
     virtual void                printResults();
-    virtual void                writeResultsFile(const std::string & prefix);
+    virtual void                writeResultsFile(const std::string & dir, const std::string & prefix);
 
     virtual const CombatSearchResults & getResults() const;
 };

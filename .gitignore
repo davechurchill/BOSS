@@ -14,6 +14,8 @@ bin/*obj
 bin/*map
 bin/*pdb
 bin/gnuplot
+bin/results
+
 *.gpl
 *.js
 emscripten/BOSS.data

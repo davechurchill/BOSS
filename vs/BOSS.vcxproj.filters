@@ -84,6 +84,9 @@
     <ClCompile Include="..\src\NaiveBuildOrderSearch.cpp">
       <Filter>search\NaiveSearch</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\FileTools.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ActionType.h" />
@@ -171,6 +174,9 @@
     </ClInclude>
     <ClInclude Include="..\src\NaiveBuildOrderSearch.h">
       <Filter>search\NaiveSearch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\FileTools.h">
+      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

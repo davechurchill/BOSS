@@ -5,9 +5,9 @@
     {    
         "BuildOrderPlot" :
         {
-            "Run"           : true,
+            "Run"           : false,
             "Type"          : "BuildOrderPlot",
-            "OutputDir"     : "gnuplot/",
+            "OutputDir"     : "gnuplot",
             "Scenarios"     :   
             [ 
                 { "State" : "Protoss Start State", "BuildOrder" : "UAB DT Rush" },
@@ -18,16 +18,17 @@
     
         "TestCombatSearch" :
         {
-            "Run"               : false,
+            "Run"               : true,
             "Type"              : "CombatSearch",
             "SearchTypes"       : [ "BestResponse", "Integral", "Bucket"],
             "Race"              : "Protoss",
             "State"             : "Protoss Start State",
             "PrintNewBest"      : true,
+            "OutputDir"         : "gnuplot",
             "SearchTimeLimitMS" : 1200000,
             "FrameTimeLimit"    : 4500,
-            "RelevantActions"   : [ "Probe", "Pylon", "Nexus", "Assimilator", "Gateway", "Zealot", "Cybernetics_Core", "Dragoon" ],
-            "MaxActions"        : [ ["Nexus", 1], ["Assimilator", 1], ["Cybernetics_Core", 1], ["Pylon", 6], ["Gateway", 3] ],
+            "RelevantActions"   : [ "Probe", "Pylon", "Nexus", "Assimilator", "Gateway", "Zealot", "CyberneticsCore", "Dragoon" ],
+            "MaxActions"        : [ ["Nexus", 1], ["Assimilator", 1], ["CyberneticsCore", 1], ["Pylon", 6], ["Gateway", 3] ],
             "AlwaysMakeWorkers" : true,
             "OpeningBuildOrder" : "Protoss Opening Book",
             "BestResponseParams":

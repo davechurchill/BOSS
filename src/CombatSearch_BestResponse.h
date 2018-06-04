@@ -28,7 +28,7 @@ public:
 	
     virtual void printResults();
 
-    virtual void writeResultsFile(const std::string & filename);
+    virtual void writeResultsFile(const std::string & dir, const std::string & filename);
 };
 
 }

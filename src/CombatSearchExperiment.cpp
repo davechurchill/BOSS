@@ -3,6 +3,7 @@
 #include "CombatSearch_Bucket.h"
 #include "CombatSearch_Integral.h"
 #include "CombatSearch_BestResponse.h"
+#include "FileTools.h"
 
 using namespace BOSS;
 
@@ -27,6 +28,9 @@ CombatSearchExperiment::CombatSearchExperiment(const std::string & name, const j
     BOSS_ASSERT(val.count("Race") && val["Race"].is_string(), "CombatSearchExperiment must have a 'Race' string");
     m_race = Races::GetRaceID(val["Race"]);
 
+    BOSS_ASSERT(val.count("OutputDir") && val["OutputDir"].is_string(), "CombatSearchExperiment must have an 'OutputDir' string");
+    m_outputDir = val["OutputDir"].get<std::string>();
+
     BOSS_ASSERT(val.count("State") && val["State"].is_string(), "CombatSearchExperiment must have a 'State' string");
     m_params.setInitialState(BOSSConfig::Instance().GetState(val["State"]));
 
@@ -47,9 +51,11 @@ CombatSearchExperiment::CombatSearchExperiment(const std::string & name, const j
 
             BOSS_ASSERT(maxActions[i].size() == 2 && maxActions[i][0u].is_string() && maxActions[i][1u].is_number_integer(), "MaxActions element must be [\"Action\", Count]");
 
-            BOSS_ASSERT(ActionTypes::TypeExists(maxActions[i][0u]), "Action Type doesn't exist: %s", maxActions[i][0u]);
+            const std::string & typeName = maxActions[i][0u];
 
-            m_params.setMaxActions(ActionTypes::GetActionType(maxActions[i][0u]), maxActions[i][1]);
+            BOSS_ASSERT(ActionTypes::TypeExists(typeName), "Action Type doesn't exist: %s", typeName.c_str());
+
+            m_params.setMaxActions(ActionTypes::GetActionType(typeName), maxActions[i][1]);
         }
     }
 
@@ -102,11 +108,15 @@ CombatSearchExperiment::CombatSearchExperiment(const std::string & name, const j
 
 void CombatSearchExperiment::run()
 {
+    m_outputDir = "results/" + Assert::CurrentDateTime();
+
+    FileTools::MakeDirectory(m_outputDir);
+
     static std::string stars = "************************************************";
     for (size_t i(0); i < m_searchTypes.size(); ++i)
     {
         std::shared_ptr<CombatSearch> combatSearch;
-        std::string resultsFile = "gnuplot/" + m_name;
+        std::string resultsFile = m_name;
 
         std::cout << "\n" << stars << "\n* Running Experiment: " << m_name << " [" << m_searchTypes[i] << "]\n" << stars << "\n";
 
@@ -132,7 +142,7 @@ void CombatSearchExperiment::run()
 
         combatSearch->search();
         combatSearch->printResults();
-        combatSearch->writeResultsFile(resultsFile);
+        combatSearch->writeResultsFile(m_outputDir, resultsFile);
         const CombatSearchResults & results = combatSearch->getResults();
         std::cout << "\nSearched " << results.nodesExpanded << " nodes in " << results.timeElapsed << "ms @ " << (1000.0*results.nodesExpanded/results.timeElapsed) << " nodes/sec\n\n";
     }

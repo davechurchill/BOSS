@@ -1,0 +1,23 @@
+BOSS TODO:
+
+***** ADD OUTPUTDIR TO COMBAT SEARCH
+
+TESTED:
+Y - BuildOrderPlot
+Y - TestCombatSearch
+N - BuildOrderSearch type
+
+
+Finish:
+
+DFBB_BuildOrderStackSearch::generateLegalActions
+
+
+To Implement:
+
+GameState::getSupplyInProgress
+GameState::getLastActionFinishTime
+
+BuildOrder::sortByPrerequisites
+
+DFBB_BuildOrderSmartSearch::recurseOverStrictDependencies

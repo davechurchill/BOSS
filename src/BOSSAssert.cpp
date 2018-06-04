@@ -9,12 +9,12 @@ namespace BOSS
 {
 namespace Assert
 {
-    const std::string currentDateTime() 
+    const std::string CurrentDateTime() 
     {
         auto t = std::time(nullptr);
         auto tm = *std::localtime(&t);
         std::stringstream ss;
-        ss << std::put_time(&tm, "%d-%m-%Y %H-%M-%S");
+        ss << std::put_time(&tm, "%d-%m-%Y_%H-%M-%S");
         return ss.str();
     }
 

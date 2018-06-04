@@ -48,13 +48,15 @@ void CombatSearch_BestResponse::printResults()
 }
 
 #include "BuildOrderPlotter.h"
-void CombatSearch_BestResponse::writeResultsFile(const std::string & filename)
+void CombatSearch_BestResponse::writeResultsFile(const std::string & dir, const std::string & filename)
 {
     BuildOrderPlotter plot;
+    plot.setOutputDir(dir);
     plot.addPlot("BestResponseSelf", m_params.getInitialState(), m_bestResponseData.getBestBuildOrder());
     plot.doPlots();
 
     BuildOrderPlotter plot2;
+    plot2.setOutputDir(dir);
     plot2.addPlot("BestResponseEnemy", m_params.getEnemyInitialState(), m_params.getEnemyBuildOrder());
     plot2.doPlots();
 }

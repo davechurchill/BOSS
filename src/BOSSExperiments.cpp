@@ -27,7 +27,7 @@ void Experiments::RunExperiments(const std::string & experimentFilename)
 
             if (type == "CombatSearch")
             {
-                //RunCombatExperiment(name, val);
+                RunCombatExperiment(name, val);
             }
             else if (type == "BuildOrderPlot")
             {
@@ -45,12 +45,18 @@ void Experiments::RunExperiments(const std::string & experimentFilename)
 
 void Experiments::RunCombatExperiment(const std::string & name, const json & val)
 {
+    std::cout << "Combat Search Experiment - " << name << std::endl;
+
     CombatSearchExperiment exp(name, val);
     exp.run();
+
+    std::cout << "    " << name << " completed" << std::endl;
 }
 
 void Experiments::RunBuildOrderPlot(const std::string & name, const json & j)
 {
+    std::cout << "Build Order Plot Experiment - " << name << std::endl;
+
     BOSS_ASSERT(j.count("Scenarios") && j["Scenarios"].is_array(), "Experiment has no Scenarios array");
     BOSS_ASSERT(j.count("OutputDir") && j["OutputDir"].is_string(), "Experiment has no OutputFile string");
     
@@ -66,4 +72,6 @@ void Experiments::RunBuildOrderPlot(const std::string & name, const json & j)
     }
 
     plotter.doPlots();
+
+    std::cout << "    " << name << " completed" << std::endl;
 }

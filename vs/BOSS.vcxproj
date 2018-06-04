@@ -36,6 +36,7 @@
     <ClCompile Include="..\src\ExternalInterface.cpp" />
     <ClCompile Include="..\src\BuildOrder.cpp" />
     <ClCompile Include="..\src\Common.cpp" />
+    <ClCompile Include="..\src\FileTools.cpp" />
     <ClCompile Include="..\src\GameState.cpp" />
     <ClCompile Include="..\src\JSONTools.cpp" />
     <ClCompile Include="..\src\ActionSet.cpp" />
@@ -68,6 +69,7 @@
     <ClInclude Include="..\src\DFBB_BuildOrderSmartSearch.h" />
     <ClInclude Include="..\src\DFBB_BuildOrderStackSearch.h" />
     <ClInclude Include="..\src\Eval.h" />
+    <ClInclude Include="..\src\FileTools.h" />
     <ClInclude Include="..\src\GameState.h" />
     <ClInclude Include="..\src\JSONTools.h" />
     <ClInclude Include="..\src\json\json.hpp" />
