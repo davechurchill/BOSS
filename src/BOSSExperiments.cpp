@@ -2,6 +2,7 @@
 
 #include "CombatSearchExperiment.h"
 #include "BuildOrderPlotter.h"
+#include "FileTools.h"
 
 using namespace BOSS;
 
@@ -61,7 +62,11 @@ void Experiments::RunBuildOrderPlot(const std::string & name, const json & j)
     BOSS_ASSERT(j.count("OutputDir") && j["OutputDir"].is_string(), "Experiment has no OutputFile string");
     
     BuildOrderPlotter plotter;
-    plotter.setOutputDir(j["OutputDir"].get<std::string>());
+    std::string outputDir(j["OutputDir"].get<std::string>());
+    FileTools::MakeDirectory(outputDir);
+    outputDir = outputDir + "/" + Assert::CurrentDateTime() + "_" + name;
+    FileTools::MakeDirectory(outputDir);
+    plotter.setOutputDir(outputDir);
     
     for (auto & scenario : j["Scenarios"])
     {

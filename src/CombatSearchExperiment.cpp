@@ -108,8 +108,8 @@ CombatSearchExperiment::CombatSearchExperiment(const std::string & name, const j
 
 void CombatSearchExperiment::run()
 {
-    m_outputDir = "results/" + Assert::CurrentDateTime();
-
+    FileTools::MakeDirectory(m_outputDir);
+    m_outputDir = m_outputDir + "/" + Assert::CurrentDateTime() + "_" + m_name;
     FileTools::MakeDirectory(m_outputDir);
 
     static std::string stars = "************************************************";

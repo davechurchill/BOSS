@@ -5,13 +5,13 @@
     {    
         "BuildOrderPlot" :
         {
-            "Run"           : false,
+            "Run"           : true,
             "Type"          : "BuildOrderPlot",
-            "OutputDir"     : "gnuplot",
+            "OutputDir"     : "results",
             "Scenarios"     :   
             [ 
                 { "State" : "Protoss Start State", "BuildOrder" : "UAB DT Rush" },
-                { "State" : "Protoss Start State", "BuildOrder" : "Protoss Opening Book" },
+                { "State" : "Protoss Start State", "BuildOrder" : "UAB Zealot Rush" },
                 { "State" : "Protoss Start State", "BuildOrder" : "UAB Dragoon Rush" }
             ] 
         },
@@ -24,9 +24,9 @@
             "Race"              : "Protoss",
             "State"             : "Protoss Start State",
             "PrintNewBest"      : true,
-            "OutputDir"         : "gnuplot",
+            "OutputDir"         : "results",
             "SearchTimeLimitMS" : 1200000,
-            "FrameTimeLimit"    : 4500,
+            "FrameTimeLimit"    : 4000,
             "RelevantActions"   : [ "Probe", "Pylon", "Nexus", "Assimilator", "Gateway", "Zealot", "CyberneticsCore", "Dragoon" ],
             "MaxActions"        : [ ["Nexus", 1], ["Assimilator", 1], ["CyberneticsCore", 1], ["Pylon", 6], ["Gateway", 3] ],
             "AlwaysMakeWorkers" : true,

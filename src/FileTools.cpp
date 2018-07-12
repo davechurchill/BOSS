@@ -1,4 +1,5 @@
 #include "FileTools.h"
+#include <iostream>
 
 #include <sys/types.h>
 #include <sys/stat.h> 
@@ -22,6 +23,6 @@ void FileTools::MakeDirectory(const std::string & dir)
     nError = mkdir(sPath.c_str(), nMode); // can be used on non-Windows
 #endif
     if (nError != 0) {
-        // handle your error here
+        std::cerr << "Could not make directory: " << dir << "\n";
     }
 }
