@@ -39,7 +39,7 @@ class CombatSearchParameters
 	//		Worker cutoff pruning stops workers from being constructed after a certain number
 	//			of frames have passed in the search. Intuitively we build the majority of workers
 	//			at the beginning of a build, so this can enforce it to make search faster. If
-	//          true, workers are no longer legal if currentFrame > workerCutoff * uperBound
+	//          true, workers are no longer legal if currentFrame > workerCutoff * upperBound
 	//          in our search algorithm. If workerCutoff is 1, workers will not be pruned.
 	//
 	//      true:  worker cutoff is used

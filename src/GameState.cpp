@@ -47,10 +47,10 @@ bool GameState::isLegal(const ActionType & action) const
     // 
     if (mineralWorkers == 0) { return false; }
     	
-    // if it's a unit and we are out of supply and aren't making an overlord, it's not legal
+    // if it's a unit and we are out of supply and aren't making a supply providing unit, it's not legal
 	if (!action.isMorphed() && !action.isSupplyProvider() && ((m_currentSupply + action.supplyCost()) > (m_maxSupply + getSupplyInProgress()))) { return false; }
 
-    // TODO: require an extra for refineries byt not buildings
+    // TODO: require an extra for refineries but not buildings
     // rules for buildings which are built by workers
     if (action.isBuilding() && !action.isMorphed() && !action.isAddon() && (mineralWorkers == 0)) { return false; }
 
@@ -321,6 +321,7 @@ int GameState::whenBuilderReady(const ActionType & action) const
 {
     int builderID = getBuilderID(action);
 
+	// Probably unnecessary, given that we check for this condition inside of getBuilderID()
     BOSS_ASSERT(builderID != -1, "Didn't find when builder ready for %s", action.getName().c_str());
 
     return m_currentFrame + getUnit(builderID).getTimeUntilFree();

@@ -1,0 +1,58 @@
+{
+    "Game Data" : "SC2Data.json",
+
+    "Experiments" : 
+    {    
+        "BuildOrderPlot" :
+        {
+            "Run"           : false,
+            "Type"          : "BuildOrderPlot",
+            "OutputDir"     : "results",
+            "Scenarios"     :   
+            [ 
+                { "State" : "Protoss Start State", "BuildOrder" : "UAB DT Rush" },
+                { "State" : "Protoss Start State", "BuildOrder" : "UAB Zealot Rush" },
+                { "State" : "Protoss Start State", "BuildOrder" : "UAB Dragoon Rush" }
+            ] 
+        },
+    
+        "CombatSearch" :
+        {
+            "Run"               : true,
+            "Type"              : "CombatSearch",
+            "SearchTypes"       : [ "Integral"],
+            "Race"              : "Protoss",
+            "State"             : "Protoss Start State",
+            "PrintNewBest"      : true,
+            "OutputDir"         : "results",
+            "SearchTimeLimitMS" : 1200000,
+            "FrameTimeLimit"    : 3000,
+            "RelevantActions"   : [ "Probe", "Pylon", "Nexus", "Assimilator", "Gateway", "CyberneticsCore", "Stalker"],
+            "MaxActions"        : [ ["Nexus", 1], ["CyberneticsCore", 1], ["Assimilator", 2] ],
+            "AlwaysMakeWorkers" : true,
+            "OpeningBuildOrder" : "Empty"
+        },
+        
+        "DT Rush" :   
+        {   
+            "Run"           : false, 
+            "Type"          : "BuildOrderSearch", 
+            "OutputFile"    : "DTRush_Opt.txt", 
+            "Race"          : "Protoss",
+            "State"         : "Protoss Start State"
+        }
+    },
+
+    "States" : 
+    {
+        "Protoss Start State"   : { "race" : "Protoss", "minerals" : 50, "gas" : 0, "units" : [ ["Probe", 12], ["Nexus", 1] ] },
+        "Zerg Start State"      : { "race" : "Zerg",    "minerals" : 50, "gas" : 0, "units" : [ ["Drone", 12], ["Hatchery", 1], ["Overlord", 1] ] },
+        "Terran Start State"    : { "race" : "Terran",  "minerals" : 50, "gas" : 0, "units" : [ ["SCV", 12], ["CommandCenter", 1] ] }
+    },
+    
+    "Build Orders" :
+    {
+        "Empty"                 : [ ],     
+        "CyberCore"             : [ "Gateway", "Assimilator", "CyberneticsCore" ]
+    }
+}
