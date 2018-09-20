@@ -56,6 +56,7 @@ void ActionTypeData::Init(const std::string & filename)
 
             data.id = a;
             JSONTools::ReadString("name",           actions[a], data.name);
+			std::cout << data.name << std::endl;
             JSONTools::ReadString("race",           actions[a], data.raceName);
             data.race = Races::GetRaceID(data.raceName);
             JSONTools::ReadInt("mineralCost",       actions[a], data.mineralCost);

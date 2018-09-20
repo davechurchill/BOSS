@@ -206,7 +206,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["SCV", "1", "Busy"], 
-			"required" : ["CommandCenter"]
+			"required" : ["CommandCenter", "OrbitalCommand", "PlantearyFortress"]
 		},
 		{
 			"name" : "MissileTurret", 
@@ -431,7 +431,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Factory", "1", "Busy"], 
-			"required" : ["TechLab"]
+			"required" : ["TechLab", "BarracksTechLab", "FactoryTechLab", "StarportTechLab"]
 		},
 		{
 			"name" : "VikingFighter", 
@@ -706,7 +706,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Barracks", "1", "Busy"], 
-			"required" : ["GhostAcademy"]
+			"required" : []
 		},
 		{
 			"name" : "Marauder", 
@@ -731,7 +731,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Barracks", "1", "Busy"], 
-			"required" : ["TechLab"]
+			"required" : ["TechLab", "BarracksTechLab", "FactoryTechLab", "StarportTechLab"]
 		},
 		{
 			"name" : "Thor", 
@@ -831,7 +831,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Starport", "1", "Busy"], 
-			"required" : ["TechLab"]
+			"required" : ["TechLab", "BarracksTechLab", "FactoryTechLab", "StarportTechLab"]
 		},
 		{
 			"name" : "Raven", 
@@ -856,7 +856,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Starport", "1", "Busy"], 
-			"required" : ["TechLab"]
+			"required" : ["TechLab", "BarracksTechLab", "FactoryTechLab", "StarportTechLab"]
 		},
 		{
 			"name" : "Battlecruiser", 
@@ -1656,7 +1656,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Drone", "1", "Morphed"], 
-			"required" : ["Hatchery"]
+			"required" : ["Hatchery", "Lair", "Hive"]
 		},
 		{
 			"name" : "EvolutionChamber", 
@@ -1681,7 +1681,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Drone", "1", "Morphed"], 
-			"required" : ["Hatchery"]
+			"required" : ["Hatchery", "Lair", "Hive"]
 		},
 		{
 			"name" : "HydraliskDen", 
@@ -1706,7 +1706,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Drone", "1", "Morphed"], 
-			"required" : ["Lair"]
+			"required" : ["Lair", "Hive"]
 		},
 		{
 			"name" : "Spire", 
@@ -1731,7 +1731,7 @@
 			"isAddon" : false, 
 			"equivalent" : ["GreaterSpire"], 
 			"whatBuilds" : ["Drone", "1", "Morphed"], 
-			"required" : ["Lair"]
+			"required" : ["Lair", "Hive"]
 		},
 		{
 			"name" : "UltraliskCavern", 
@@ -1781,7 +1781,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Drone", "1", "Morphed"], 
-			"required" : ["Lair"]
+			"required" : ["Lair", "Hive"]
 		},
 		{
 			"name" : "NydusNetwork", 
@@ -1806,7 +1806,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Drone", "1", "Morphed"], 
-			"required" : ["Lair"]
+			"required" : ["Lair", "Hive"]
 		},
 		{
 			"name" : "BanelingNest", 
@@ -2106,7 +2106,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Larva", "1", "Morphed"], 
-			"required" : ["Spire"]
+			"required" : ["Spire", "GreaterSpire"]
 		},
 		{
 			"name" : "Ultralisk", 
@@ -2206,7 +2206,7 @@
 			"isAddon" : false, 
 			"equivalent" : [], 
 			"whatBuilds" : ["Larva", "1", "Morphed"], 
-			"required" : ["Spire"]
+			"required" : ["Spire", "GreaterSpire"]
 		},
 		{
 			"name" : "Queen", 
@@ -2305,7 +2305,7 @@
 			"isResourceDepot" : false, 
 			"isAddon" : false, 
 			"equivalent" : [], 
-			"whatBuilds" : ["Gateway", "1", "Morphed"], 
+			"whatBuilds" : ["Gateway", "1", "Busy"], 
 			"required" : []
 		},
 		{
@@ -2330,7 +2330,7 @@
 			"isResourceDepot" : false, 
 			"isAddon" : false, 
 			"equivalent" : [], 
-			"whatBuilds" : ["NydusNetwork", "1", "Busy"], 
+			"whatBuilds" : ["Drone", "1", "Morphed"], 
 			"required" : ["NydusNetwork"]
 		},
 		{
@@ -2558,31 +2558,31 @@
 			"whatBuilds" : ["Starport", "1", "Busy"], 
 			"required" : []
 		},
-		{
-			"name" : "Cyclone", 
-			"race" : "Terran", 
-			"mineralCost" : 150, 
-			"gasCost" : 100, 
-			"supplyCost" : 3.0, 
-			"energyCost" : 0, 
-			"supplyProvided" : 0, 
-			"buildTime" : 720, 
-			"numProduced" : 1, 
-			"startingEnergy" : 0, 
-			"maxEnergy" : 0, 
-			"isUnit" : true, 
-			"isUpgrade" : false, 
-			"isAbility" : false, 
-			"isBuilding" : false, 
-			"isWorker" : false, 
-			"isRefinery" : false, 
-			"isSupplyProvider" : false, 
-			"isResourceDepot" : false, 
-			"isAddon" : false, 
-			"equivalent" : [], 
-			"whatBuilds" : ["Factory", "1", "Busy"], 
-			"required" : []
-		},
+	      {
+	        "name": "Cyclone",
+	        "race": "Terran",
+	        "mineralCost": 150,
+	        "gasCost": 100,
+	        "supplyCost": 3.0,
+	        "energyCost": 0,
+	        "supplyProvided": 0,
+	        "buildTime": 720,
+	        "numProduced": 1,
+	        "startingEnergy": 0,
+	        "maxEnergy": 0,
+	        "isUnit": true,
+	        "isUpgrade": false,
+	        "isAbility": false,
+	        "isBuilding": false,
+	        "isWorker": false,
+	        "isRefinery": false,
+	        "isSupplyProvider": false,
+	        "isResourceDepot": false,
+	        "isAddon": false,
+	        "equivalent": [],
+	        "whatBuilds": [ "Factory", "1", "Busy" ],
+	        "required": []
+	      },
 		{
 			"name" : "Disruptor", 
 			"race" : "Protoss", 
@@ -2632,6 +2632,6 @@
 			"equivalent" : [], 
 			"whatBuilds" : ["Probe", "1", "None"], 
 			"required" : ["CyberneticsCore"]
-		}
-	]
+ 		}    
+ 	]
 }
