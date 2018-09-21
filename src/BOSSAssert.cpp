@@ -24,6 +24,7 @@ namespace Assert
 
 		// get the extra parameters
         char messageBuffer[4096] = "";
+		sprintf(messageBuffer, msg);
         if (msg != NULL)
         {
 			char* arg;
@@ -32,9 +33,11 @@ namespace Assert
 			while (true) {
 				// get the argument. assuming all extra arguments are chars
 				arg = va_arg(args, char*);
+
 				// there are no more arguments
-				if (arg && !arg[0])
+				if (arg)
 					break;
+
 				// put the extra parameters inside of msg
 				sprintf(messageBuffer, msg, arg);
 			}

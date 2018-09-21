@@ -26,9 +26,9 @@
             "PrintNewBest"      : true,
             "OutputDir"         : "results",
             "SearchTimeLimitMS" : 1200000,
-            "FrameTimeLimit"    : 3000,
-            "RelevantActions"   : [ "Probe", "Pylon", "Nexus", "Assimilator", "Gateway", "CyberneticsCore", "Stalker"],
-            "MaxActions"        : [ ["Nexus", 1], ["CyberneticsCore", 1], ["Assimilator", 2] ],
+            "FrameTimeLimit"    : 4000,
+            "RelevantActions"   : [ "Probe", "Pylon", "Nexus", "Assimilator", "Gateway", "CyberneticsCore", "Stalker", "Zealot"],
+            "MaxActions"        : [ ["Nexus", 1], ["Assimilator", 2], ["CyberneticsCore", 1] ],
             "AlwaysMakeWorkers" : true,
             "OpeningBuildOrder" : "Empty"
         },

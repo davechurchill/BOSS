@@ -41,7 +41,7 @@ struct ActionTypeData
     std::vector<ActionType>     equivalent;
     std::vector<ActionType>     required;
 
-    static void Init(const std::string & filename);
+    static void Init(const json & filename);
     static const ActionTypeData & GetActionTypeData(const ActionID & action);
     static const ActionTypeData & GetActionTypeData(const std::string & name);
     static const std::vector<ActionTypeData> & GetAllActionTypeData();

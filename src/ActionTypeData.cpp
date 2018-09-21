@@ -25,27 +25,8 @@ const std::vector<ActionTypeData> & ActionTypeData::GetAllActionTypeData()
     return AllActionTypeData;
 }
 
-void ActionTypeData::Init(const std::string & filename)
+void ActionTypeData::Init(const json & j)
 {
-    // add the None type for error returns
-    AllActionTypeData.push_back(ActionTypeData());
-    ActionTypeNameMap["None"] = 0;
-    
-    // parse the JSON file and report an error if the parsing failed
-    std::ifstream file(filename);
-    json j;
-	file >> j;
-
-    bool parsingFailed = false;
-    if (parsingFailed)
-    {
-        std::cerr << "Error: Config File Found, but could not be parsed\n";
-        std::cerr << "Config Filename: " << filename << "\n";
-        std::cerr << "The bot will not run without its configuration file\n";
-        std::cerr << "Please check that the file exists, is not empty, and is valid JSON. Incomplete paths are relative to the BOSS .exe file\n";
-        return;
-    }
-
     // read all of the action types in the file
     if (j.count("Types") && j["Types"].is_array())
     {
@@ -56,7 +37,6 @@ void ActionTypeData::Init(const std::string & filename)
 
             data.id = a;
             JSONTools::ReadString("name",           actions[a], data.name);
-			std::cout << data.name << std::endl;
             JSONTools::ReadString("race",           actions[a], data.raceName);
             data.race = Races::GetRaceID(data.raceName);
             JSONTools::ReadInt("mineralCost",       actions[a], data.mineralCost);
