@@ -146,14 +146,22 @@ void testjson()
 int main(int argc, char *argv[])
 {
     // Initialize all the BOSS internal data
-    BOSS::Init("BWData.json");
+    //BOSS::Init("../bin/BWData.json");
 
     // Read in the config parameters that will be used for experiments
-    BOSS::BOSSConfig::Instance().ParseConfig("BOSS_Config.txt");
+    //BOSS::BOSSConfig::Instance().ParseConfig("../bin/BOSS_Config.txt");
 
-    BOSS::Experiments::RunExperiments("BOSS_Config.txt");
+    //BOSS::Experiments::RunExperiments("../bin/BOSS_Config.txt");
 
     //testBuildOrder();
     
+	// Initialize all the BOSS internal data
+	BOSS::Init("../bin/SC2Data.json");
+
+	// Read in the config parameters that will be used for experiments
+	BOSS::BOSSConfig::Instance().ParseConfig("../bin/BOSS_SC2_Config.txt");
+
+	BOSS::Experiments::RunExperiments("../bin/BOSS_SC2_Config.txt");
+
     return 0;
 }

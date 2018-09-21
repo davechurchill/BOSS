@@ -22,7 +22,8 @@ class Unit
     int         m_job;              // current job this Unit has (UnitJobs::XXX)
     int         m_timeUntilBuilt;   // time remaining until this Unit is completed
     int         m_timeUntilFree;    // time remaining until this Unit can build again
-    int         m_numLarva;         // number of larva this building currently has (Hatch only)
+	int			m_timeChronoBoost;	// time remaining on Chrono Boost. 
+	int         m_numLarva;         // number of larva this building currently has (Hatch only)
 
 public:
 

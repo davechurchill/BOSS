@@ -72,7 +72,7 @@ void CombatSearch::generateLegalActions(const GameState & state, ActionSet & leg
             return;
         }
 
-        // figure out of anything can be made before a worker
+        // figure out if anything can be made before a worker
         for (size_t a(0); a < legalActions.size(); ++a)
         {
             const ActionType & actionType = legalActions[a];

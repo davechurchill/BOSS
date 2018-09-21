@@ -22,6 +22,18 @@ namespace BOSS
     typedef size_t  ActionID;
     typedef size_t  RaceID;
 
+	// constants declared in data file
+	class CONSTANTS
+	{
+	public:
+		static double MPWPF;				// minerals per worker per frame
+		static double GPWPF;				// gas per worker per frame
+		static double ERPF;				// energy regen per frame
+		static double HRPF;				// health regen per frame
+		static double SRPF;				// shield regen per frame
+		static int WorkersPerRefinery;
+	};
+
     namespace Races
     {
         enum {Protoss, Terran, Zerg, NUM_RACES, None};

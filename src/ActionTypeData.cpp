@@ -25,27 +25,8 @@ const std::vector<ActionTypeData> & ActionTypeData::GetAllActionTypeData()
     return AllActionTypeData;
 }
 
-void ActionTypeData::Init(const std::string & filename)
+void ActionTypeData::Init(const json & j)
 {
-    // add the None type for error returns
-    AllActionTypeData.push_back(ActionTypeData());
-    ActionTypeNameMap["None"] = 0;
-    
-    // parse the JSON file and report an error if the parsing failed
-    std::ifstream file(filename);
-    json j;
-    file >> j;
-
-    bool parsingFailed = false;
-    if (parsingFailed)
-    {
-        std::cerr << "Error: Config File Found, but could not be parsed\n";
-        std::cerr << "Config Filename: " << filename << "\n";
-        std::cerr << "The bot will not run without its configuration file\n";
-        std::cerr << "Please check that the file exists, is not empty, and is valid JSON. Incomplete paths are relative to the BOSS .exe file\n";
-        return;
-    }
-
     // read all of the action types in the file
     if (j.count("Types") && j["Types"].is_array())
     {
@@ -60,7 +41,7 @@ void ActionTypeData::Init(const std::string & filename)
             data.race = Races::GetRaceID(data.raceName);
             JSONTools::ReadInt("mineralCost",       actions[a], data.mineralCost);
             JSONTools::ReadInt("gasCost",           actions[a], data.gasCost);
-            JSONTools::ReadInt("supplyCost",        actions[a], data.supplyCost);
+			JSONTools::ReadFloat("supplyCost",      actions[a], data.supplyCost); // demical supply cost in SC2
             JSONTools::ReadInt("energyCost",        actions[a], data.energyCost);
             JSONTools::ReadInt("supplyProvided",    actions[a], data.supplyProvided);
             JSONTools::ReadInt("buildTime",         actions[a], data.buildTime);
@@ -80,7 +61,7 @@ void ActionTypeData::Init(const std::string & filename)
             BOSS_ASSERT(actions[a].count("whatBuilds"), "no 'whatBuilds' member");
             auto & whatBuilds = actions[a]["whatBuilds"];
             data.whatBuildsStr = whatBuilds[0].get<std::string>();
-            data.whatBuildsCount = whatBuilds[1];
+            data.whatBuildsCount = std::stoul(whatBuilds[1].get<std::string>());
             data.whatBuildsStatus = whatBuilds[2].get<std::string>();
             if (whatBuilds.size() == 4) { data.whatBuildsAddonStr = whatBuilds[3].get<std::string>(); }
 

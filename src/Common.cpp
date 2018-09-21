@@ -4,6 +4,14 @@
 
 using namespace BOSS;
 
+// defining static variables
+double CONSTANTS::MPWPF;
+double CONSTANTS::GPWPF;
+double CONSTANTS::ERPF;
+double CONSTANTS::HRPF;
+double CONSTANTS::SRPF;
+int CONSTANTS::WorkersPerRefinery;
+
 RaceID Races::GetRaceID(const std::string & race)
 {
     if      (race == "Protoss") { return Races::Protoss; }

@@ -22,14 +22,28 @@ namespace Assert
     {
         std::cerr << "Assertion thrown!\n";
 
+		// get the extra parameters
         char messageBuffer[4096] = "";
+		sprintf(messageBuffer, msg);
         if (msg != NULL)
         {
+			char* arg;
             va_list args;
             va_start(args, msg);
-            sprintf(messageBuffer, msg, args);
-            va_end(args);
-        }
+			while (true) {
+				// get the argument. assuming all extra arguments are chars
+				arg = va_arg(args, char*);
+
+				// there are no more arguments
+				if (arg)
+					break;
+
+				// put the extra parameters inside of msg
+				sprintf(messageBuffer, msg, arg);
+			}
+            
+			va_end(args);
+        }	
 
         std::stringstream ss;
         ss                                      << std::endl;
