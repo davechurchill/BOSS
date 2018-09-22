@@ -4,10 +4,6 @@
 
 using namespace BOSS;
 
-const double MPWPF = 0.045f;
-const double GPWPF = 0.070f;
-const int WorkersPerRefinery = 3;
-
 GameState::GameState()
     : m_minerals        (0.0f)
     , m_gas             (0.0f)
@@ -44,13 +40,13 @@ bool GameState::isLegal(const ActionType & action) const
     const size_t numRefineries  = m_numRefineries + refineriesInProgress;
     const size_t numDepots      = m_numDepots + getNumInProgress(ActionTypes::GetResourceDepot(m_race));
 
-    // 
+    // if we have no mineral workers, we can't make any unit
     if (mineralWorkers == 0) { return false; }
     	
-    // if it's a unit and we are out of supply and aren't making an overlord, it's not legal
+    // if it's a unit and we are out of supply and aren't making a supply providing unit, it's not legal
 	if (!action.isMorphed() && !action.isSupplyProvider() && ((m_currentSupply + action.supplyCost()) > (m_maxSupply + getSupplyInProgress()))) { return false; }
 
-    // TODO: require an extra for refineries byt not buildings
+    // TODO: require an extra for refineries but not buildings
     // rules for buildings which are built by workers
     if (action.isBuilding() && !action.isMorphed() && !action.isAddon() && (mineralWorkers == 0)) { return false; }
 
@@ -127,8 +123,8 @@ void GameState::fastForward(const int & toFrame)
 
         // add the resources we gathered during this time period
         const int timeElapsed	= actionCompletionTime - lastActionFinishTime;
-        m_minerals              += timeElapsed * MPWPF * m_mineralWorkers;
-        m_gas                   += timeElapsed * GPWPF * m_gasWorkers;
+        m_minerals              += timeElapsed * CONSTANTS::MPWPF * m_mineralWorkers;
+        m_gas                   += timeElapsed * CONSTANTS::GPWPF * m_gasWorkers;
         lastActionFinishTime    = actionCompletionTime;
         
         // if it's a Terran building that's not an addon, the worker returns to minerals
@@ -144,8 +140,8 @@ void GameState::fastForward(const int & toFrame)
 
     // update resources from the last action finished to the ff frame
     int timeElapsed = toFrame - lastActionFinishTime;
-    m_minerals      += timeElapsed * MPWPF * m_mineralWorkers;
-    m_gas           += timeElapsed * GPWPF * m_gasWorkers;
+    m_minerals      += timeElapsed * CONSTANTS::MPWPF * m_mineralWorkers;
+    m_gas           += timeElapsed * CONSTANTS::GPWPF * m_gasWorkers;
 
     // update all the intances to the ff time
     for (auto & unit : m_units)
@@ -165,7 +161,7 @@ void GameState::completeUnit(Unit & unit)
     if (unit.getType().isWorker())
     {
         m_mineralWorkers++;
-        int needGasWorkers = std::max(0, (WorkersPerRefinery*m_numRefineries - m_gasWorkers));
+        int needGasWorkers = std::max(0, (CONSTANTS::WorkersPerRefinery*m_numRefineries - m_gasWorkers));
         BOSS_ASSERT(needGasWorkers < m_mineralWorkers, "Shouldn't need more gas workers than we have mineral workers");
         m_mineralWorkers -= needGasWorkers;
         m_gasWorkers += needGasWorkers;
@@ -174,7 +170,7 @@ void GameState::completeUnit(Unit & unit)
     {
         m_numRefineries++;
         BOSS_ASSERT(m_numRefineries <= m_numDepots, "Shouldn't have more refineries than depots");
-        int needGasWorkers = std::max(0, (WorkersPerRefinery*m_numRefineries - m_gasWorkers));
+        int needGasWorkers = std::max(0, (CONSTANTS::WorkersPerRefinery*m_numRefineries - m_gasWorkers));
         BOSS_ASSERT(needGasWorkers < m_mineralWorkers, "Shouldn't need more gas workers than we have mineral workers");
         m_mineralWorkers -= needGasWorkers;
         m_gasWorkers += needGasWorkers;
@@ -270,8 +266,8 @@ int GameState::whenResourcesReady(const ActionType & action) const
         int elapsed = actionCompletionTime - lastActionFinishFrame;
 
         // the amount of minerals that would be added this time step
-        double tempAddMinerals = elapsed * currentMineralWorkers * MPWPF;
-        double tempAddGas      = elapsed * currentGasWorkers * GPWPF;
+        double tempAddMinerals = elapsed * currentMineralWorkers * CONSTANTS::MPWPF;
+        double tempAddGas      = elapsed * currentGasWorkers * CONSTANTS::GPWPF;
 
         // if this amount isn't enough, update the amount added for this interval
         if (addedMinerals + tempAddMinerals < mineralDifference || addedGas + tempAddGas < gasDifference)
@@ -295,9 +291,9 @@ int GameState::whenResourcesReady(const ActionType & action) const
         // finishing a refinery adjusts the worker count
         else if (unit.getType().isRefinery())
         {
-            BOSS_ASSERT(currentMineralWorkers > WorkersPerRefinery, "Not enough mineral workers \n");
-            currentMineralWorkers -= WorkersPerRefinery; 
-            currentGasWorkers += WorkersPerRefinery;
+            BOSS_ASSERT(currentMineralWorkers > CONSTANTS::WorkersPerRefinery, "Not enough mineral workers \n");
+            currentMineralWorkers -= CONSTANTS::WorkersPerRefinery;
+            currentGasWorkers += CONSTANTS::WorkersPerRefinery;
         }
 
         // update the last action
@@ -309,8 +305,8 @@ int GameState::whenResourcesReady(const ActionType & action) const
     {
         BOSS_ASSERT(currentMineralWorkers > 0, "Shouldn't have 0 mineral workers");
 
-        int mineralTimeNeeded = (int)std::ceil((mineralDifference - addedMinerals) / (currentMineralWorkers * MPWPF));
-        int gasTimeNeeded     = (int)std::ceil((gasDifference - addedGas) / (currentGasWorkers * GPWPF));
+        int mineralTimeNeeded = (int)std::ceil((mineralDifference - addedMinerals) / (currentMineralWorkers * CONSTANTS::MPWPF));
+        int gasTimeNeeded     = (int)std::ceil((gasDifference - addedGas) / (currentGasWorkers * CONSTANTS::GPWPF));
         addedTime             += std::max(mineralTimeNeeded, gasTimeNeeded);
     }
     
@@ -321,6 +317,7 @@ int GameState::whenBuilderReady(const ActionType & action) const
 {
     int builderID = getBuilderID(action);
 
+	// Probably unnecessary, given that we check for this condition inside of getBuilderID()
     BOSS_ASSERT(builderID != -1, "Didn't find when builder ready for %s", action.getName().c_str());
 
     return m_currentFrame + getUnit(builderID).getTimeUntilFree();

@@ -3364,7 +3364,7 @@ class parser
         {
             error_msg += "; expected " + std::string(lexer_t::token_type_name(expected));
         }
-
+		
         JSON_THROW(parse_error::create(101, m_lexer.get_position(), error_msg));
     }
 

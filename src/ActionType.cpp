@@ -44,7 +44,7 @@ int  ActionType::mineralPrice()      const { return ActionTypeData::GetActionTyp
 int  ActionType::gasPrice()          const { return ActionTypeData::GetActionTypeData(m_id).gasCost; }
 int  ActionType::supplyCost()        const { return ActionTypeData::GetActionTypeData(m_id).supplyCost; }
 int  ActionType::supplyProvided()    const { return ActionTypeData::GetActionTypeData(m_id).supplyProvided; }
-int  ActionType::numProduced()       const { return 1; }
+int  ActionType::numProduced()       const { return ActionTypeData::GetActionTypeData(m_id).numProduced; }
 bool ActionType::isAddon()           const { return ActionTypeData::GetActionTypeData(m_id).isAddon; }
 bool ActionType::isRefinery()        const { return ActionTypeData::GetActionTypeData(m_id).isRefinery; }
 bool ActionType::isWorker()          const { return ActionTypeData::GetActionTypeData(m_id).isWorker; }
