@@ -112,7 +112,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)/../bin/</OutDir>
+    <OutDir>$(SolutionDir)..\bin\</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>
     <TargetExt>.lib</TargetExt>
     <IntDir>$(SolutionDir)\$(Configuration)\$(ProjectName)\</IntDir>

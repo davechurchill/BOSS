@@ -10,6 +10,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BOSS_main", "BOSS_main.vcxp
 		{9F8709E3-AC4F-45F2-8105-4A99D8E2A127} = {9F8709E3-AC4F-45F2-8105-4A99D8E2A127}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BOSS_sfml", "BOSS_sfml.vcxproj", "{32DF5E7C-C8A7-4508-B471-67C405BCF4B9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9F8709E3-AC4F-45F2-8105-4A99D8E2A127} = {9F8709E3-AC4F-45F2-8105-4A99D8E2A127}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -24,6 +29,10 @@ Global
 		{BD4AD06D-B208-433D-B340-DDAF56A6D050}.Debug|x86.Build.0 = Debug|Win32
 		{BD4AD06D-B208-433D-B340-DDAF56A6D050}.Release|x86.ActiveCfg = Release|Win32
 		{BD4AD06D-B208-433D-B340-DDAF56A6D050}.Release|x86.Build.0 = Release|Win32
+		{32DF5E7C-C8A7-4508-B471-67C405BCF4B9}.Debug|x86.ActiveCfg = Debug|Win32
+		{32DF5E7C-C8A7-4508-B471-67C405BCF4B9}.Debug|x86.Build.0 = Debug|Win32
+		{32DF5E7C-C8A7-4508-B471-67C405BCF4B9}.Release|x86.ActiveCfg = Release|Win32
+		{32DF5E7C-C8A7-4508-B471-67C405BCF4B9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
