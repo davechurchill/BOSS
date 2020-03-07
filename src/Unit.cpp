@@ -2,16 +2,11 @@
 
 using namespace BOSS;
 
-Unit::Unit(const ActionType & type, const size_t & id, int builderID)
-    : m_job             (UnitJobs::None)
-    , m_id              (id)
+Unit::Unit(const ActionType type, const size_t id, int builderID)
+    : m_id              (id)
     , m_type            (type)
-    , m_addon           (ActionTypes::None)
-    , m_buildType       (ActionTypes::None)
-    , m_buildID         (0)
     , m_timeUntilBuilt  (builderID != -1 ? type.buildTime() : 0)
     , m_timeUntilFree   (builderID != -1 ? type.buildTime() : 0)
-    , m_numLarva        (0)
     , m_builderID       (builderID)
 {
     
@@ -40,7 +35,7 @@ void Unit::complete()
     m_timeUntilBuilt = 0;
 }
 
-void Unit::fastForward(const int & frames)
+void Unit::fastForward(const int frames)
 {
     // if we are completing the thing that this Unit is building
     if ((m_buildType != ActionTypes::None) && frames >= m_timeUntilFree)
@@ -81,37 +76,37 @@ int Unit::whenCanBuild(const ActionType & type) const
     return m_timeUntilFree;
 }
 
-const int & Unit::getTimeUntilBuilt() const
+const int Unit::getTimeUntilBuilt() const
 {
     return m_timeUntilBuilt;
 }
 
-const int & Unit::getTimeUntilFree() const
+const int Unit::getTimeUntilFree() const
 {
     return m_timeUntilFree;
 }
 
-const ActionType & Unit::getType() const
+const ActionType Unit::getType() const
 {
     return m_type;
 }
 
-const ActionType & Unit::getAddon() const
+const ActionType Unit::getAddon() const
 {
     return m_addon;
 }
 
-const ActionType & Unit::getBuildType() const
+const ActionType Unit::getBuildType() const
 {
     return m_buildType;
 }
 
-const size_t & Unit::getID() const
+const size_t Unit::getID() const
 {
     return m_id;
 }
 
-void Unit::setBuilderID(const int & id)
+void Unit::setBuilderID(const int id)
 {
     m_builderID = id;
 }

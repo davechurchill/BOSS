@@ -25,7 +25,7 @@ void test()
     state.addUnit(ActionTypes::GetActionType("Probe"));
     state.addUnit(ActionTypes::GetActionType("Probe"));
     state.addUnit(ActionTypes::GetActionType("Probe"));
-    state.setMinerals(50.0f);
+    state.setMinerals(50);
 
     std::vector<std::string> bos =
     { "Probe", "Probe", "Probe", "Probe", "Pylon", "Pylon", "Pylon", "Probe", "Probe", "Gateway", "Probe",

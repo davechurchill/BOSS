@@ -8,18 +8,11 @@ std::vector<ActionSet> allActionPrerequisites;
 std::vector<ActionSet> allActionRecursivePrerequisites;
 
 ActionType::ActionType()
-    : m_id(0)
 {
 
 }
 
-ActionType::ActionType(const ActionType & type)
-    : m_id(type.m_id)
-{
-
-}
-
-ActionType::ActionType(const ActionID & actionID)
+ActionType::ActionType(const ActionID actionID)
     : m_id(actionID)
 {
 
@@ -35,8 +28,8 @@ ActionType & ActionType::operator = (const ActionType & rhs)
     return *this;
 }   
 
-ActionID    ActionType::getID()     const { return m_id; }
-RaceID      ActionType::getRace()   const { return ActionTypeData::GetActionTypeData(m_id).race; }
+ActionID    ActionType::getID()      const { return m_id; }
+RaceID      ActionType::getRace()    const { return ActionTypeData::GetActionTypeData(m_id).race; }
 const std::string & ActionType::getName()   const { return ActionTypeData::GetActionTypeData(m_id).name; }
 	
 int  ActionType::buildTime()         const { return ActionTypeData::GetActionTypeData(m_id).buildTime; }
@@ -87,9 +80,9 @@ const ActionSet & ActionType::getRecursivePrerequisiteActionCount() const
     return allActionRecursivePrerequisites[m_id];
 }
 
-const bool ActionType::operator == (const ActionType & rhs)     const { return m_id == rhs.m_id; }
-const bool ActionType::operator != (const ActionType & rhs)     const { return m_id != rhs.m_id; }
-const bool ActionType::operator <  (const ActionType & rhs)     const { return m_id < rhs.m_id; }
+bool ActionType::operator == (const ActionType rhs)     const { return m_id == rhs.m_id; }
+bool ActionType::operator != (const ActionType rhs)     const { return m_id != rhs.m_id; }
+bool ActionType::operator <  (const ActionType rhs)     const { return m_id < rhs.m_id; }
 
 namespace BOSS
 {
@@ -140,34 +133,34 @@ namespace ActionTypes
         }
     }
 
-    const ActionType & GetWorker(const RaceID raceID)
+    ActionType GetWorker(const RaceID raceID)
     {
         return workerActionTypes[raceID];
     }
 
-    const ActionType & GetSupplyProvider(const RaceID raceID)
+    ActionType GetSupplyProvider(const RaceID raceID)
     {
         return supplyProviderActionTypes[raceID];
     }
 
-    const ActionType & GetRefinery(const RaceID raceID)
+    ActionType GetRefinery(const RaceID raceID)
     {
         return refineryActionTypes[raceID];
     }
 
-    const ActionType & GetResourceDepot(const RaceID raceID)
+    ActionType GetResourceDepot(const RaceID raceID)
     {
         return resourceDepotActionTypes[raceID];
     }
     
-    const ActionType & GetActionType(const std::string & name)
+    ActionType GetActionType(const std::string & name)
     {
         BOSS_ASSERT(TypeExists(name), "ActionType name not found: %s", name.c_str());
 
         return nameMap[name];
     }
 
-    const bool TypeExists(const std::string & name) 
+    bool TypeExists(const std::string & name) 
     {
         return nameMap.find(name) != nameMap.end();
     }

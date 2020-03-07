@@ -16,24 +16,24 @@ public:
 
     BuildOrder();
 
-    void                    add(const ActionType & type);
-    void                    add(const ActionType & type, const int & amount);
-    void                    add(const BuildOrder & other);
-    void                    clear();
-    void                    pop_back();
-    void                    sortByPrerequisites();
-    
-    const ActionType &      operator [] (const size_t & i) const;
-    ActionType &            operator [] (const size_t & i);
+    void            add(const ActionType type);
+    void            add(const ActionType type, const int amount);
+    void            add(const BuildOrder & other);
+    void            clear();
+    void            pop_back();
+    void            sortByPrerequisites();
 
-    const size_t            size() const;
-    const size_t            getTypeCount(const ActionType & type) const;
-    const bool              empty() const;
+    ActionType      operator [] (const size_t i) const;
+    ActionType &    operator [] (const size_t i);
 
-    std::string             getJSONString() const;
-    std::string             getNumberedString() const;
-    std::string             getIDString() const;
-    std::string             getNameString(const size_t charactersPerName = 0) const;
+    size_t          size() const;
+    size_t          getTypeCount(const ActionType type) const;
+    bool            empty() const;
+
+    std::string     getJSONString() const;
+    std::string     getNumberedString() const;
+    std::string     getIDString() const;
+    std::string     getNameString(const size_t charactersPerName = 0) const;
 };
 
 }

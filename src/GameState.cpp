@@ -35,7 +35,7 @@ void GameState::getLegalActions(std::vector<ActionType> & legalActions) const
     }
 }
 
-bool GameState::isLegal(const ActionType & action) const
+bool GameState::isLegal(const ActionType action) const
 {
     if (action.getRace() != m_race) { return false; }
 
@@ -75,7 +75,7 @@ bool GameState::isLegal(const ActionType & action) const
     return true;
 }
 
-void GameState::doAction(const ActionType & type)
+void GameState::doAction(const ActionType type)
 {
     int previousFrame = m_currentFrame;
 
@@ -104,7 +104,7 @@ void GameState::doAction(const ActionType & type)
     addUnit(type, getBuilderID(type));
 }
 
-void GameState::fastForward(const int & toFrame)
+void GameState::fastForward(const int toFrame)
 {
     if (toFrame == m_currentFrame) { return; }
 
@@ -187,7 +187,7 @@ void GameState::completeUnit(Unit & unit)
 
 // add a unit of the given type to the state
 // if builderID is -1 (default) the unit is added as completed, otherwise it begins construction with the builder
-void GameState::addUnit(const ActionType & type, int builderID)
+void GameState::addUnit(const ActionType type, int builderID)
 {
     BOSS_ASSERT(m_race == Races::None || type.getRace() == m_race, "Adding an Unit of a different race");
 
@@ -222,7 +222,7 @@ void GameState::addUnit(const ActionType & type, int builderID)
     }
 }
 
-int GameState::whenCanBuild(const ActionType & action) const
+int GameState::whenCanBuild(const ActionType action) const
 {
     // figure out when prerequisites will be ready
     int maxTime         = m_currentFrame;
@@ -243,7 +243,7 @@ int GameState::whenCanBuild(const ActionType & action) const
 
 // returns the game frame that we will have the resources available to construction given action type
 // this function assumes the action is legal (must be checked beforehand)
-int GameState::whenResourcesReady(const ActionType & action) const
+int GameState::whenResourcesReady(const ActionType action) const
 {
     if (m_minerals >= action.mineralPrice() && m_gas >= action.gasPrice())
     {
@@ -317,7 +317,7 @@ int GameState::whenResourcesReady(const ActionType & action) const
     return addedTime + m_currentFrame;
 }
 
-int GameState::whenBuilderReady(const ActionType & action) const
+int GameState::whenBuilderReady(const ActionType action) const
 {
     int builderID = getBuilderID(action);
 
@@ -326,7 +326,7 @@ int GameState::whenBuilderReady(const ActionType & action) const
     return m_currentFrame + getUnit(builderID).getTimeUntilFree();
 }
 
-int GameState::whenSupplyReady(const ActionType & action) const
+int GameState::whenSupplyReady(const ActionType action) const
 {
     int supplyNeeded = action.supplyCost() + m_currentSupply - m_maxSupply;
     if (supplyNeeded <= 0) { return m_currentFrame; }
@@ -345,7 +345,7 @@ int GameState::whenSupplyReady(const ActionType & action) const
     return m_currentFrame;
 }
 
-int GameState::whenPrerequisitesReady(const ActionType & action) const
+int GameState::whenPrerequisitesReady(const ActionType action) const
 {
     // if this action requires no prerequisites, then they are ready right now
     if (action.required().empty())
@@ -373,7 +373,7 @@ int GameState::whenPrerequisitesReady(const ActionType & action) const
     return m_currentFrame + whenPrereqReady;
 }
 
-int GameState::getBuilderID(const ActionType & action) const
+int GameState::getBuilderID(const ActionType action) const
 {
     int minWhenReady = std::numeric_limits<int>::max();
     int builderID = -1;
@@ -402,37 +402,37 @@ int GameState::getBuilderID(const ActionType & action) const
     return builderID;
 }
 
-bool GameState::haveBuilder(const ActionType & type) const
+bool GameState::haveBuilder(const ActionType type) const
 {
     return std::any_of(m_units.begin(), m_units.end(), 
            [&type](const Unit & u){ return u.whenCanBuild(type) != -1; });
 }
 
-bool GameState::havePrerequisites(const ActionType & type) const
+bool GameState::havePrerequisites(const ActionType type) const
 {
     return std::all_of(type.required().begin(), type.required().end(), 
            [this](const ActionType & req) { return this->haveType(req); });
 }
 
-size_t GameState::getNumInProgress(const ActionType & action) const
+size_t GameState::getNumInProgress(const ActionType action) const
 {
     return std::count_if(m_unitsBeingBuilt.begin(), m_unitsBeingBuilt.end(),
            [this, &action](const size_t & id) { return action == this->getUnit(id).getType(); } );
 }
 
-size_t GameState::getNumCompleted(const ActionType & action) const
+size_t GameState::getNumCompleted(const ActionType action) const
 {
     return std::count_if(m_units.begin(), m_units.end(),
            [&action](const Unit & unit) { return action == unit.getType() && unit.getTimeUntilBuilt() == 0; } );
 }
 
-size_t GameState::getNumTotal(const ActionType & action) const
+size_t GameState::getNumTotal(const ActionType action) const
 {
     return std::count_if(m_units.begin(), m_units.end(), 
            [&action](const Unit & unit) { return action == unit.getType(); } );
 }
 
-bool GameState::haveType(const ActionType & action) const
+bool GameState::haveType(const ActionType action) const
 {
     return std::any_of(m_units.begin(), m_units.end(), 
            [&action](const Unit & i){ return i.getType() == action; });
@@ -444,7 +444,7 @@ int GameState::getSupplyInProgress() const
            [this](size_t lhs, size_t rhs) { return lhs + this->getUnit(rhs).getType().supplyProvided(); });
 }
 
-const Unit & GameState::getUnit(const size_t & id) const
+const Unit & GameState::getUnit(const size_t id) const
 {
     return m_units[id];
 }
@@ -454,37 +454,37 @@ Unit & GameState::getUnit(const size_t & id)
     return m_units[id];
 }
 
-const double & GameState::getMinerals() const
+double GameState::getMinerals() const
 {
     return m_minerals;
 }
 
-const double & GameState::getGas() const
+double GameState::getGas() const
 {
     return m_gas;
 }
 
-const int & GameState::getCurrentSupply() const
+int GameState::getCurrentSupply() const
 {
     return m_currentSupply;
 }
 
-const int & GameState::getMaxSupply() const
+int GameState::getMaxSupply() const
 {
     return m_maxSupply;
 }
 
-const int & GameState::getCurrentFrame() const
+int GameState::getCurrentFrame() const
 {
     return m_currentFrame;
 }
 
-void GameState::setMinerals(const double & minerals)
+void GameState::setMinerals(const double minerals)
 {
     m_minerals = minerals;
 }
 
-void GameState::setGas(const double & gas)
+void GameState::setGas(const double gas)
 {
     m_gas = gas;
 }
@@ -494,7 +494,7 @@ int GameState::getRace() const
     return m_race;
 }
 
-bool GameState::canBuildNow(const ActionType & action) const
+bool GameState::canBuildNow(const ActionType action) const
 {
 	return whenCanBuild(action) == getCurrentFrame();
 }
@@ -514,7 +514,7 @@ int GameState::getLastActionFinishTime() const
     return m_unitsBeingBuilt.empty() ? getCurrentFrame() : m_units[m_unitsBeingBuilt.front()].getTimeUntilBuilt();
 }
 
-int GameState::getNextFinishTime(const ActionType & type) const
+int GameState::getNextFinishTime(const ActionType type) const
 {
     auto it = std::find_if(m_unitsBeingBuilt.rbegin(), m_unitsBeingBuilt.rend(),
               [this, &type](const size_t & uid) { return this->getUnit(uid).getType() == type; });

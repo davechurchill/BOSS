@@ -13,7 +13,7 @@ const ActionTypeData & ActionTypeData::GetActionTypeData(const std::string & nam
     return AllActionTypeData[ActionTypeNameMap.at(name)];
 }
 
-const ActionTypeData & ActionTypeData::GetActionTypeData(const ActionID & action)
+const ActionTypeData & ActionTypeData::GetActionTypeData(const ActionID action)
 {
     BOSS_ASSERT(action < AllActionTypeData.size(), "ActionID overflow: %d", action);
 
