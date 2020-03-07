@@ -18,4 +18,3 @@ emscripten/BOSS.js:$(OBJECTS) Makefile
 
 clean:
 	rm $(OBJECTS)
-    
