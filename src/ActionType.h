@@ -14,6 +14,7 @@ public:
 
     ActionType();
     ActionType(const ActionID actionID);
+    ActionType(const std::string & str);
 
     ActionType & operator = (const ActionType & rhs);
     const std::string & getName()       const;

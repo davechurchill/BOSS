@@ -2,7 +2,6 @@
 vs/.vs/
 vs/Debug
 vs/Release
-vs/*.user
 
 bin/CommandCenter
 bin/*.exe

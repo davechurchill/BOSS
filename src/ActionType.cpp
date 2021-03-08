@@ -18,6 +18,11 @@ ActionType::ActionType(const ActionID actionID)
 
 }
 
+ActionType::ActionType(const std::string& str)
+{
+    *this = ActionTypes::GetActionType(str);
+}
+
 ActionType & ActionType::operator = (const ActionType & rhs)
 {
     if (this != &rhs)

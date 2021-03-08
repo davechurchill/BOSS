@@ -68,5 +68,6 @@ public:
     void    setGas(const double gas);
 
     std::string     toString() const;
+    const std::vector<Unit>& getUnits() const;
 };
 }

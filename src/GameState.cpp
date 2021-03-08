@@ -582,3 +582,8 @@ std::string GameState::toString() const
 
     return ss.str();
 }
+
+const std::vector<Unit>& GameState::getUnits() const
+{
+    return m_units;
+}

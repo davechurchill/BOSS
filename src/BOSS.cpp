@@ -4,10 +4,9 @@
 
 namespace BOSS
 {
-    bool isInit = false;
-
     void Init(const std::string & filename)
     {
+        static bool isInit = false;
         if (!isInit)
         {
             ActionTypeData::Init(filename);
