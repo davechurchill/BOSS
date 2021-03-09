@@ -11,19 +11,20 @@ class GameState
 {
     std::vector<Unit>	m_units;
     std::vector<size_t>	m_unitsBeingBuilt;  // indices of m_units which are not completed, sorted descending by finish time
-    int					m_race              = Races::None;
-    double				m_minerals          = 0;
-    double				m_gas               = 0;
-    int					m_currentSupply     = 0;
-    int					m_maxSupply         = 0;
-    int					m_currentFrame      = 0;
-    int					m_previousFrame     = 0;
-    int					m_mineralWorkers    = 0;
-    int					m_gasWorkers        = 0;
-    int					m_buildingWorkers   = 0;
-    int					m_numRefineries     = 0;
-    int					m_numDepots         = 0;
-    ActionType			m_previousAction    = ActionTypes::None;
+    int m_race              = Races::None;
+    int m_minerals          = 0;
+    int m_gas               = 0;
+    int m_currentSupply     = 0;
+    int m_maxSupply         = 0;
+    int m_currentFrame      = 0;
+    int m_previousFrame     = 0;
+    int m_mineralWorkers    = 0;
+    int m_gasWorkers        = 0;
+    int m_buildingWorkers   = 0;
+    int m_numRefineries     = 0;
+    int m_numDepots         = 0;
+    ActionType m_previousAction    = ActionTypes::None;
+    
     
     Unit &  getUnit(const size_t & id);
     int     getBuilderID(const ActionType type)             const;
@@ -33,6 +34,7 @@ class GameState
     int     whenPrerequisitesReady(const ActionType action) const;
     int     whenResourcesReady(const ActionType action)     const;
     int     whenBuilderReady(const ActionType action)       const;
+    int     scaleResource(int baseResourceValue)            const;
     void    completeUnit(Unit & Unit);
 
 public:
@@ -40,8 +42,8 @@ public:
     GameState();
     
     const Unit &  getUnit(const size_t id)              const;
-    double  getMinerals()                               const;
-    double  getGas()                                    const;
+    int     getMinerals()                               const;
+    int     getGas()                                    const;
     int     getCurrentSupply()                          const;
     int     getMaxSupply()                              const;
     int     getCurrentFrame()                           const;
@@ -64,10 +66,17 @@ public:
     void    doAction(const ActionType type);
     void    fastForward(const int frames);
     void    addUnit(const ActionType unit, int builderID = -1);
-    void    setMinerals(const double minerals);
-    void    setGas(const double gas);
+    void    setMinerals(const int minerals);
+    void    setGas(const int gas);
 
-    std::string     toString() const;
+    std::string toString() const;
+
+    std::string toStringAllUnits() const;
+    std::string toStringResources() const;
+    std::string toStringInProgress() const;
+    std::string toStringCompleted() const;
+    std::string toStringLegalActions() const;
+
     const std::vector<Unit>& getUnits() const;
 };
 }

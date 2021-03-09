@@ -4,13 +4,16 @@
 
 using namespace BOSS;
 
-const double MPWPF = 0.045f;
-const double GPWPF = 0.070f;
+//const double MPWPF = 0.045f;
+//const double GPWPF = 0.070f;
+const int ResourceScale = 1000;
+const int MPWPF = 45;
+const int GPWPF = 70;
 const int WorkersPerRefinery = 3;
 
 GameState::GameState()
-    : m_minerals        (0.0f)
-    , m_gas             (0.0f)
+    : m_minerals        (0)
+    , m_gas             (0)
     , m_race            (Races::None)
     , m_currentSupply   (0)
     , m_maxSupply       (0)
@@ -44,6 +47,11 @@ bool GameState::isLegal(const ActionType action) const
     const size_t numRefineries  = m_numRefineries + refineriesInProgress;
     const size_t numDepots      = m_numDepots + getNumInProgress(ActionTypes::GetResourceDepot(m_race));
 
+    if (action.getName() == "SiegeTankTankMode")
+    {
+        int a = 6;
+    }
+
     // 
     if (mineralWorkers == 0) { return false; }
     	
@@ -66,6 +74,12 @@ bool GameState::isLegal(const ActionType action) const
     // we don't need to go over the maximum supply limit with supply providers
     if (action.isSupplyProvider() && (m_maxSupply + getSupplyInProgress() > 400)) { return false; }
 
+    // if it's an addon, we need to check if we have a building without an addon to build it
+    if (action.isAddon())
+    {
+
+    }
+
     // TODO: can only build one of a tech type
     // TODO: check to see if an addon can ever be built
     if (!haveBuilder(action)) { return false; }
@@ -84,8 +98,8 @@ void GameState::doAction(const ActionType type)
     fastForward(timeWhenReady);
 
     // subtract the resource cost
-    m_minerals  -= type.mineralPrice();
-    m_gas       -= type.gasPrice();
+    m_minerals  -= scaleResource(type.mineralPrice());
+    m_gas       -= scaleResource(type.gasPrice());
 
     // if it's a Terran building that's not an addon, the worker removed from minerals
     if (type.getRace() == Races::Terran && type.isBuilding() && !type.isAddon())
@@ -245,7 +259,9 @@ int GameState::whenCanBuild(const ActionType action) const
 // this function assumes the action is legal (must be checked beforehand)
 int GameState::whenResourcesReady(const ActionType action) const
 {
-    if (m_minerals >= action.mineralPrice() && m_gas >= action.gasPrice())
+    const int mineralPrice = scaleResource(action.mineralPrice());
+    const int gasPrice = scaleResource(action.gasPrice());
+    if (m_minerals >= mineralPrice && m_gas >= gasPrice)
     {
         return getCurrentFrame();
     }
@@ -255,10 +271,10 @@ int GameState::whenResourcesReady(const ActionType action) const
     int currentGasWorkers       = m_gasWorkers;
     int lastActionFinishFrame   = m_currentFrame;
     int addedTime               = 0;
-    double addedMinerals        = 0;
-    double addedGas             = 0;
-    double mineralDifference    = action.mineralPrice() - m_minerals;
-    double gasDifference        = action.gasPrice() - m_gas;
+    int addedMinerals           = 0;
+    int addedGas                = 0;
+    int mineralDifference       = mineralPrice - m_minerals;
+    int gasDifference           = gasPrice - m_gas;
 
     // loop through each action in progress, adding the minerals we would gather from each interval
     for (size_t i(0); i < m_unitsBeingBuilt.size(); ++i)
@@ -270,8 +286,8 @@ int GameState::whenResourcesReady(const ActionType action) const
         int elapsed = actionCompletionTime - lastActionFinishFrame;
 
         // the amount of minerals that would be added this time step
-        double tempAddMinerals = elapsed * currentMineralWorkers * MPWPF;
-        double tempAddGas      = elapsed * currentGasWorkers * GPWPF;
+        int tempAddMinerals = elapsed * currentMineralWorkers * MPWPF;
+        int tempAddGas      = elapsed * currentGasWorkers * GPWPF;
 
         // if this amount isn't enough, update the amount added for this interval
         if (addedMinerals + tempAddMinerals < mineralDifference || addedGas + tempAddGas < gasDifference)
@@ -309,9 +325,18 @@ int GameState::whenResourcesReady(const ActionType action) const
     {
         BOSS_ASSERT(currentMineralWorkers > 0, "Shouldn't have 0 mineral workers");
 
-        int mineralTimeNeeded = (int)std::ceil((mineralDifference - addedMinerals) / (currentMineralWorkers * MPWPF));
-        int gasTimeNeeded     = (int)std::ceil((gasDifference - addedGas) / (currentGasWorkers * GPWPF));
-        addedTime             += std::max(mineralTimeNeeded, gasTimeNeeded);
+        int mineralIncome       = currentMineralWorkers * MPWPF;
+        int gasIncome           = currentGasWorkers * GPWPF;
+        int mineralsNeeded      = mineralDifference - addedMinerals;
+        int gasNeeded           = gasDifference - addedGas;
+        int mineralTimeNeeded   = mineralIncome == 0 ? 0 : (mineralsNeeded / mineralIncome);
+        int gasTimeNeeded       = gasIncome     == 0 ? 0 : (gasDifference / gasIncome);
+
+        // since this is integer division, check to see if we need one more step to go above required resources
+        if (mineralTimeNeeded * mineralIncome < mineralsNeeded) { mineralTimeNeeded += 1; }
+        if (gasTimeNeeded     * gasIncome     < gasNeeded)      { gasTimeNeeded += 1; }
+
+        addedTime += std::max(mineralTimeNeeded, gasTimeNeeded);
     }
     
     return addedTime + m_currentFrame;
@@ -389,6 +414,8 @@ int GameState::getBuilderID(const ActionType action) const
             return unit.getID();
         }
 
+        // terrain building cannot make addon while it is building
+
         // if the Unit can build the unit, set the new min
         if (whenReady != -1 && whenReady < minWhenReady)
         {
@@ -444,6 +471,11 @@ int GameState::getSupplyInProgress() const
            [this](size_t lhs, size_t rhs) { return lhs + this->getUnit(rhs).getType().supplyProvided(); });
 }
 
+int GameState::scaleResource(int baseResourceValue) const
+{
+    return baseResourceValue * ResourceScale;
+}
+
 const Unit & GameState::getUnit(const size_t id) const
 {
     return m_units[id];
@@ -454,14 +486,14 @@ Unit & GameState::getUnit(const size_t & id)
     return m_units[id];
 }
 
-double GameState::getMinerals() const
+int GameState::getMinerals() const
 {
-    return m_minerals;
+    return (int)(m_minerals / ResourceScale);
 }
 
-double GameState::getGas() const
+int GameState::getGas() const
 {
-    return m_gas;
+    return (int)(m_gas / ResourceScale);
 }
 
 int GameState::getCurrentSupply() const
@@ -479,14 +511,14 @@ int GameState::getCurrentFrame() const
     return m_currentFrame;
 }
 
-void GameState::setMinerals(const double minerals)
+void GameState::setMinerals(const int minerals)
 {
-    m_minerals = minerals;
+    m_minerals = scaleResource(minerals);
 }
 
-void GameState::setGas(const double gas)
+void GameState::setGas(const int gas)
 {
-    m_gas = gas;
+    m_gas = scaleResource(gas);
 }
 
 int GameState::getRace() const
@@ -525,7 +557,7 @@ int GameState::getNextFinishTime(const ActionType type) const
 std::string GameState::toString() const
 {
 	std::stringstream ss;
-    char buf[1024];
+    char buf[2048];
     ss << std::setfill('0') << std::setw(7);
 	ss << "\n--------------------------------------\n";
     
@@ -552,9 +584,12 @@ std::string GameState::toString() const
     }
 
     ss << "\nAll Units:\n";
+    ss << "---------------------------------------------------------------\n";
+    ss << "   ID  BID Constr  Free Type            BuildType           bID\n";
+    ss << "---------------------------------------------------------------\n";
     for (auto & unit : m_units) 
     {
-        sprintf(buf, "%5d %5d %s\n", unit.getID(), unit.getTimeUntilFree(), unit.getType().getName().c_str());
+        sprintf(buf, "%5d %4d %6d %5d %-15s %-15s %5d\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID());
         ss << buf;
     }
     
@@ -572,7 +607,7 @@ std::string GameState::toString() const
     }
 
 	ss << "\nResources:\n";
-    sprintf(buf, "%7d   Minerals\n%7d   Gas\n%7d   Mineral Workers\n%7d   Gas Workers\n%3d/%3d  Supply\n", (int)m_minerals, (int)m_gas, m_mineralWorkers, m_gasWorkers, m_currentSupply/2, m_maxSupply/2);
+    sprintf(buf, "%7d   Minerals %7d\n%7d   Gas  %7d\n%7d   Mineral Workers %7d\n%7d   Gas Workers %7d\n%3d/%3d  Supply\n", getMinerals(), m_minerals, getGas(), m_gas, getNumMineralWorkers(), getNumMineralWorkers()*MPWPF, getNumGasWorkers(), getNumGasWorkers()*GPWPF, m_currentSupply/2, m_maxSupply/2);
     ss << buf;
 
     ss << "--------------------------------------\n";
@@ -580,6 +615,99 @@ std::string GameState::toString() const
     ss << "Next Probe Finish: " << getNextFinishTime(ActionTypes::GetActionType("Probe")) << "\n";
     //printPath();
 
+    return ss.str();
+}
+
+std::string GameState::toStringAllUnits() const
+{
+    std::stringstream ss;
+    char buf[2048];
+
+    ss << "All Units:\n";
+    ss << "---------------------------------------------------------------\n";
+    ss << "   ID  BID Constr  Free Type            BuildType           bID\n";
+    ss << "---------------------------------------------------------------\n";
+    for (auto& unit : m_units)
+    {
+        sprintf(buf, "%5d %4d %6d %5d %-15s %-15s %5d\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID());
+        ss << buf;
+    }
+
+    return ss.str();
+}
+
+std::string GameState::toStringLegalActions() const
+{
+    std::stringstream ss;
+    char buf[2048];
+
+    ss << "\nLegal Actions:\n";
+    std::vector<ActionType> legalActions;
+    getLegalActions(legalActions);
+    ss << "--------------------------------------\n";
+    sprintf(buf, "%5s %5s %5s %5s\n", "total", "build", "res", "pre");
+    ss << buf;
+    ss << "--------------------------------------\n";
+    for (auto& type : legalActions)
+    {
+        sprintf(buf, "%5d %5d %5d %5d %s\n", (whenCanBuild(type) - m_currentFrame), (whenBuilderReady(type) - m_currentFrame), (whenResourcesReady(type) - m_currentFrame), (whenPrerequisitesReady(type) - m_currentFrame), type.getName().c_str());
+        ss << buf;
+    }
+
+    return ss.str();
+}
+
+std::string GameState::toStringResources() const
+{
+    std::stringstream ss;
+    char buf[2048];
+
+    ss << "\nCurrent  Frame: " << m_currentFrame << " (" << (m_currentFrame / (60 * 24)) << "m " << ((m_currentFrame / 24) % 60) << "s)\n";
+    ss << "Previous Frame: " << m_previousFrame << " (" << (m_previousFrame / (60 * 24)) << "m " << ((m_previousFrame / 24) % 60) << "s)\n\n";
+
+    ss << "Resources:\n";
+    sprintf(buf, "%7d   Minerals  %7d\n%7d   Gas       %7d\n%7d   M Workers %7d\n%7d   G Workers %7d\n%3d/%3d  Supply\n", getMinerals(), m_minerals, getGas(), m_gas, getNumMineralWorkers(), getNumMineralWorkers() * MPWPF, getNumGasWorkers(), getNumGasWorkers() * GPWPF, m_currentSupply / 2, m_maxSupply / 2);
+    ss << buf;
+
+    ss << "--------------------------------------\n";
+    ss << "Supply In Progress: " << getSupplyInProgress() << "\n";
+    ss << "Next Probe Finish: " << getNextFinishTime(ActionTypes::GetActionType("Probe")) << "\n";
+    
+    return ss.str();
+}
+
+std::string GameState::toStringInProgress() const
+{
+    std::stringstream ss;
+    char buf[2048];
+    ss << std::setfill('0') << std::setw(7);
+
+    ss << "\nUnits In Progress:\n";
+    for (auto& id : m_unitsBeingBuilt)
+    {
+        auto& unit = getUnit(id);
+        sprintf(buf, "%5d %5d %s\n", unit.getID(), unit.getTimeUntilBuilt(), unit.getType().getName().c_str());
+        ss << buf;
+    }
+    return ss.str();
+}
+
+std::string GameState::toStringCompleted() const
+{
+    std::stringstream ss;
+    char buf[2048];
+    ss << std::setfill('0') << std::setw(7);
+
+    ss << "Units Completed:\n";
+    const std::vector<ActionType>& allActions = ActionTypes::GetAllActionTypes();
+    for (auto& type : ActionTypes::GetAllActionTypes())
+    {
+        size_t numCompleted = getNumCompleted(type);
+        if (numCompleted > 0)
+        {
+            ss << "\t" << numCompleted << "\t" << type.getName() << "\n";
+        }
+    }
     return ss.str();
 }
 

@@ -82,7 +82,11 @@ void ActionTypeData::Init(const std::string & filename)
             data.whatBuildsStr = whatBuilds[0].get<std::string>();
             data.whatBuildsCount = whatBuilds[1];
             data.whatBuildsStatus = whatBuilds[2].get<std::string>();
-            if (whatBuilds.size() == 4) { data.whatBuildsAddonStr = whatBuilds[3].get<std::string>(); }
+            if (whatBuilds.size() == 4) 
+            { 
+                data.whatBuildsAddonStr = whatBuilds[3].get<std::string>(); 
+                std::cout << data.name << " " << data.whatBuildsAddonStr << "\n";
+            }
 
             BOSS_ASSERT(actions[a].count("required"), "no 'required' member");
             for (auto & req : actions[a]["required"])
@@ -118,7 +122,7 @@ void ActionTypeData::Init(const std::string & filename)
         if (data.whatBuildsAddonStr.size() > 0) 
         {
             // get the types of the addon required by the builder of this thing
-            data.whatBuildsAddon = ActionType(AllActionTypeData[ActionTypeNameMap.at(data.whatBuildsAddonStr)].id);
+            data.whatBuildsAddon = ActionType(ActionTypeNameMap.at(data.whatBuildsAddonStr));
         }
 
         // add the types of all the equivalent types

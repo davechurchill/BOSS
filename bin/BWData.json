@@ -284,7 +284,7 @@
             "required" : []
  },
         { 
-            "name" : "SiegeTankTankMode", 
+            "name" : "SiegeTank", 
             "race" : "Terran", 
             "mineralCost" : 150, 
             "gasCost" : 100, 
@@ -383,31 +383,7 @@
             "whatBuilds" : ["Starport", 1, "Busy", "ControlTower"], 
             "required" : ["PhysicsLab"]
  },
-        { 
-            "name" : "SiegeTankSiegeMode", 
-            "race" : "Terran", 
-            "mineralCost" : 150, 
-            "gasCost" : 100, 
-            "supplyCost" : 4, 
-            "energyCost" : 0, 
-            "supplyProvided" : 0, 
-            "buildTime" : 750, 
-            "numProduced" : 1, 
-            "startingEnergy" : 0, 
-            "maxEnergy" : 0, 
-            "isUnit" : true, 
-            "isUpgrade" : false, 
-            "isAbility" : false, 
-            "isBuilding" : false, 
-            "isWorker" : false, 
-            "isRefinery" : false, 
-            "isSupplyProvider" : false, 
-            "isResourceDepot" : false, 
-            "isAddon" : false, 
-            "equivalent" : [], 
-            "whatBuilds" : ["Factory", 1, "Busy", "MachineShop"], 
-            "required" : []
- },
+        
         { 
             "name" : "Firebat", 
             "race" : "Terran", 

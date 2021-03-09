@@ -1,5 +1,10 @@
 BOSS TODO:
 
+
+- Gas units not legal while refinery building?
+
+
+
 ***** ADD OUTPUTDIR TO COMBAT SEARCH
 
 TESTED:
