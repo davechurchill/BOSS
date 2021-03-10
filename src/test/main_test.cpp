@@ -6,7 +6,7 @@ using namespace BOSS;
 
 TEST_CASE("Init BOSS")
 {
-    BOSS::Init("BWData.json");
+    BOSS::Init("config/BWData.json");
     REQUIRE(true);
 }
 
@@ -67,7 +67,7 @@ TEST_CASE("Protoss Start State")
 
 TEST_CASE("Protoss Tech Tree") 
 {
-    BOSS::Init("BWData.json");
+    BOSS::Init("config/BWData.json");
 
     BOSS::GameState state;
     state.addUnit(ActionType("Nexus"));
@@ -134,7 +134,7 @@ TEST_CASE("Terran Start State")
 
 TEST_CASE("Terran Tech Tree")
 {
-    BOSS::Init("BWData.json");
+    BOSS::Init("config/BWData.json");
 
     BOSS::GameState state;
     state.addUnit(ActionType("CommandCenter"));

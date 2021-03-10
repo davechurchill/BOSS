@@ -177,7 +177,7 @@ void test()
 int main(int argc, char *argv[])
 {
     // Initialize all the BOSS internal data
-    BOSS::Init("BWData.json");
+    BOSS::Init("config/BWData.json");
 
     for (auto t : ActionTypes::GetAllActionTypes())
     {
