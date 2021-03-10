@@ -14,13 +14,13 @@ namespace Assert
         auto t = std::time(nullptr);
         auto tm = *std::localtime(&t);
         std::stringstream ss;
-        ss << std::put_time(&tm, "%d-%m-%Y_%H-%M-%S");
+        ss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
         return ss.str();
     }
 
     void ReportFailure(const GameState * state, const char * condition, const char * file, int line, const char * msg, ...)
     {
-        std::cerr << "Assertion thrown!\n";
+        std::cerr << "\nAssertion thrown!\n";
 
         char messageBuffer[1024] = "";
         if (msg != nullptr)
@@ -41,8 +41,8 @@ namespace Assert
         ss << "Time:      " << CurrentDateTime() << std::endl;
                 
         #if !defined(EMSCRIPTEN)
-            std::cerr << ss.str();  
-            throw BOSSException(ss.str());
+            std::cerr << ss.str() << "\n";  
+            exit(0);
         #else
             printf("BOSS Exception Thrown:\n %s\n", ss.str().c_str());
             throw BOSSException(ss.str());

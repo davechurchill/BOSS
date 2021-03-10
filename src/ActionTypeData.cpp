@@ -34,16 +34,15 @@ void ActionTypeData::Init(const std::string & filename)
     // parse the JSON file and report an error if the parsing failed
     std::ifstream file(filename);
     json j;
-    file >> j;
 
-    bool parsingFailed = false;
-    if (parsingFailed)
+    try 
     {
-        std::cerr << "Error: Config File Found, but could not be parsed\n";
-        std::cerr << "Config Filename: " << filename << "\n";
-        std::cerr << "The bot will not run without its configuration file\n";
-        std::cerr << "Please check that the file exists, is not empty, and is valid JSON. Incomplete paths are relative to the BOSS .exe file\n";
-        return;
+        file >> j;
+    }
+    catch (json::parse_error e) 
+    {
+        std::cerr << e.what() << "\n";
+        BOSS_ASSERT(false, "Can't Parse Data file: %s", filename.c_str());
     }
 
     // read all of the action types in the file
@@ -85,7 +84,6 @@ void ActionTypeData::Init(const std::string & filename)
             if (whatBuilds.size() == 4) 
             { 
                 data.whatBuildsAddonStr = whatBuilds[3].get<std::string>(); 
-                std::cout << data.name << " " << data.whatBuildsAddonStr << "\n";
             }
 
             BOSS_ASSERT(actions[a].count("required"), "no 'required' member");

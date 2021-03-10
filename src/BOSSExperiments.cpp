@@ -73,6 +73,7 @@ void Experiments::RunBuildOrderPlot(const std::string & name, const json & j)
         BOSS_ASSERT(scenario.count("State") && scenario["State"].is_string(), "Scenario has no 'state' string");
         BOSS_ASSERT(scenario.count("BuildOrder") && scenario["BuildOrder"].is_string(), "Scenario has no 'buildOrder' string");
     
+        std::cout << "    Plotting Build Order: " << scenario["BuildOrder"] << "\n";
         plotter.addPlot(scenario["BuildOrder"], BOSSConfig::Instance().GetState(scenario["State"]), BOSSConfig::Instance().GetBuildOrder(scenario["BuildOrder"]));
     }
 

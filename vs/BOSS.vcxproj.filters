@@ -180,9 +180,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="BuildOrder">
-      <UniqueIdentifier>{804d91b0-f4f3-4d83-9d93-27d0ef490532}</UniqueIdentifier>
-    </Filter>
     <Filter Include="common">
       <UniqueIdentifier>{a3b62d23-f83c-4f84-adbc-15fb2522a4cd}</UniqueIdentifier>
     </Filter>

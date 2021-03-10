@@ -19,7 +19,15 @@ void BOSSConfig::ParseConfig(const std::string & configFile)
 
     std::ifstream file(configFile);
     json j;
-    file >> j;
+    
+    try {
+        file >> j;
+    }
+    catch (json::parse_error e) {
+        
+        std::cerr << e.what() << "\n";
+        BOSS_ASSERT(false, "Can't Parse Config file: %s", configFile.c_str());
+    }
 
     BOSS_ASSERT(j.count("States"), "No 'States' member found");
     BOSS_ASSERT(j.count("Build Orders"), "No 'Build Orders' member found");
