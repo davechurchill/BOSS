@@ -695,7 +695,6 @@ std::string GameState::toStringInProgress() const
 std::string GameState::toStringCompleted() const
 {
     std::stringstream ss;
-    char buf[2048];
     ss << std::setfill('0') << std::setw(7);
 
     ss << "Units Completed:\n";

@@ -12,13 +12,16 @@
             [ 
                 { "State" : "Protoss Start State", "BuildOrder" : "UAB DT Rush" },
                 { "State" : "Protoss Start State", "BuildOrder" : "UAB Zealot Rush" },
-                { "State" : "Protoss Start State", "BuildOrder" : "UAB Dragoon Rush" }
+                { "State" : "Protoss Start State", "BuildOrder" : "UAB Dragoon Rush" },
+                { "State" : "Terran Start State", "BuildOrder" : "UAB Tank Push" },
+                { "State" : "Terran Start State", "BuildOrder" : "Battlecruisers" },
+                { "State" : "Terran Start State", "BuildOrder" : "Battlecruisers2" }
             ] 
         },
     
         "CombatSearch" :
         {
-            "Run"               : true,
+            "Run"               : false,
             "Type"              : "CombatSearch",
             "SearchTypes"       : [ "BestResponse", "Integral", "Bucket"],
             "Race"              : "Protoss",
@@ -61,6 +64,9 @@
         "Protoss Opening Book"  : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway"],
         "Zerg Opening Book"     : [ "Drone", "Drone", "Drone", "Drone", "Overlord" ],
         "Terran Opening Book"   : [ "SCV", "SCV", "SCV", "SCV", "SupplyDepot" ],
+        "UAB Tank Push"         : [ "SCV", "SCV", "SCV", "SCV", "SCV", "SupplyDepot", "SCV", "Barracks", "Refinery", "SCV", "SCV", "SCV", "SCV", "Factory", "Factory", "SCV", "SCV", "SCV", "SCV", "MachineShop", "MachineShop", "SupplyDepot", "SiegeTank", "SiegeTank", "SiegeTank", "SiegeTank"],
+        "Battlecruisers"        : [ "SCV", "SCV", "SCV", "SCV", "SCV", "SupplyDepot", "Refinery", "Barracks",  "SCV", "SCV", "SCV", "Factory", "SCV", "SCV", "SupplyDepot", "SCV", "Starport", "Starport", "SCV", "SCV", "SupplyDepot", "ScienceFacility","ControlTower", "SCV",  "SCV", "SupplyDepot", "ControlTower", "SCV","PhysicsLab", "SCV", "Battlecruiser", "Battlecruiser"],
+        "Battlecruisers2"        : [ "SCV", "SCV", "SCV", "SCV", "SCV", "SupplyDepot", "SCV", "Barracks", "Refinery", "SCV", "SCV", "SCV", "SCV", "Factory", "SCV", "SCV", "SCV", "SupplyDepot", "SCV", "Starport", "SCV", "Starport", "SCV", "SCV", "SupplyDepot", "ScienceFacility","ControlTower", "SCV",  "SCV", "SupplyDepot", "ControlTower", "SCV","PhysicsLab", "SCV", "Battlecruiser", "Battlecruiser"],
         "3 Hatch Muta"          : [ "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk" ],
         "3 Hatch Muta 2"        : [ "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk" ],
         "8 Zealots"             : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Probe", "Gateway", "Probe", "Gateway", "Pylon",  "Pylon", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot" ],

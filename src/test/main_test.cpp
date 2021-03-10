@@ -172,10 +172,21 @@ TEST_CASE("Terran Tech Tree")
     DoLegalCheck(state, legal, "Bunker", { });
     DoLegalCheck(state, legal, "Academy", { "Medic", "Firebat", "ComsatStation" });
     DoLegalCheck(state, legal, "Factory", { "Vulture", "MachineShop", "Starport", "Armory" });
+    DoLegalCheck(state, legal, "Factory", { });
+    DoLegalCheck(state, legal, "MachineShop", { "SiegeTank" });
+    DoLegalCheck(state, legal, "Armory", { "Goliath" });
     DoLegalCheck(state, legal, "Starport", { "Wraith", "ControlTower", "ScienceFacility" }); 
-    DoLegalCheck(state, legal, "ScienceFacility", {  "PhysicsLab", "CovertOps" }); // ADDONS NOT WORKING
+    DoLegalCheck(state, legal, "Starport", { });
+    DoLegalCheck(state, legal, "ControlTower", { "Valkyrie",  "Dropship" });
+    DoLegalCheck(state, legal, "ScienceFacility", {  "PhysicsLab", "CovertOps", "ScienceVessel" });
+    DoLegalCheck(state, legal, "ScienceFacility", {  });
+    DoLegalCheck(state, legal, "PhysicsLab", { "Battlecruiser" });
+    DoLegalCheck(state, legal, "CovertOps", { "Ghost", "NuclearSilo" });
+    DoLegalCheck(state, legal, "ScienceFacility", {  });
+    DoLegalCheck(state, legal, "SupplyDepot", { });
+    DoLegalCheck(state, legal, "Battlecruiser", { });
+    DoLegalCheck(state, legal, "Ghost", { });
 
-    // DoLegalCheck(state, legal, "ControlTower", { "Valkyrie", "ScienceVessel" });
-    // DoLegalCheck(state, legal, "MachineShop", { "SiegeTankTankMode" }); 
-    // DoLegalCheck(state, legal, "ControlTower", { "ScienceVessel" });
+    // 
+    //     // DoLegalCheck(state, legal, "ControlTower", { "ScienceVessel" });
 }

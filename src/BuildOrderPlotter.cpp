@@ -80,10 +80,16 @@ void BuildOrderPlotter::writeBuildOrderPlot(const std::vector<BuildOrderPlotData
         maxY += (plots[p].m_maxLayer + 2) * (plots[p].m_boxHeight + plots[p].m_boxHeightBuffer) + 15;
     }
 
+    int maxFinishTime = 0;
+    for (const auto& plot : plots)
+    {
+        maxFinishTime = std::max(maxFinishTime, plot.m_maxFinishTime);
+    }
+
     //ss << "set title \"Title Goes Here\"" << std::endl;
     //ss << "set xlabel \"Time (frames)\"" << std::endl;
     ss << "set style rect fc lt -1 fs transparent solid 0.15" << std::endl;
-    ss << "set xrange [" << -(plots[0].m_maxFinishTime*.03) << ":" << 1.03*plots[0].m_maxFinishTime << "]" << std::endl;
+    ss << "set xrange [" << -(maxFinishTime*.03) << ":" << 1.03*maxFinishTime << "]" << std::endl;
     ss << "set yrange [-15:" << maxY << "]" << std::endl;
     ss << "unset ytics" << std::endl;
     ss << "set grid xtics" << std::endl;
