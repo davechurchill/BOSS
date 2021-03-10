@@ -15,11 +15,14 @@ class BuildOrderPlotter
 
 public:
 
+    static void QuickPlot(const GameState& state, const std::vector<BuildOrder>& buildOrders);
+
     BuildOrderPlotter();
     //BuildOrderPlotter(const std::string & name, const json & j);
     
     void addPlot(const std::string & name, const GameState & state, const BuildOrder & buildOrder);
     void doPlots();
+    void doBuildOrderPlot();
 
     const std::vector<BuildOrderPlotData> & getPlots() const;
 

@@ -3,6 +3,7 @@
 #include "Common.h"
 #include "BOSSConfig.h"
 #include "GameState.h"
+#include "BuildOrderPlotter.h"
 
 namespace BOSS
 {

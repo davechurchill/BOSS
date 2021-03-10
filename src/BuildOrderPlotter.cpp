@@ -3,6 +3,17 @@
 
 using namespace BOSS;
 
+void BuildOrderPlotter::QuickPlot(const GameState& state, const std::vector<BuildOrder>& buildOrders)
+{
+    BuildOrderPlotter plotter;
+    for (size_t i = 0; i < buildOrders.size(); i++)
+    {
+        plotter.addPlot("QuickPlot", state, buildOrders[i]);
+    }
+    plotter.setOutputDir("results");
+    plotter.doBuildOrderPlot();
+}
+
 BuildOrderPlotter::BuildOrderPlotter()
 {
 
@@ -48,6 +59,19 @@ void BuildOrderPlotter::doPlots()
     }
 
     getPlotJSON(m_allPlots);
+}
+
+void BuildOrderPlotter::doBuildOrderPlot()
+{
+    std::string buildOrderFilename = "AllBuildOrders.gpl";
+
+    // if we only have one build order, name the file after it
+    if (m_allPlots.size() == 1)
+    {
+        buildOrderFilename = m_buildOrderNames[0] + "_BuildOrder.gpl";
+    }
+
+    writeBuildOrderPlot(m_allPlots, m_outputDir + "/" + buildOrderFilename);
 }
 
 void BuildOrderPlotter::writeResourcePlot(const BuildOrderPlotData & plot, const std::string & filename)

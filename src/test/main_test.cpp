@@ -186,7 +186,24 @@ TEST_CASE("Terran Tech Tree")
     DoLegalCheck(state, legal, "SupplyDepot", { });
     DoLegalCheck(state, legal, "Battlecruiser", { });
     DoLegalCheck(state, legal, "Ghost", { });
+}
 
-    // 
-    //     // DoLegalCheck(state, legal, "ControlTower", { "ScienceVessel" });
+TEST_CASE("Terran Build With All Workers")
+{
+    BOSS::GameState state;
+    state.addUnit(ActionType("CommandCenter"));
+    state.addUnit(ActionType("SCV"));
+    state.addUnit(ActionType("SCV"));
+    state.addUnit(ActionType("SCV"));
+    state.addUnit(ActionType("SCV"));
+    state.setMinerals(5000);
+
+    BuildOrder bo;
+    bo.add(ActionType("SupplyDepot"), 10);
+
+    BuildOrder bo2;
+    bo2.add(ActionType("Barracks"), 6);
+
+    
+    BuildOrderPlotter::QuickPlot(state, { bo, bo2 });
 }
