@@ -131,8 +131,7 @@ void test()
 
     // main loop - continues for each frame while window is open
     while (window.isOpen())
-    {
-        
+    {        
         if (progress || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         {
             state.fastForward(state.getCurrentFrame() + 1);

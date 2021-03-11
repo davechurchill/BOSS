@@ -10,7 +10,12 @@
             "OutputDir"     : "results",
             "Scenarios"     :   
             [ 
-                { "State" : "Zerg Start State", "BuildOrder" : "3 Hatch Muta" }
+                { "State" : "Zerg Start State", "BuildOrder" : "3 Hatch Muta" },
+                { "State" : "Zerg Start State", "BuildOrder" : "Zerg_2HatchHydra" },
+                { "State" : "Terran Start State", "BuildOrder" : "UAB Tank Push" },
+                { "State" : "Terran Start State", "BuildOrder" : "Battlecruisers" },
+                { "State" : "Protoss Start State", "BuildOrder" : "UAB Dragoon Rush" },
+                { "State" : "Protoss Start State", "BuildOrder" : "UAB DT Rush" }
             ] 
         },
     

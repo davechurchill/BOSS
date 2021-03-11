@@ -87,7 +87,6 @@ void ActionTypeData::Init(const std::string & filename)
             data.whatBuildsCount = whatBuilds[1];
             data.whatBuildsStatus = whatBuilds[2].get<std::string>();
             data.isMorphed = (data.whatBuildsStatus == "Morphed");
-            std::cout << data.name << " " << data.whatBuildsStatus << "\n";
             if (whatBuilds.size() == 4) 
             { 
                 data.whatBuildsAddonStr = whatBuilds[3].get<std::string>(); 
