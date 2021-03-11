@@ -10,12 +10,7 @@
             "OutputDir"     : "results",
             "Scenarios"     :   
             [ 
-                { "State" : "Protoss Start State", "BuildOrder" : "UAB DT Rush" },
-                { "State" : "Protoss Start State", "BuildOrder" : "UAB Zealot Rush" },
-                { "State" : "Protoss Start State", "BuildOrder" : "UAB Dragoon Rush" },
-                { "State" : "Terran Start State", "BuildOrder" : "UAB Tank Push" },
-                { "State" : "Terran Start State", "BuildOrder" : "Battlecruisers" },
-                { "State" : "Terran Start State", "BuildOrder" : "Battlecruisers2" }
+                { "State" : "Zerg Start State", "BuildOrder" : "3 Hatch Muta" }
             ] 
         },
     
@@ -73,7 +68,10 @@
         "UAB Zealot Rush"       : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Gateway", "Probe", "Probe", "Zealot", "Pylon", "Zealot", "Zealot", "Probe", "Zealot", "Zealot", "Probe", "Pylon", "Zealot", "Gateway", "Probe", "Pylon", "Probe", "Zealot", "Probe", "Zealot", "Zealot", "Zealot", "Zealot", "Pylon", "Probe", "Zealot", "Zealot", "Zealot" ],
         "UAB DT Rush"           : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "CyberneticsCore", "Probe", "Probe", "CitadelofAdun", "Probe", "Probe", "Probe", "TemplarArchives", "Gateway", "Pylon", "DarkTemplar", "DarkTemplar", "DarkTemplar", "DarkTemplar", "Probe", "Pylon", "Probe"],
         "UAB Dragoon Rush"      : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "Probe", "CyberneticsCore", "Probe", "Pylon", "Probe", "Gateway", "Dragoon", "Gateway", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon"],
-        "Build Order"           : [ "SCV", "Barracks", "Marine", "Marine", "Refinery", "EngineeringBay", "Bunker"]
+        "Build Order"           : [ "SCV", "Barracks", "Marine", "Marine", "Refinery", "EngineeringBay", "Bunker"],
+        "Zerg_ZerglingRush"     : [ "Drone", "SpawningPool", "Zergling", "Zergling", "Zergling", "Zergling"],
+        "Zerg_9Pool"            : [ "Drone", "Drone", "Drone", "Drone", "Drone", "SpawningPool", "Drone", "Extractor", "Overlord", "Drone", "Zergling", "Zergling", "Zergling", "HydraliskDen", "Drone", "Drone", "Drone", "Drone"],
+        "Zerg_2HatchHydra"      : [ "Drone", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Extractor", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "HydraliskDen", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hydralisk", "Hydralisk", "Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk", "Hatchery", "Extractor" ]
     },
 
     "Build Order Search Goals" :

@@ -76,11 +76,18 @@ void ActionTypeData::Init(const std::string & filename)
             JSONTools::ReadBool("isResourceDepot",  actions[a], data.isDepot);
             JSONTools::ReadBool("isAddon",          actions[a], data.isAddon);
 
+            if (data.name == "Hatchery" || data.name == "Lair" || data.name == "Hive")
+            {
+                data.isHatchery = true;
+            }
+
             BOSS_ASSERT(actions[a].count("whatBuilds"), "no 'whatBuilds' member");
             auto & whatBuilds = actions[a]["whatBuilds"];
             data.whatBuildsStr = whatBuilds[0].get<std::string>();
             data.whatBuildsCount = whatBuilds[1];
             data.whatBuildsStatus = whatBuilds[2].get<std::string>();
+            data.isMorphed = (data.whatBuildsStatus == "Morphed");
+            std::cout << data.name << " " << data.whatBuildsStatus << "\n";
             if (whatBuilds.size() == 4) 
             { 
                 data.whatBuildsAddonStr = whatBuilds[3].get<std::string>(); 

@@ -38,6 +38,7 @@ public:
     bool isSupplyProvider() const;
     bool isAddon()          const;
     bool isMorphed()        const;
+    bool isHatchery()       const;
 
     ActionType whatBuilds() const;
     ActionType whatBuildsAddon() const;

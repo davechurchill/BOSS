@@ -33,6 +33,33 @@ void Unit::startBuilding(const Unit & unit)
     }
 }
 
+void Unit::startMorphing(const ActionType & type)
+{
+    // we won't be free until the build time is finished
+    m_timeUntilFree = type.buildTime();
+
+    // technically this unit is now being built as well
+    //m_timeUntilBuilt = type.buildTime();
+
+    // record the type that we're building
+    m_buildType = type;
+
+    // record the id of the unit we're building
+    m_buildID = m_id;
+
+    // if we morph the unit, then we change into it
+    m_type = type;
+
+    // we are building ourself
+    m_builderID = m_id;
+
+    static const ActionType hatchery("Hatchery");
+    if (type == hatchery && m_builderID != -1)
+    {
+        m_timeUntilLarva = 1;
+    }
+}
+
 void Unit::complete()
 {
     //m_timeUntilFree = 0;
@@ -41,6 +68,8 @@ void Unit::complete()
 
 void Unit::fastForward(const int frames)
 {
+    m_larvaToAdd = 0;
+
     // if we are completing the thing that this Unit is building
     if ((m_buildType != ActionTypes::None) && frames >= m_timeUntilFree)
     {
@@ -55,6 +84,45 @@ void Unit::fastForward(const int frames)
         m_job = m_type.isWorker() ? UnitJobs::Minerals : UnitJobs::None;
     }
 
+    // compute the number of larva this building should have
+    BOSS_ASSERT(m_numLarva < 3 || m_timeUntilLarva == 0, "Larva Error");
+    static const ActionType hatchery("Hatchery");
+
+    // we can only fast forward larva counters if we have a valid one
+    bool ffLarva = m_timeUntilLarva > 0;
+
+    // but don't fast forward larva counter of unbuilt hatcheries
+    if (m_type == hatchery && m_timeUntilFree > frames) { ffLarva = false; }
+
+    if (ffLarva)
+    {
+        BOSS_ASSERT(m_numLarva < 3, "Shouldn't have less than 3 larva and a non-zero timer");
+        
+        int ff = frames;
+        if (m_type == hatchery && m_timeUntilFree <= frames)
+        {
+            ff -= m_timeUntilFree;
+        }
+
+        while (m_numLarva < 3 && ff > 0)
+        {
+            if (ff < m_timeUntilLarva)
+            {
+                m_timeUntilLarva -= ff;
+                break;
+            }
+            else
+            {
+                ff -= m_timeUntilLarva;
+                m_larvaToAdd++;
+                m_timeUntilLarva = 13 * 24;
+            }
+
+            // don't add too many larva
+            if (m_numLarva + m_larvaToAdd >= 3) { break; }
+        }
+    }
+
     // subtract the amount of frames fast forwarded from our remaining times
     m_timeUntilFree = std::max(0, m_timeUntilFree - frames);
     m_timeUntilBuilt = std::max(0, m_timeUntilBuilt - frames);
@@ -63,11 +131,6 @@ void Unit::fastForward(const int frames)
 // returns when this Unit can build a given type, -1 if it can't
 int Unit::whenCanBuild(const ActionType & type) const
 {
-    if (m_type.getName() == "Factory" && type.getName() == "SiegeTankTankMode")
-    {
-        int a = 7;
-    }
-
     // check to see if this type can build the given type
     // TODO: check equivalent types (hatchery gspire etc)
     if (type.whatBuilds() != m_type) { return -1; }
@@ -90,37 +153,46 @@ int Unit::whenCanBuild(const ActionType & type) const
     return m_timeUntilFree;
 }
 
-const int Unit::getTimeUntilBuilt() const
+void Unit::useLarva()
+{
+    BOSS_ASSERT(m_numLarva > 0, "Can't use a larva when we have none");
+
+    m_numLarva--;
+
+    m_timeUntilLarva = 13 * 24;
+}
+
+int Unit::getTimeUntilBuilt() const
 {
     return m_timeUntilBuilt;
 }
 
-const int Unit::getTimeUntilFree() const
+int Unit::getTimeUntilFree() const
 {
     return m_timeUntilFree;
 }
 
-const ActionType Unit::getType() const
+ActionType Unit::getType() const
 {
     return m_type;
 }
 
-const ActionType Unit::getAddon() const
+ActionType Unit::getAddon() const
 {
     return m_addon;
 }
 
-const ActionType Unit::getBuildType() const
+ActionType Unit::getBuildType() const
 {
     return m_buildType;
 }
 
-const size_t Unit::getID() const
+size_t Unit::getID() const
 {
     return m_id;
 }
 
-const size_t Unit::getAddonID() const
+size_t Unit::getAddonID() const
 {
     return m_addonID;
 }
@@ -130,17 +202,41 @@ void Unit::setBuilderID(const int id)
     m_builderID = id;
 }
 
-const bool Unit::hasAddon() const
+bool Unit::hasAddon() const
 {
     return m_addon != ActionTypes::None;
 }
 
-const size_t Unit::getBuildID() const
+size_t Unit::getBuildID() const
 {
     return m_buildID;
 }
 
-const size_t Unit::getBuilderID() const
+size_t Unit::getBuilderID() const
 {
     return m_builderID;
+}
+
+int Unit::timeUntilLarva() const
+{
+    return m_timeUntilLarva;
+}
+
+int Unit::numLarva() const
+{
+    return m_numLarva;
+}
+
+void Unit::addLarva()
+{
+    BOSS_ASSERT(m_numLarva < 3, "Can't have more than 3 larva");
+    m_numLarva++;
+
+    // make sure we reset the timer if we have 3 larva
+    if (m_numLarva == 3) { m_timeUntilLarva = 0; }
+}
+
+int Unit::larvaToAdd() const
+{
+    return m_larvaToAdd;
 }

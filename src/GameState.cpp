@@ -4,8 +4,6 @@
 
 using namespace BOSS;
 
-//const double MPWPF = 0.045f;
-//const double GPWPF = 0.070f;
 const int ResourceScale = 1000;
 const int MPWPF = 45;
 const int GPWPF = 70;
@@ -47,11 +45,6 @@ bool GameState::isLegal(const ActionType action) const
     const size_t numRefineries  = m_numRefineries + refineriesInProgress;
     const size_t numDepots      = m_numDepots + getNumInProgress(ActionTypes::GetResourceDepot(m_race));
 
-    if (action.getName() == "SiegeTankTankMode")
-    {
-        int a = 6;
-    }
-
     // 
     if (mineralWorkers == 0) { return false; }
     	
@@ -74,15 +67,8 @@ bool GameState::isLegal(const ActionType action) const
     // we don't need to go over the maximum supply limit with supply providers
     if (action.isSupplyProvider() && (m_maxSupply + getSupplyInProgress() > 400)) { return false; }
 
-    // if it's an addon, we need to check if we have a building without an addon to build it
-    if (action.isAddon())
-    {
-
-    }
-
-    // TODO: can only build one of a tech type
-    // TODO: check to see if an addon can ever be built
-    if (!haveBuilder(action)) { return false; }
+    static const ActionType larva("Larva");
+    if (action.whatBuilds() != larva && !haveBuilder(action)) { return false; }
 
     if (!havePrerequisites(action)) { return false; }
 
@@ -91,6 +77,8 @@ bool GameState::isLegal(const ActionType action) const
 
 void GameState::doAction(const ActionType type)
 {
+    BOSS_ASSERT(isLegal(type), "Trying to do illegal action: %s", type.getName().c_str());
+
     int previousFrame = m_currentFrame;
 
     // figure out when this action can be done and fast forward to it
@@ -162,9 +150,14 @@ void GameState::fastForward(const int toFrame)
     m_gas           += timeElapsed * GPWPF * m_gasWorkers;
 
     // update all the intances to the ff time
-    for (auto & unit : m_units)
+    for (size_t i=0; i<m_units.size(); i++)
     {
-        unit.fastForward(toFrame - previousFrame);
+        m_units[i].fastForward(toFrame - previousFrame);
+        static const ActionType larva("Larva");
+        for (int l = 0; l < m_units[i].larvaToAdd(); l++)
+        {
+            addUnit(larva, m_units[i].getID());
+        }
     }
 
     m_currentFrame = toFrame;
@@ -197,6 +190,7 @@ void GameState::completeUnit(Unit & unit)
     {
         m_numDepots++;
     }
+
 }
 
 // add a unit of the given type to the state
@@ -206,33 +200,73 @@ void GameState::addUnit(const ActionType type, int builderID)
     BOSS_ASSERT(m_race == Races::None || type.getRace() == m_race, "Adding an Unit of a different race");
 
     m_race = type.getRace();
-    Unit unit(type, m_units.size(), builderID);
-
-    m_units.push_back(unit);
-    m_currentSupply += unit.getType().supplyCost();
     
-    // if we have a valid builder for this object, add it to the Units being built
-    if (builderID != -1)
+    static const ActionType larva("Larva");
+    if (type == larva)
     {
-        getUnit(builderID).startBuilding(m_units.back());
-
-        // add the Unit ID being built and sort the list
-        m_unitsBeingBuilt.push_back(unit.getID());
-
-		// we know the list is already sorted when we add this unit, so we just swap it from the end until it's in the right place
-		for (size_t i = m_unitsBeingBuilt.size() - 1; i > 0; i--) 
-		{
-			if (getUnit(m_unitsBeingBuilt[i]).getTimeUntilBuilt() > getUnit(m_unitsBeingBuilt[i - 1]).getTimeUntilBuilt())
-			{ 
-				std::swap(m_unitsBeingBuilt[i], m_unitsBeingBuilt[i - 1]); 
-			}
-			else { break; }
-		}
+        Unit unit(type, m_units.size(), builderID);
+        m_units.push_back(unit);
+        getUnit(builderID).addLarva();
     }
     // if there's no builder, complete the unit now and skip the unit in progress step
-    else
+    else if (builderID == -1)
     {
-        completeUnit(m_units.back());
+        Unit unit(type, m_units.size(), builderID);
+        m_units.push_back(unit);
+        m_currentSupply += unit.getType().supplyCost();
+        completeUnit(unit);
+
+        // if it's a hatchery, add 3 larva
+        static const ActionType hatchery("Hatchery");
+        static const ActionType larva("Larva");
+        if (unit.getType() == hatchery)
+        {
+            addUnit(larva, unit.getID());
+            addUnit(larva, unit.getID());
+            addUnit(larva, unit.getID());
+        }
+    }
+    // if we have a valid builder for this object, add it to the Units being built
+    else 
+    {
+        int unitBeingBuiltID = 0;
+
+        // if the type is morphed we don't need a new unit 
+        if (type.isMorphed())
+        {
+            Unit& builder = getUnit(builderID);
+
+            // if the builder is a larva, we need to subtract from its hatchery's count
+            if (builder.getType() == larva)
+            {
+                getUnit(builder.getBuilderID()).useLarva();;
+            }
+
+            builder.startMorphing(type);
+            unitBeingBuiltID = builder.getID();
+        }
+        // if it's non-morphed, then we need a new unit
+        else
+        {
+            Unit unit(type, m_units.size(), builderID);
+            m_units.push_back(unit);
+            m_currentSupply += unit.getType().supplyCost();
+            getUnit(builderID).startBuilding(m_units.back());
+            unitBeingBuiltID = unit.getID();
+        }
+
+        // add the unit ID being built and sort the list
+        m_unitsBeingBuilt.push_back(unitBeingBuiltID);
+
+        // we know the list is already sorted when we add this unit, so we just swap it from the end until it's in the right place
+        for (size_t i = m_unitsBeingBuilt.size() - 1; i > 0; i--)
+        {
+            if (getUnit(m_unitsBeingBuilt[i]).getTimeUntilBuilt() > getUnit(m_unitsBeingBuilt[i - 1]).getTimeUntilBuilt())
+            {
+                std::swap(m_unitsBeingBuilt[i], m_unitsBeingBuilt[i - 1]);
+            }
+            else { break; }
+        }
     }
 }
 
@@ -344,11 +378,36 @@ int GameState::whenResourcesReady(const ActionType action) const
 
 int GameState::whenBuilderReady(const ActionType action) const
 {
-    int builderID = getBuilderID(action);
+    static const ActionType larva("Larva");
+    static const ActionType hatchery("Hatchery");
+    
+    // if what builds this is a larva, we have to check when the next one will appear
+    if (action.whatBuilds() == larva)
+    {
+        int minLarvaTime = 1000000;
+        for (auto& unit : m_units)
+        {
+            if (!unit.getType().isHatchery()) { continue; }
+            if (unit.numLarva() > 0) { return m_currentFrame; }
+            // if it's an actual hatchery, check its build time
+            int time = unit.timeUntilLarva();
+            if (unit.getType() == hatchery) { time += unit.getTimeUntilFree(); }
+            if (time < minLarvaTime)
+            {
+                minLarvaTime = time;
+            }
+        }
+        return m_currentFrame + minLarvaTime;
+        BOSS_ASSERT(minLarvaTime != 1000000, "Error in getting next larva time");
+    }
+    // otherwise, check to see when a builder will be ready
+    else
+    {
+        int builderID = getBuilderID(action);
+        BOSS_ASSERT(builderID != -1, "Didn't find when builder ready for %s", action.getName().c_str());
+        return m_currentFrame + getUnit(builderID).getTimeUntilFree();
+    }
 
-    BOSS_ASSERT(builderID != -1, "Didn't find when builder ready for %s", action.getName().c_str());
-
-    return m_currentFrame + getUnit(builderID).getTimeUntilFree();
 }
 
 int GameState::whenSupplyReady(const ActionType action) const
@@ -629,7 +688,7 @@ std::string GameState::toStringAllUnits() const
     ss << "---------------------------------------------------------------\n";
     for (auto& unit : m_units)
     {
-        sprintf(buf, "%5d %4d %6d %5d %-15s %-15s %5d\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID());
+        sprintf(buf, "%5d %4d %6d %5d %-15s %-15s %5d %3d %5d\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID(), unit.numLarva(), unit.timeUntilLarva());
         ss << buf;
     }
 

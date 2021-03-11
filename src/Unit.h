@@ -24,28 +24,37 @@ class Unit
     int         m_timeUntilBuilt    = 0;                    // time remaining until this Unit is completed
     int         m_timeUntilFree     = 0;                    // time remaining until this Unit can build again
     int         m_numLarva          = 0;                    // number of larva this building currently has (Hatch only)
+    int         m_timeUntilLarva    = 0;
+    int         m_larvaToAdd        = 0;
 
 public:
 
     Unit(const ActionType type, const size_t id, int builderID);
 
-    const int getTimeUntilFree() const;
-    const int getTimeUntilBuilt() const;
-    const ActionType getType() const;
-    const ActionType getAddon() const;
-    const ActionType getBuildType() const;
-    const size_t getID() const;
-    const size_t getBuildID() const;
-    const size_t getBuilderID() const;
-    const size_t getAddonID() const;
-    const bool hasAddon() const;
+    int getTimeUntilFree() const;
+    int getTimeUntilBuilt() const;
+    ActionType getType() const;
+    ActionType getAddon() const;
+    ActionType getBuildType() const;
+    size_t getID() const;
+    size_t getBuildID() const;
+    size_t getBuilderID() const;
+    size_t getAddonID() const;
+    bool hasAddon() const;
+    int timeUntilLarva() const;
+    int numLarva() const;
+    int larvaToAdd() const;
+
 
     int whenCanBuild(const ActionType & type) const;
 
     void complete();
     void setBuilderID(const int id);
     void startBuilding(const Unit & Unit);
+    void startMorphing(const ActionType& type);
     void fastForward(const int frames);
+    void useLarva();
+    void addLarva();
 };
 
 }

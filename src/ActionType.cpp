@@ -52,7 +52,8 @@ bool ActionType::isSupplyProvider()  const { return ActionTypeData::GetActionTyp
 bool ActionType::isUnit()            const { return ActionTypeData::GetActionTypeData(m_id).isUnit; }
 bool ActionType::isUpgrade()         const { return ActionTypeData::GetActionTypeData(m_id).isUpgrade; }
 bool ActionType::isAbility()         const { return ActionTypeData::GetActionTypeData(m_id).isAbility; }
-bool ActionType::isMorphed()         const { return false; }
+bool ActionType::isMorphed()         const { return ActionTypeData::GetActionTypeData(m_id).isMorphed; }
+bool ActionType::isHatchery()        const { return ActionTypeData::GetActionTypeData(m_id).isHatchery; }
 
 ActionType ActionType::whatBuilds() const
 {

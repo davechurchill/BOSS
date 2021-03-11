@@ -41,12 +41,15 @@ namespace Assert
         ss << "Time:      " << CurrentDateTime() << std::endl;
                 
         #if !defined(EMSCRIPTEN)
-            std::cerr << ss.str() << "\n";  
+            std::cerr << ss.str() << "\n"; 
+            getchar();
             exit(0);
         #else
             printf("BOSS Exception Thrown:\n %s\n", ss.str().c_str());
             throw BOSSException(ss.str());
         #endif
+
+            
     }
 }
 }

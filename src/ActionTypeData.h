@@ -30,6 +30,8 @@ struct ActionTypeData
     bool                        isSupplyProvider= false;
     bool                        isDepot         = false;
     bool                        isAddon         = false;
+    bool                        isHatchery      = false;
+    bool                        isMorphed       = false;
     ActionType                  whatBuilds      = 0;
     size_t                      whatBuildsCount = 1;
     ActionType                  whatBuildsAddon = 0;

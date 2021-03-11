@@ -36,6 +36,9 @@ GameState GetProtossStartState()
     state.addUnit(ActionType("Probe"));
     state.addUnit(ActionType("Probe"));
     state.setMinerals(50);
+
+
+
     return state;
 }
 
@@ -67,6 +70,32 @@ GameState GetTerranStartState()
     return state;
 }
 
+GameState GetZergStartState()
+{
+    GameState state;
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Overlord"));
+    state.addUnit(ActionType("Hatchery"));
+    state.setMinerals(50);
+
+    GameState state2(state);
+
+    BuildOrder bo;
+    std::vector<std::string> bos = { "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone" };
+    for (size_t a = 0; a < bos.size(); a++)
+    {
+        bo.add(ActionType(bos[a]));
+        state.doAction(bo[a]);
+    }
+
+    BuildOrderPlotter::QuickPlot(state2, { bo });
+
+    return state;
+}
+
 void test()
 {
     font.loadFromFile("fonts/cour.ttf");
@@ -74,7 +103,7 @@ void test()
     text.setFont(font);
     text.setCharacterSize(16);
 
-    GameState state = GetTerranStartState();
+    GameState state = GetZergStartState();
 
     std::vector<std::string> bos =
     { "Probe",  "Pylon", "Probe", "Probe", "Gateway", "Probe",
@@ -82,6 +111,8 @@ void test()
     "Dragoon", "Gateway", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon" };
 
     bos = { "SiegeTank", "SiegeTank" };
+    bos = { "Drone", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Extractor", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "HydraliskDen", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hydralisk", "Hydralisk", "Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk", "Hatchery", "Extractor" };
+    bos = { "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk" };
 
     std::vector<ActionType> buildOrder;
 
@@ -139,23 +170,23 @@ void test()
         text.setString(state.toStringAllUnits()); 
         window.draw(text);
 
-        text.setPosition(sf::Vector2f(720, 10));
+        text.setPosition(sf::Vector2f(800, 10));
         text.setString(state.toStringResources());
         window.draw(text);
 
-        text.setPosition(sf::Vector2f(720, 300));
+        text.setPosition(sf::Vector2f(800, 300));
         text.setString(state.toStringCompleted());
         window.draw(text);
 
-        text.setPosition(sf::Vector2f(720, 400));
+        text.setPosition(sf::Vector2f(800, 400));
         text.setString(state.toStringInProgress());
         window.draw(text);
 
-        text.setPosition(sf::Vector2f(720, 500));
+        text.setPosition(sf::Vector2f(800, 500));
         text.setString(state.toStringLegalActions());
         window.draw(text);
 
-        text.setPosition(sf::Vector2f(1150, 10));
+        text.setPosition(sf::Vector2f(1200, 10));
         text.setString(getBuildOrderString(bos, buildOrderIndex));
         window.draw(text);
 
@@ -181,7 +212,7 @@ int main(int argc, char *argv[])
 
     for (auto t : ActionTypes::GetAllActionTypes())
     {
-        std::cout << t.getID() << " " << t.getName() << " " << t.whatBuildsAddon().getName() << "\n";
+        std::cout << t.getID() << " " << t.getName() << " " << (t.isMorphed() ? "Morphed" : "Built") << "\n";
     }
 
     test();
