@@ -169,18 +169,30 @@ TEST_CASE("Terran Tech Tree")
     // build stuff in order in the tech tree, testing legality as we go
     DoLegalCheck(state, legal, "EngineeringBay", { "MissileTurret" });
     DoLegalCheck(state, legal, "Barracks", { "Marine", "Bunker", "Academy", "Factory" });
+    DoLegalCheck(state, legal, "Marine", { });
     DoLegalCheck(state, legal, "Bunker", { });
     DoLegalCheck(state, legal, "Academy", { "Medic", "Firebat", "ComsatStation" });
+    DoLegalCheck(state, legal, "Medic", { });
+    DoLegalCheck(state, legal, "SupplyDepot", { });
+    DoLegalCheck(state, legal, "Firebat", { });
     DoLegalCheck(state, legal, "Factory", { "Vulture", "MachineShop", "Starport", "Armory" });
     DoLegalCheck(state, legal, "Factory", { });
     DoLegalCheck(state, legal, "MachineShop", { "SiegeTank" });
+    DoLegalCheck(state, legal, "SiegeTank", { });
     DoLegalCheck(state, legal, "Armory", { "Goliath" });
+    DoLegalCheck(state, legal, "Goliath", { });
     DoLegalCheck(state, legal, "Starport", { "Wraith", "ControlTower", "ScienceFacility" }); 
+    DoLegalCheck(state, legal, "Wraith", { });
+    DoLegalCheck(state, legal, "SupplyDepot", { });
     DoLegalCheck(state, legal, "Starport", { });
     DoLegalCheck(state, legal, "ControlTower", { "Valkyrie",  "Dropship" });
+    DoLegalCheck(state, legal, "Valkyrie", { });
+    DoLegalCheck(state, legal, "Dropship", { });
     DoLegalCheck(state, legal, "ScienceFacility", {  "PhysicsLab", "CovertOps", "ScienceVessel" });
     DoLegalCheck(state, legal, "ScienceFacility", {  });
     DoLegalCheck(state, legal, "PhysicsLab", { "Battlecruiser" });
+    DoLegalCheck(state, legal, "SupplyDepot", { });
+    DoLegalCheck(state, legal, "Battlecruiser", { });
     DoLegalCheck(state, legal, "CovertOps", { "Ghost", "NuclearSilo" });
     DoLegalCheck(state, legal, "ScienceFacility", {  });
     DoLegalCheck(state, legal, "SupplyDepot", { });
@@ -206,4 +218,170 @@ TEST_CASE("Terran Build With All Workers")
 
     
     BuildOrderPlotter::QuickPlot(state, { bo, bo2 });
+}
+
+TEST_CASE("Zerg Tech Tree")
+{
+    BOSS::Init("config/BWData.json");
+
+    BOSS::GameState state;
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Overlord"));
+    state.addUnit(ActionType("Hatchery"));
+    state.setMinerals(50);
+
+    std::map<std::string, bool> legal;
+    for (auto& a : ActionTypes::GetAllActionTypes())
+    {
+        legal[a.getName()] = false;
+    }
+
+    // test the base legal units
+    DoLegalCheck(state, legal, "", { "Drone", "Overlord", "SpawningPool", "Extractor", "Hatchery", "CreepColony", "EvolutionChamber" });
+
+    // build some more workers and gas so everything will eventually be legal
+    // zerg needs a ton of drones so just make them all in the beginning
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Overlord"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Extractor"));
+    state.doAction(ActionType("Hatchery"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Overlord"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Hatchery"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Overlord"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Overlord"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+
+    // build stuff in order in the tech tree, testing legality as we go
+    DoLegalCheck(state, legal, "CreepColony", {});
+    DoLegalCheck(state, legal, "CreepColony", {});
+    DoLegalCheck(state, legal, "CreepColony", {});
+    DoLegalCheck(state, legal, "SpawningPool", { "Zergling", "SunkenColony", "HydraliskDen", "Lair" });
+    DoLegalCheck(state, legal, "EvolutionChamber", { "SporeColony" });
+    DoLegalCheck(state, legal, "Zergling", { });
+    DoLegalCheck(state, legal, "SporeColony", { });
+    DoLegalCheck(state, legal, "SunkenColony", { });
+    DoLegalCheck(state, legal, "HydraliskDen", { "Hydralisk" });
+    DoLegalCheck(state, legal, "Hydralisk", { "Lurker" });
+    DoLegalCheck(state, legal, "Lair", { "QueensNest", "Spire" });
+    DoLegalCheck(state, legal, "Spire", { "Mutalisk", "Scourge" });
+    DoLegalCheck(state, legal, "QueensNest", { "Queen", "Hive" });
+    DoLegalCheck(state, legal, "Queen", { });
+    DoLegalCheck(state, legal, "Lair", { }); // 2nd lair so hive won't be illegal next
+    DoLegalCheck(state, legal, "Hive", { "DefilerMound", "NydusCanal", "UltraliskCavern", "GreaterSpire" });
+    DoLegalCheck(state, legal, "DefilerMound", { "Defiler" });
+    DoLegalCheck(state, legal, "Defiler", { });
+    DoLegalCheck(state, legal, "Overlord", { });
+    DoLegalCheck(state, legal, "UltraliskCavern", { "Ultralisk" });
+    DoLegalCheck(state, legal, "Ultralisk", { });
+    DoLegalCheck(state, legal, "Overlord", { });
+    DoLegalCheck(state, legal, "Mutalisk", { });
+    DoLegalCheck(state, legal, "Mutalisk", { });
+    DoLegalCheck(state, legal, "Mutalisk", { });
+    DoLegalCheck(state, legal, "Spire", { }); // so gspire won't be illegal
+    DoLegalCheck(state, legal, "GreaterSpire", { "Devourer", "Guardian" });
+    DoLegalCheck(state, legal, "Overlord", { });
+    DoLegalCheck(state, legal, "Devourer", { });
+    DoLegalCheck(state, legal, "Guardian", { });
+}
+
+TEST_CASE("Zerg Use All Drones")
+{
+    BOSS::Init("config/BWData.json");
+
+    BOSS::GameState state;
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Overlord"));
+    state.addUnit(ActionType("Hatchery"));
+    state.setMinerals(50);
+
+    state.doAction(ActionType("SpawningPool"));
+    state.doAction(ActionType("SpawningPool"));
+    state.doAction(ActionType("SpawningPool"));
+    state.doAction(ActionType("SpawningPool"));
+
+    REQUIRE(!state.isLegal(ActionType("SpawningPool")));
+}
+
+TEST_CASE("Zerg 3 Drones Gas Only")
+{
+    BOSS::Init("config/BWData.json");
+
+    BOSS::GameState state;
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Overlord"));
+    state.addUnit(ActionType("Hatchery"));
+    state.setMinerals(50);
+
+    //state.doAction(ActionType("SpawningPool"));
+    //state.doAction(ActionType("Extractor"));
+    //state.fastForward(state.getCurrentFrame() + 500);
+
+    //REQUIRE(!state.isLegal(ActionType("SpawningPool")));
+}
+
+TEST_CASE("Zerg Supply Test")
+{
+    BOSS::Init("config/BWData.json");
+
+    BOSS::GameState state;
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Overlord"));
+    state.addUnit(ActionType("Hatchery"));
+    state.setMinerals(50);
+
+    GameState state2(state);
+
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+    state.doAction(ActionType("Drone"));
+
+    state2.doAction(ActionType("Drone"));
+    state2.doAction(ActionType("Drone"));
+    state2.doAction(ActionType("Drone"));
+    state2.doAction(ActionType("SpawningPool"));
+    state2.doAction(ActionType("Drone"));
+    state2.doAction(ActionType("Drone"));
+    
+    REQUIRE(!state.isLegal(ActionType("Drone")));
+    REQUIRE(!state2.isLegal(ActionType("Drone")));
+    REQUIRE(!state2.isLegal(ActionType("Zergling")));
 }

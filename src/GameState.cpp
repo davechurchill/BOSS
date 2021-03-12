@@ -40,23 +40,25 @@ bool GameState::isLegal(const ActionType action) const
 {
     if (action.getRace() != m_race) { return false; }
 
+    static const ActionType larva("Larva");
+    if (action == larva) { return false; }
+
+
     const size_t mineralWorkers = m_mineralWorkers + m_buildingWorkers;
     const size_t refineriesInProgress = getNumInProgress(ActionTypes::GetRefinery(m_race));
     const size_t numRefineries  = m_numRefineries + refineriesInProgress;
     const size_t numDepots      = m_numDepots + getNumInProgress(ActionTypes::GetResourceDepot(m_race));
 
-    // 
-    if (mineralWorkers == 0) { return false; }
-    	
-    // if it's a unit and we are out of supply and aren't making an overlord, it's not legal
-	if (!action.isMorphed() && !action.isSupplyProvider() && ((m_currentSupply + action.supplyCost()) > (m_maxSupply + getSupplyInProgress()))) { return false; }
+    // check to see if we will ever have enough resources to build this thing
+    if ((m_minerals < action.mineralPrice()) && (mineralWorkers == 0)) { return false; }
+    if ((m_gas      < action.gasPrice())     && (m_gasWorkers   == 0)) { return false; }
+        	
+    // if we won't have enough supply eventually to build this item, it's not legal
+    if ((m_currentSupply + action.supplyCost() - action.whatBuilds().supplyCost()) > (m_maxSupply + getSupplyInProgress())) { return false; }
 
     // TODO: require an extra for refineries byt not buildings
     // rules for buildings which are built by workers
     if (action.isBuilding() && !action.isMorphed() && !action.isAddon() && (mineralWorkers == 0)) { return false; }
-
-    // if we have no gas income we can't make a gas unit
-    if ((m_gas < action.gasPrice()) && (m_gasWorkers == 0)) { return false; }
 
     // if we have no mineral income we'll never have a minerla unit
     if ((m_minerals < action.mineralPrice()) && (mineralWorkers == 0)) { return false; }
@@ -67,9 +69,10 @@ bool GameState::isLegal(const ActionType action) const
     // we don't need to go over the maximum supply limit with supply providers
     if (action.isSupplyProvider() && (m_maxSupply + getSupplyInProgress() > 400)) { return false; }
 
-    static const ActionType larva("Larva");
-    if (action.whatBuilds() != larva && !haveBuilder(action)) { return false; }
+    // if we don't have a builder for the type, we can't build it
+    if (!haveBuilder(action) && (action.whatBuilds() != larva)) { return false; }
 
+    // if we don't have the prerequisites, we can't build it either
     if (!havePrerequisites(action)) { return false; }
 
     return true;
@@ -242,6 +245,7 @@ void GameState::addUnit(const ActionType type, int builderID)
                 getUnit(builder.getBuilderID()).useLarva();;
             }
 
+            m_currentSupply += type.supplyCost();
             builder.startMorphing(type);
             unitBeingBuiltID = builder.getID();
         }
