@@ -12,6 +12,7 @@
             [ 
                 { "State" : "Zerg Start State", "BuildOrder" : "3 Hatch Muta" },
                 { "State" : "Zerg Start State", "BuildOrder" : "Zerg_2HatchHydra" },
+                { "State" : "Zerg Start State", "BuildOrder" : "Zerg_3HatchScourge" },
                 { "State" : "Terran Start State", "BuildOrder" : "UAB Tank Push" },
                 { "State" : "Terran Start State", "BuildOrder" : "Battlecruisers" },
                 { "State" : "Protoss Start State", "BuildOrder" : "UAB Dragoon Rush" },
@@ -76,7 +77,8 @@
         "Build Order"           : [ "SCV", "Barracks", "Marine", "Marine", "Refinery", "EngineeringBay", "Bunker"],
         "Zerg_ZerglingRush"     : [ "Drone", "SpawningPool", "Zergling", "Zergling", "Zergling", "Zergling"],
         "Zerg_9Pool"            : [ "Drone", "Drone", "Drone", "Drone", "Drone", "SpawningPool", "Drone", "Extractor", "Overlord", "Drone", "Zergling", "Zergling", "Zergling", "HydraliskDen", "Drone", "Drone", "Drone", "Drone"],
-        "Zerg_2HatchHydra"      : [ "Drone", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Extractor", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "HydraliskDen", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hydralisk", "Hydralisk", "Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk", "Hatchery", "Extractor" ]
+        "Zerg_2HatchHydra"      : [ "Drone", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Overlord", "Drone", "Extractor", "Overlord", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "HydraliskDen", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hydralisk", "Hydralisk", "Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk"  ],
+        "Zerg_3HatchScourge"    : [ "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "Overlord", "Drone", "Drone", "SpawningPool", "Drone", "Drone", "Extractor", "Drone", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone","Lair", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "Spire", "Overlord", "Drone", "Overlord", "Hatchery", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "Hatchery", "Drone", "Extractor", "Drone", "Hatchery", "Scourge", "Scourge", "Scourge", "Scourge", "Scourge", "Scourge", "Scourge", "Scourge", "Scourge", "Scourge", "Scourge", "Scourge"]
     },
 
     "Build Order Search Goals" :

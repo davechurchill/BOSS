@@ -40,9 +40,13 @@ bool GameState::isLegal(const ActionType action) const
 {
     if (action.getRace() != m_race) { return false; }
 
+    if (action.getName() == "Lair")
+    {
+        int a = 7;
+    }
+
     static const ActionType larva("Larva");
     if (action == larva) { return false; }
-
 
     const size_t mineralWorkers = m_mineralWorkers + m_buildingWorkers;
     const size_t refineriesInProgress = getNumInProgress(ActionTypes::GetRefinery(m_race));
@@ -51,7 +55,9 @@ bool GameState::isLegal(const ActionType action) const
 
     // check to see if we will ever have enough resources to build this thing
     if ((m_minerals < action.mineralPrice()) && (mineralWorkers == 0)) { return false; }
-    if ((m_gas      < action.gasPrice())     && (m_gasWorkers   == 0)) { return false; }
+    // TODO: do we want to check if we won't have enough workers for the extractor?
+    
+    if ((m_gas < action.gasPrice()) && (m_gasWorkers == 0) && (numRefineries == 0)) { return false; }
         	
     // if we won't have enough supply eventually to build this item, it's not legal
     if ((m_currentSupply + action.supplyCost() - action.whatBuilds().supplyCost()) > (m_maxSupply + getSupplyInProgress())) { return false; }
@@ -92,6 +98,8 @@ void GameState::doAction(const ActionType type)
     m_minerals      -= scaleResource(type.mineralPrice());
     m_gas           -= scaleResource(type.gasPrice());
     m_currentSupply += type.supplyCost();
+
+    // TODO: supply cose from muta to guardian?
 
     // if it's a Terran building that's not an addon, the worker removed from minerals
     if (type.getRace() == Races::Terran && type.isBuilding() && !type.isAddon())
