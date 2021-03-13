@@ -6,7 +6,7 @@ LDFLAGS=-O3 -flto -pthread
 
 LDFLAGS_SFML=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-INCLUDES=-Isrc -Isrc/search -Isrc/test -Isrc/sfml
+INCLUDES=-Isrc -Isrc/BOSS -Isrc/json -Isrc/search -Isrc/test -Isrc/sfml
 
 SRC_BOSS=$(wildcard src/BOSS/*.cpp) 
 OBJ_BOSS=$(SRC_BOSS:.cpp=.o)
