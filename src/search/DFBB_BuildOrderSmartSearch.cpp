@@ -57,10 +57,10 @@ void DFBB_BuildOrderSmartSearch::calculateSearchSettings()
     m_goal.setGoalMax(resourceDepot, m_initialState.getNumTotal(resourceDepot));
 
     // set the number of refineries
-    m_goal.setGoalMax(refinery, std::min(3u, calculateRefineriesRequired()));
+    m_goal.setGoalMax(refinery, std::min((size_t)3, calculateRefineriesRequired()));
 
     // set the maximum number of workers to an initial ridiculously high upper bound
-    m_goal.setGoalMax(worker, std::min(m_initialState.getNumTotal(worker) + 20u, 100u));
+    m_goal.setGoalMax(worker, std::min(m_initialState.getNumTotal(worker) + (size_t)20, (size_t)100));
 
     // set the number of supply providers required
     m_goal.setGoalMax(supplyProvider, calculateSupplyProvidersRequired());
@@ -157,7 +157,7 @@ void DFBB_BuildOrderSmartSearch::setPrerequisiteGoalMax()
                 if (numGoalUnitsBuiltBy[actionType.getID()] > 0)
                 {
                     // set the goal max to how many units
-                    m_goal.setGoalMax(actionType, std::min(m_initialState.getNumTotal(actionType) + additionalProductionBuildingLimit, numGoalUnitsBuiltBy[actionType.getID()]));
+                    m_goal.setGoalMax(actionType, std::min(m_initialState.getNumTotal(actionType) + additionalProductionBuildingLimit, (size_t)numGoalUnitsBuiltBy[actionType.getID()]));
                 }
             }
         }
@@ -264,7 +264,7 @@ void DFBB_BuildOrderSmartSearch::setRepetitions()
         if (!actionType.isSupplyProvider() && m_goal.getGoal(actionType) >= 5)
         {
             // set the repetitions to half of the value
-            m_params.setRepetitions(actionType, std::min(4u, (m_goal.getGoal(actionType) / 2u)));
+            m_params.setRepetitions(actionType, std::min((size_t)4, (m_goal.getGoal(actionType) / 2)));
             m_params.setRepetitions(actionType.whatBuilds(), 2);
             m_params.setRepetitionThreshold(actionType.whatBuilds(), 1);
         }
