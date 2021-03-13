@@ -27,8 +27,8 @@ namespace Assert
         {
             va_list args;
             va_start(args, msg);
-            //vsprintf(messageBuffer, msg, args);
-            vsnprintf_s(messageBuffer, 1024, msg, args);
+            vsprintf(messageBuffer, msg, args);
+            //vsnprintf_s(messageBuffer, 1024, msg, args);
             va_end(args);
         }
 
