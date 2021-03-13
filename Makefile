@@ -26,14 +26,14 @@ OBJ_EMSCRIPTEN=$(SRC_AI:.cpp=.o)
 
 all:bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test
 
-bin/BOSS_Experiments:$(OBJ_ENGINE) $(OBJ_EXPERIMENTS) Makefile
-	$(CC) $(OBJ_ENGINE) $(OBJ_EXPERIMENTS) -o $@  $(LDFLAGS)
+bin/BOSS_Experiments:$(OBJ_BOSS) $(OBJ_EXPERIMENTS) Makefile
+	$(CC) $(OBJ_BOSS) $(OBJ_EXPERIMENTS) -o $@  $(LDFLAGS)
 
-bin/BOSS_SFML:$(OBJ_ENGINE) $(OBJ_SFML) Makefile
-	$(CC) $(OBJ_ENGINE) $(OBJ_SFML) -o $@  $(LDFLAGS) $(LDFLAGS_SFML)
+bin/BOSS_SFML:$(OBJ_BOSS) $(OBJ_SFML) Makefile
+	$(CC) $(OBJ_BOSS) $(OBJ_SFML) -o $@  $(LDFLAGS) $(LDFLAGS_SFML)
 
-bin/BOSS_Test:$(OBJ_ENGINE) $(OBJ_EXPERIMENTS) Makefile
-	$(CC) $(OBJ_ENGINE) $(OBJ_TEST) -o $@  $(LDFLAGS)
+bin/BOSS_Test:$(OBJ_BOSS) $(OBJ_TEST) Makefile
+	$(CC) $(OBJ_BOSS) $(OBJ_TEST) -o $@  $(LDFLAGS)
 
 .cpp.o:
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ 
