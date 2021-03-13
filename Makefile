@@ -8,7 +8,7 @@ LDFLAGS_SFML=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 INCLUDES=-Isrc -Isrc/BOSS -Isrc/json -Isrc/search -Isrc/test -Isrc/sfml
 
-SRC_BOSS=$(wildcard src/BOSS/*.cpp) 
+SRC_BOSS=$(wildcard src/BOSS/*.cpp src/search/*.cpp) 
 OBJ_BOSS=$(SRC_BOSS:.cpp=.o)
 
 SRC_EXPERIMENTS=$(wildcard src/experiments/*.cpp) 
