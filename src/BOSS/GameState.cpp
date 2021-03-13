@@ -89,8 +89,9 @@ void GameState::doAction(const ActionType type)
     fastForward(timeWhenReady);
 
     // subtract the resource cost
-    m_minerals  -= scaleResource(type.mineralPrice());
-    m_gas       -= scaleResource(type.gasPrice());
+    m_minerals      -= scaleResource(type.mineralPrice());
+    m_gas           -= scaleResource(type.gasPrice());
+    m_currentSupply += type.supplyCost();
 
     // if it's a Terran building that's not an addon, the worker removed from minerals
     if (type.getRace() == Races::Terran && type.isBuilding() && !type.isAddon())
@@ -102,7 +103,8 @@ void GameState::doAction(const ActionType type)
     // if it's a Zerg unit that requires a Drone, remove a mineral worker
     if (type.getRace() == Races::Zerg && type.whatBuilds().isWorker())
     {
-        m_mineralWorkers--;
+        m_mineralWorkers--;     // the worker is no longer on minerals
+        m_currentSupply -= 2;   // the worker supply is no longer being used up
     }
 
     // get a builder for this type and start building it
@@ -216,8 +218,9 @@ void GameState::addUnit(const ActionType type, int builderID)
     {
         Unit unit(type, m_units.size(), builderID);
         m_units.push_back(unit);
-        m_currentSupply += unit.getType().supplyCost();
         completeUnit(unit);
+
+        m_currentSupply += type.supplyCost();
 
         // if it's a hatchery, add 3 larva
         static const ActionType hatchery("Hatchery");
@@ -245,7 +248,6 @@ void GameState::addUnit(const ActionType type, int builderID)
                 getUnit(builder.getBuilderID()).useLarva();;
             }
 
-            m_currentSupply += type.supplyCost();
             builder.startMorphing(type);
             unitBeingBuiltID = builder.getID();
         }
@@ -254,7 +256,6 @@ void GameState::addUnit(const ActionType type, int builderID)
         {
             Unit unit(type, m_units.size(), builderID);
             m_units.push_back(unit);
-            m_currentSupply += unit.getType().supplyCost();
             getUnit(builderID).startBuilding(m_units.back());
             unitBeingBuiltID = unit.getID();
         }

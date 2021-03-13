@@ -39,7 +39,7 @@ void Unit::startMorphing(const ActionType & type)
     m_timeUntilFree = type.buildTime();
 
     // technically this unit is now being built as well
-    //m_timeUntilBuilt = type.buildTime();
+    m_timeUntilBuilt = type.buildTime();
 
     // record the type that we're building
     m_buildType = type;

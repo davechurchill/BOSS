@@ -337,6 +337,47 @@ TEST_CASE("Zerg Use All Drones")
 
 TEST_CASE("Zerg 3 Drones Gas Only")
 {
+    /*BOSS::Init("config/BWData.json");
+
+    BOSS::GameState state;
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Overlord"));
+    state.addUnit(ActionType("Hatchery"));
+    state.setMinerals(50);*/
+
+    //state.doAction(ActionType("SpawningPool"));
+    //state.doAction(ActionType("Extractor"));
+    //state.fastForward(state.getCurrentFrame() + 500);
+
+    //REQUIRE(!state.isLegal(ActionType("SpawningPool")));
+}
+
+void SupplySanityCheck(const GameState& state)
+{
+    int supplyUsedSum = 0;
+    int supplyTotalSum = 0;
+
+    for (auto& u : state.getUnits())
+    {
+        supplyUsedSum += u.getType().supplyCost();
+        
+        if (u.getTimeUntilFree() == 0)
+        {
+            supplyTotalSum += u.getType().supplyProvided();
+        }
+    }
+
+    if (supplyTotalSum != state.getMaxSupply())
+
+    REQUIRE(supplyUsedSum == state.getCurrentSupply());
+    REQUIRE(supplyTotalSum == state.getMaxSupply());
+}
+
+TEST_CASE("Zerg Supply Sanity Test")
+{
     BOSS::Init("config/BWData.json");
 
     BOSS::GameState state;
@@ -348,14 +389,19 @@ TEST_CASE("Zerg 3 Drones Gas Only")
     state.addUnit(ActionType("Hatchery"));
     state.setMinerals(50);
 
-    //state.doAction(ActionType("SpawningPool"));
-    //state.doAction(ActionType("Extractor"));
-    //state.fastForward(state.getCurrentFrame() + 500);
+    SupplySanityCheck(state);
 
-    //REQUIRE(!state.isLegal(ActionType("SpawningPool")));
+    std::vector<std::string> bos = { "Drone", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Extractor", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "HydraliskDen", "Drone", "Overlord", "Drone", "Drone",  "Overlord", "Drone", "Hydralisk", "Hydralisk", "Hydralisk", "Hydralisk", "Hydralisk", "Hydralisk", "Hydralisk", "Hydralisk", "Hydralisk", "Hydralisk", "Hydralisk", "Hydralisk", "Hatchery", "Extractor" };
+
+    for (size_t i = 0; i < bos.size(); i++)
+    {
+        ActionType type(bos[i]);
+        state.doAction(type);
+        SupplySanityCheck(state);
+    }
 }
 
-TEST_CASE("Zerg Supply Test")
+TEST_CASE("Zerg Supply Legal Test")
 {
     BOSS::Init("config/BWData.json");
 
@@ -380,6 +426,7 @@ TEST_CASE("Zerg Supply Test")
     state2.doAction(ActionType("Drone"));
     state2.doAction(ActionType("Drone"));
     state2.doAction(ActionType("SpawningPool"));
+    state2.doAction(ActionType("Drone"));
     state2.doAction(ActionType("Drone"));
     state2.doAction(ActionType("Drone"));
     
