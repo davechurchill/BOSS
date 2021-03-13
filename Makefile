@@ -12,16 +12,16 @@ SRC_BOSS=$(wildcard src/BOSS/*.cpp)
 OBJ_BOSS=$(SRC_BOSS:.cpp=.o)
 
 SRC_EXPERIMENTS=$(wildcard src/experiments/*.cpp) 
-OBJ_EXPERIMENTS=$(SRC_GUI:.cpp=.o)
+OBJ_EXPERIMENTS=$(SRC_EXPERIMENTS:.cpp=.o)
 
 SRC_SFML=$(wildcard src/sfml/*.cpp) 
-OBJ_SFML=$(SRC_GUI:.cpp=.o)
+OBJ_SFML=$(SRC_SFML:.cpp=.o)
 
 SRC_TEST=$(wildcard src/test/*.cpp src/test/catch2/*.cpp) 
-OBJ_TEST=$(SRC_AI:.cpp=.o)
+OBJ_TEST=$(SRC_TEST:.cpp=.o)
 
 SRC_EMSCRIPTEN=$(wildcard src/emscripten/*.cpp) 
-OBJ_EMSCRIPTEN=$(SRC_AI:.cpp=.o)
+OBJ_EMSCRIPTEN=$(SRC_EMSCRIPTEN:.cpp=.o)
 
 
 all:bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test
