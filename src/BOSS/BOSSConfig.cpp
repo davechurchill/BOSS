@@ -1,5 +1,7 @@
 #include "BOSSConfig.h"
 
+#include "BuildOrderSearchGoal.h"
+
 using namespace BOSS;
 
 BOSSConfig::BOSSConfig()

@@ -2,10 +2,10 @@
 
 #include "Common.h"
 #include "BuildOrder.h"
-#include "BuildOrderSearchGoal.h"
 
 namespace BOSS
 {
+class BuildOrderSearchGoal;
 namespace JSONTools
 {
     template <class T>
@@ -18,7 +18,6 @@ namespace JSONTools
         }
     }
 
-    
     void ReadBool(const char * key, const json & json, bool & dest);
     void ReadString(const char * key, const json & json, std::string & dest);
 

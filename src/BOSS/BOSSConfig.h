@@ -2,11 +2,10 @@
 
 #include "BOSS.h"
 #include "JSONTools.h"
-#include "BuildOrderSearchGoal.h"
 
 namespace BOSS
 {
-
+class BuildOrderSearchGoal;
 class BOSSConfig
 {
     std::string                                 m_configFile;

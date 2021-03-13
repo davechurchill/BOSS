@@ -69,9 +69,10 @@ CombatSearchExperiment::CombatSearchExperiment(const std::string & name, const j
         for (size_t i(0); i < relevantActions.size(); ++i)
         {
             BOSS_ASSERT(relevantActions[i].is_string(), "RelvantActions element must be action type string");
-            BOSS_ASSERT(ActionTypes::TypeExists(relevantActions[i]), "Action Type doesn't exist: %s", relevantActions[i]);
+            std::string typeName = relevantActions[i].get<std::string>();
+            BOSS_ASSERT(ActionTypes::TypeExists(typeName), "Action Type doesn't exist: %s", typeName);
             
-            relevantActionSet.add(ActionTypes::GetActionType(relevantActions[i]));
+            relevantActionSet.add(ActionTypes::GetActionType(typeName));
         }
 
         m_params.setRelevantActions(relevantActionSet);

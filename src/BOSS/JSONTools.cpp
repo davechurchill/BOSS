@@ -1,5 +1,6 @@
 #include "JSONTools.h"
 #include "GameState.h"
+#include "BuildOrderSearchGoal.h"
 
 using namespace BOSS;
 

@@ -51,7 +51,7 @@ GameState GetTerranStartState()
     state.addUnit(ActionType("SCV"));
     state.addUnit(ActionType("SCV"));
     state.doAction(ActionType("SCV"));
-    state.doAction(ActionType("SCV"));
+    state.doAction(ActionType("SCV")); 
     state.doAction(ActionType("SCV"));
     state.doAction(ActionType("SCV"));
     state.doAction(ActionType("SupplyDepot"));

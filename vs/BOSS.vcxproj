@@ -11,73 +11,74 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\ActionType.cpp" />
-    <ClCompile Include="..\src\ActionTypeData.cpp" />
-    <ClCompile Include="..\src\BOSS.cpp" />
-    <ClCompile Include="..\src\BOSSAssert.cpp" />
-    <ClCompile Include="..\src\BOSSException.cpp" />
-    <ClCompile Include="..\src\BuildOrderPlotter.cpp" />
-    <ClCompile Include="..\src\BuildOrderPlotData.cpp" />
-    <ClCompile Include="..\src\BuildOrderSearchGoal.cpp" />
-    <ClCompile Include="..\src\CombatSearch.cpp" />
-    <ClCompile Include="..\src\CombatSearchParameters.cpp" />
-    <ClCompile Include="..\src\CombatSearchResults.cpp" />
-    <ClCompile Include="..\src\CombatSearch_BestResponse.cpp" />
-    <ClCompile Include="..\src\CombatSearch_BestResponseData.cpp" />
-    <ClCompile Include="..\src\CombatSearch_Bucket.cpp" />
-    <ClCompile Include="..\src\CombatSearch_BucketData.cpp" />
-    <ClCompile Include="..\src\CombatSearch_Integral.cpp" />
-    <ClCompile Include="..\src\CombatSearch_IntegralData.cpp" />
-    <ClCompile Include="..\src\DFBB_BuildOrderSearchParameters.cpp" />
-    <ClCompile Include="..\src\DFBB_BuildOrderSearchResults.cpp" />
-    <ClCompile Include="..\src\DFBB_BuildOrderSmartSearch.cpp" />
-    <ClCompile Include="..\src\DFBB_BuildOrderStackSearch.cpp" />
-    <ClCompile Include="..\src\Eval.cpp" />
-    <ClCompile Include="..\src\ExternalInterface.cpp" />
-    <ClCompile Include="..\src\BuildOrder.cpp" />
-    <ClCompile Include="..\src\Common.cpp" />
-    <ClCompile Include="..\src\FileTools.cpp" />
-    <ClCompile Include="..\src\GameState.cpp" />
-    <ClCompile Include="..\src\JSONTools.cpp" />
-    <ClCompile Include="..\src\ActionSet.cpp" />
-    <ClCompile Include="..\src\NaiveBuildOrderSearch.cpp" />
-    <ClCompile Include="..\src\Tools.cpp" />
-    <ClCompile Include="..\src\Unit.cpp" />
+    <ClCompile Include="..\src\BOSS\ActionSet.cpp" />
+    <ClCompile Include="..\src\BOSS\ActionType.cpp" />
+    <ClCompile Include="..\src\BOSS\ActionTypeData.cpp" />
+    <ClCompile Include="..\src\BOSS\BOSS.cpp" />
+    <ClCompile Include="..\src\BOSS\BOSSAssert.cpp" />
+    <ClCompile Include="..\src\BOSS\BOSSConfig.cpp" />
+    <ClCompile Include="..\src\BOSS\BOSSException.cpp" />
+    <ClCompile Include="..\src\BOSS\BuildOrder.cpp" />
+    <ClCompile Include="..\src\BOSS\BuildOrderPlotData.cpp" />
+    <ClCompile Include="..\src\BOSS\BuildOrderPlotter.cpp" />
+    <ClCompile Include="..\src\BOSS\Common.cpp" />
+    <ClCompile Include="..\src\BOSS\Eval.cpp" />
+    <ClCompile Include="..\src\BOSS\FileTools.cpp" />
+    <ClCompile Include="..\src\BOSS\GameState.cpp" />
+    <ClCompile Include="..\src\BOSS\JSONTools.cpp" />
+    <ClCompile Include="..\src\BOSS\Tools.cpp" />
+    <ClCompile Include="..\src\BOSS\Unit.cpp" />
+    <ClCompile Include="..\src\search\BuildOrderSearchGoal.cpp" />
+    <ClCompile Include="..\src\search\CombatSearch.cpp" />
+    <ClCompile Include="..\src\search\CombatSearchParameters.cpp" />
+    <ClCompile Include="..\src\search\CombatSearchResults.cpp" />
+    <ClCompile Include="..\src\search\CombatSearch_BestResponse.cpp" />
+    <ClCompile Include="..\src\search\CombatSearch_BestResponseData.cpp" />
+    <ClCompile Include="..\src\search\CombatSearch_Bucket.cpp" />
+    <ClCompile Include="..\src\search\CombatSearch_BucketData.cpp" />
+    <ClCompile Include="..\src\search\CombatSearch_Integral.cpp" />
+    <ClCompile Include="..\src\search\CombatSearch_IntegralData.cpp" />
+    <ClCompile Include="..\src\search\DFBB_BuildOrderSearchParameters.cpp" />
+    <ClCompile Include="..\src\search\DFBB_BuildOrderSearchResults.cpp" />
+    <ClCompile Include="..\src\search\DFBB_BuildOrderSmartSearch.cpp" />
+    <ClCompile Include="..\src\search\DFBB_BuildOrderStackSearch.cpp" />
+    <ClCompile Include="..\src\search\NaiveBuildOrderSearch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\ActionType.h" />
-    <ClInclude Include="..\src\ActionTypeData.h" />
-    <ClInclude Include="..\src\BOSS.h" />
-    <ClInclude Include="..\src\BOSSAssert.h" />
-    <ClInclude Include="..\src\BOSSException.h" />
-    <ClInclude Include="..\src\BuildOrderPlotter.h" />
-    <ClInclude Include="..\src\BuildOrder.h" />
-    <ClInclude Include="..\src\BuildOrderPlotData.h" />
-    <ClInclude Include="..\src\BuildOrderSearchGoal.h" />
-    <ClInclude Include="..\src\CombatSearch.h" />
-    <ClInclude Include="..\src\CombatSearchParameters.h" />
-    <ClInclude Include="..\src\CombatSearchResults.h" />
-    <ClInclude Include="..\src\CombatSearch_BestResponse.h" />
-    <ClInclude Include="..\src\CombatSearch_BestResponseData.h" />
-    <ClInclude Include="..\src\CombatSearch_Bucket.h" />
-    <ClInclude Include="..\src\CombatSearch_BucketData.h" />
-    <ClInclude Include="..\src\CombatSearch_Integral.h" />
-    <ClInclude Include="..\src\CombatSearch_IntegralData.h" />
-    <ClInclude Include="..\src\Common.h" />
-    <ClInclude Include="..\src\DFBB_BuildOrderSearchParameters.h" />
-    <ClInclude Include="..\src\DFBB_BuildOrderSearchResults.h" />
-    <ClInclude Include="..\src\DFBB_BuildOrderSmartSearch.h" />
-    <ClInclude Include="..\src\DFBB_BuildOrderStackSearch.h" />
-    <ClInclude Include="..\src\Eval.h" />
-    <ClInclude Include="..\src\FileTools.h" />
-    <ClInclude Include="..\src\GameState.h" />
-    <ClInclude Include="..\src\JSONTools.h" />
+    <ClInclude Include="..\src\BOSS\ActionSet.h" />
+    <ClInclude Include="..\src\BOSS\ActionType.h" />
+    <ClInclude Include="..\src\BOSS\ActionTypeData.h" />
+    <ClInclude Include="..\src\BOSS\BOSS.h" />
+    <ClInclude Include="..\src\BOSS\BOSSAssert.h" />
+    <ClInclude Include="..\src\BOSS\BOSSConfig.h" />
+    <ClInclude Include="..\src\BOSS\BOSSException.h" />
+    <ClInclude Include="..\src\BOSS\BuildOrder.h" />
+    <ClInclude Include="..\src\BOSS\BuildOrderPlotData.h" />
+    <ClInclude Include="..\src\BOSS\BuildOrderPlotter.h" />
+    <ClInclude Include="..\src\BOSS\Common.h" />
+    <ClInclude Include="..\src\BOSS\Eval.h" />
+    <ClInclude Include="..\src\BOSS\FileTools.h" />
+    <ClInclude Include="..\src\BOSS\GameState.h" />
+    <ClInclude Include="..\src\BOSS\JSONTools.h" />
+    <ClInclude Include="..\src\BOSS\Timer.hpp" />
+    <ClInclude Include="..\src\BOSS\Tools.h" />
+    <ClInclude Include="..\src\BOSS\Unit.h" />
     <ClInclude Include="..\src\json\json.hpp" />
-    <ClInclude Include="..\src\ActionSet.h" />
-    <ClInclude Include="..\src\NaiveBuildOrderSearch.h" />
-    <ClInclude Include="..\src\Timer.hpp" />
-    <ClInclude Include="..\src\Tools.h" />
-    <ClInclude Include="..\src\Unit.h" />
+    <ClInclude Include="..\src\search\BuildOrderSearchGoal.h" />
+    <ClInclude Include="..\src\search\CombatSearch.h" />
+    <ClInclude Include="..\src\search\CombatSearchParameters.h" />
+    <ClInclude Include="..\src\search\CombatSearchResults.h" />
+    <ClInclude Include="..\src\search\CombatSearch_BestResponse.h" />
+    <ClInclude Include="..\src\search\CombatSearch_BestResponseData.h" />
+    <ClInclude Include="..\src\search\CombatSearch_Bucket.h" />
+    <ClInclude Include="..\src\search\CombatSearch_BucketData.h" />
+    <ClInclude Include="..\src\search\CombatSearch_Integral.h" />
+    <ClInclude Include="..\src\search\CombatSearch_IntegralData.h" />
+    <ClInclude Include="..\src\search\DFBB_BuildOrderSearchParameters.h" />
+    <ClInclude Include="..\src\search\DFBB_BuildOrderSearchResults.h" />
+    <ClInclude Include="..\src\search\DFBB_BuildOrderSmartSearch.h" />
+    <ClInclude Include="..\src\search\DFBB_BuildOrderStackSearch.h" />
+    <ClInclude Include="..\src\search\NaiveBuildOrderSearch.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9F8709E3-AC4F-45F2-8105-4A99D8E2A127}</ProjectGuid>
@@ -130,7 +131,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../src/search;../src/BOSS/;../src/%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
@@ -151,7 +152,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../src/search;../src/BOSS/;../src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>

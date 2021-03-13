@@ -1,20 +1,43 @@
-SHELL=C:/Windows/System32/cmd.exe
-CC=C:\Libraries\emscripten\emscripten\1.37.1\em++.bat
-CFLAGS=-O3 -Wno-tautological-constant-out-of-range-compare -std=c++11
-LDFLAGS=-O3 --llvm-lto 1 -s DISABLE_EXCEPTION_CATCHING=0 
-INCLUDES=-Isource/json -Isrc -Isource/CImg
-SOURCES=$(wildcard src/*.cpp) 
-OBJECTS=$(SOURCES:.cpp=.o)
+CC=g++
+EMCC=emcc
 
-all:emscripten/BOSS.js
+CFLAGS=-O3 -std=c++17 -flto -Wformat=0
+LDFLAGS=-O3 -flto -pthread
 
-JSFLAGS=--memory-init-file 0 -s EXPORTED_FUNCTIONS="['_BOSS_JS_Init', '_BOSS_JS_GetBuildOrderPlot']" --preload-file bin/
+LDFLAGS_SFML=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-emscripten/BOSS.js:$(OBJECTS) Makefile
-	$(CC) $(OBJECTS) -o $@ $(LDFLAGS) $(JSFLAGS)
+INCLUDES=-Isrc -Isrc/search -Isrc/test -Isrc/sfml
+
+SRC_BOSS=$(wildcard src/BOSS/*.cpp) 
+OBJ_BOSS=$(SRC_BOSS:.cpp=.o)
+
+SRC_EXPERIMENTS=$(wildcard src/experiments/*.cpp) 
+OBJ_EXPERIMENTS=$(SRC_GUI:.cpp=.o)
+
+SRC_SFML=$(wildcard src/sfml/*.cpp) 
+OBJ_SFML=$(SRC_GUI:.cpp=.o)
+
+SRC_TEST=$(wildcard src/test/*.cpp src/test/catch2/*.cpp) 
+OBJ_TEST=$(SRC_AI:.cpp=.o)
+
+SRC_EMSCRIPTEN=$(wildcard src/emscripten/*.cpp) 
+OBJ_EMSCRIPTEN=$(SRC_AI:.cpp=.o)
+
+
+all:bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test
+
+bin/BOSS_Experiments:$(OBJ_ENGINE) $(OBJ_EXPERIMENTS) Makefile
+	$(CC) $(OBJ_ENGINE) $(OBJ_EXPERIMENTS) -o $@  $(LDFLAGS)
+
+bin/BOSS_SFML:$(OBJ_ENGINE) $(OBJ_SFML) Makefile
+	$(CC) $(OBJ_ENGINE) $(OBJ_SFML) -o $@  $(LDFLAGS) $(LDFLAGS_SFML)
+
+bin/BOSS_Test:$(OBJ_ENGINE) $(OBJ_EXPERIMENTS) Makefile
+	$(CC) $(OBJ_ENGINE) $(OBJ_TEST) -o $@  $(LDFLAGS)
 
 .cpp.o:
-	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
+	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ 
 
 clean:
-	rm $(OBJECTS)
+	rm -f bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test src/BOSS/*.o src/experiments/*.o src/test/*.o src/sfml/*.o src/emscripten/*.o 
+
