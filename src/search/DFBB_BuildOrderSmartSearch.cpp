@@ -205,7 +205,7 @@ void DFBB_BuildOrderSmartSearch::recurseOverStrictDependencies(const ActionType 
             continue;
         }
 
-        m_goal.setGoalMax(actionType, std::max(1u, m_goal.getGoalMax(actionType)));
+        m_goal.setGoalMax(actionType, std::max((size_t)1, m_goal.getGoalMax(actionType)));
     }
 }
 
