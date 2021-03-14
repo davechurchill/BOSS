@@ -15,7 +15,7 @@ const char * BOSS_JS_Init(char * text)
         BOSS::Init("bin/config/BWData.json");
 
         // Read in the config parameters that will be used for experiments
-        BOSS::BOSSConfig::Instance().ParseConfig("bin/confog/BOSS_Config.txt");
+        //BOSS::BOSSConfig::Instance().ParseConfig("bin/confog/BOSS_Config.txt");
     }
     catch (std::exception e)
     {
