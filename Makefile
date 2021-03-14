@@ -48,5 +48,5 @@ emscripten/BOSS.js:$(OBJ_EMSCRIPTEN) Makefile
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ 
 
 clean:
-	rm -f bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test emscripten/BOSS.js src/BOSS/*.o src/experiments/*.o src/test/*.o src/sfml/*.o src/emscripten/*.o 
+	rm -f bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test emscripten/BOSS.js src/BOSS/*.o src/search/*.o src/experiments/*.o src/test/*.o src/sfml/*.o src/emscripten/*.o 
 
