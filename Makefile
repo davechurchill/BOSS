@@ -3,8 +3,8 @@ EMCC=emcc
 
 CFLAGS=-O3 -std=c++17 -flto -Wformat=0
 LDFLAGS=-O3 -flto -pthread
-
 LDFLAGS_SFML=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+JSFLAGS=--memory-init-file 0 -s EXPORTED_FUNCTIONS="['_BOSS_JS_Init', '_BOSS_JS_GetBuildOrderPlot']" --preload-file bin/
 
 INCLUDES=-Isrc -Isrc/BOSS -Isrc/json -Isrc/search -Isrc/test -Isrc/sfml
 
@@ -35,9 +35,12 @@ bin/BOSS_SFML:$(OBJ_BOSS) $(OBJ_SFML) Makefile
 bin/BOSS_Test:$(OBJ_BOSS) $(OBJ_TEST) Makefile
 	$(CC) $(OBJ_BOSS) $(OBJ_TEST) -o $@  $(LDFLAGS)
 
+emscripten/BOSS.js:$(OBJ_BOSS) $(OBJ_EMSCRIPTEN) Makefile
+	$(EMCC) $(OBJ_BOSS) $(OBJ_EMSCRIPTEN) -o $@ $(LDFLAGS) $(JSFLAGS)
+
 .cpp.o:
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ 
 
 clean:
-	rm -f bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test src/BOSS/*.o src/experiments/*.o src/test/*.o src/sfml/*.o src/emscripten/*.o 
+	rm -f bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test emscripten/BOSS.js src/BOSS/*.o src/experiments/*.o src/test/*.o src/sfml/*.o src/emscripten/*.o 
 
