@@ -1,5 +1,8 @@
-CC=g++
-EMCC=emcc
+ifeq($(TARGET),js)
+  CC=emcc
+else
+  CC=g++
+endif
 
 CFLAGS=-O3 -std=c++17 -flto -Wformat=0
 LDFLAGS=-O3 -flto -pthread
@@ -23,8 +26,11 @@ OBJ_TEST=$(SRC_TEST:.cpp=.o)
 SRC_EMSCRIPTEN=$(wildcard src/BOSS/*.cpp src/search/*.cpp src/emscripten/*.cpp) 
 OBJ_EMSCRIPTEN=$(SRC_EMSCRIPTEN:.cpp=.o)
 
-
-all:bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test
+ifeq($(TARGET),js)
+  all:emscripten/BOSS.js
+else
+  all:bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test
+endif
 
 bin/BOSS_Experiments:$(OBJ_BOSS) $(OBJ_EXPERIMENTS) Makefile
 	$(CC) $(OBJ_BOSS) $(OBJ_EXPERIMENTS) -o $@  $(LDFLAGS)
@@ -36,7 +42,7 @@ bin/BOSS_Test:$(OBJ_BOSS) $(OBJ_TEST) Makefile
 	$(CC) $(OBJ_BOSS) $(OBJ_TEST) -o $@  $(LDFLAGS)
 
 emscripten/BOSS.js:$(OBJ_EMSCRIPTEN) Makefile
-	$(EMCC) $(OBJ_EMSCRIPTEN) -o $@ $(LDFLAGS) $(JSFLAGS)
+	$(CC) $(OBJ_EMSCRIPTEN) -o $@ $(LDFLAGS) $(JSFLAGS)
 
 .cpp.o:
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ 
