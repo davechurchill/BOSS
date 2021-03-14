@@ -20,7 +20,7 @@ OBJ_SFML=$(SRC_SFML:.cpp=.o)
 SRC_TEST=$(wildcard src/test/*.cpp src/test/catch2/*.cpp) 
 OBJ_TEST=$(SRC_TEST:.cpp=.o)
 
-SRC_EMSCRIPTEN=$(wildcard src/emscripten/*.cpp) 
+SRC_EMSCRIPTEN=$(wildcard src/BOSS/*.cpp src/search/*.cpp src/emscripten/*.cpp) 
 OBJ_EMSCRIPTEN=$(SRC_EMSCRIPTEN:.cpp=.o)
 
 
@@ -35,8 +35,8 @@ bin/BOSS_SFML:$(OBJ_BOSS) $(OBJ_SFML) Makefile
 bin/BOSS_Test:$(OBJ_BOSS) $(OBJ_TEST) Makefile
 	$(CC) $(OBJ_BOSS) $(OBJ_TEST) -o $@  $(LDFLAGS)
 
-emscripten/BOSS.js:$(OBJ_BOSS) $(OBJ_EMSCRIPTEN) Makefile
-	$(EMCC) $(OBJ_BOSS) $(OBJ_EMSCRIPTEN) -o $@ $(LDFLAGS) $(JSFLAGS)
+emscripten/BOSS.js:$(OBJ_EMSCRIPTEN) Makefile
+	$(EMCC) $(OBJ_EMSCRIPTEN) -o $@ $(LDFLAGS) $(JSFLAGS)
 
 .cpp.o:
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ 
