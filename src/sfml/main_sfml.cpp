@@ -98,7 +98,7 @@ GameState GetZergStartState()
 
 void test()
 {
-    font.loadFromFile("fonts/cour.ttf");
+    font.loadFromFile("fonts/tech.ttf");
     text.setFillColor(sf::Color(255, 255, 255));
     text.setFont(font);
     text.setCharacterSize(16);

@@ -87,6 +87,7 @@
     <ClCompile Include="..\src\BOSS\BuildOrder.cpp" />
     <ClCompile Include="..\src\BOSS\GameState.cpp" />
     <ClCompile Include="..\src\BOSS\Unit.cpp" />
+    <ClCompile Include="..\src\emscripten\ExternalInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\json\json.hpp">

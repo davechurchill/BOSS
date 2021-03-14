@@ -28,6 +28,7 @@
     <ClCompile Include="..\src\BOSS\JSONTools.cpp" />
     <ClCompile Include="..\src\BOSS\Tools.cpp" />
     <ClCompile Include="..\src\BOSS\Unit.cpp" />
+    <ClCompile Include="..\src\emscripten\ExternalInterface.cpp" />
     <ClCompile Include="..\src\search\BuildOrderSearchGoal.cpp" />
     <ClCompile Include="..\src\search\CombatSearch.cpp" />
     <ClCompile Include="..\src\search\CombatSearchParameters.cpp" />
