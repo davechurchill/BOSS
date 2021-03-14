@@ -1,7 +1,7 @@
-ifeq($(TARGET),js)
-  CC=emcc
+ifeq ($(TARGET),js)
+  CC = emcc
 else
-  CC=g++
+  CC = g++
 endif
 
 CFLAGS=-O3 -std=c++17 -flto -Wformat=0
