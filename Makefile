@@ -1,5 +1,6 @@
 ifeq ($(TARGET),js)
   CC = emcc
+else
   CC = g++
 endif
 
