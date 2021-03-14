@@ -12,10 +12,10 @@ const char * BOSS_JS_Init(char * text)
     try
     {
         std::cout << "Initializing BOSS\n";
-        BOSS::Init("bin/BWData.json");
+        BOSS::Init("bin/config/BWData.json");
 
         // Read in the config parameters that will be used for experiments
-        BOSS::BOSSConfig::Instance().ParseConfig("bin/BOSS_Config.txt");
+        BOSS::BOSSConfig::Instance().ParseConfig("bin/confog/BOSS_Config.txt");
     }
     catch (std::exception e)
     {
