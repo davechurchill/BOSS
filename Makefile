@@ -26,10 +26,10 @@ OBJ_TEST=$(SRC_TEST:.cpp=.o)
 SRC_EMSCRIPTEN=$(wildcard src/BOSS/*.cpp src/search/*.cpp src/emscripten/*.cpp) 
 OBJ_EMSCRIPTEN=$(SRC_EMSCRIPTEN:.cpp=.o)
 
-ifeq($(TARGET),js)
-  all:emscripten/BOSS.js
+ifeq ($(TARGET),js)
+  all: emscripten/BOSS.js
 else
-  all:bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test
+  all: bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test
 endif
 
 bin/BOSS_Experiments:$(OBJ_BOSS) $(OBJ_EXPERIMENTS) Makefile
