@@ -1,6 +1,6 @@
 ifeq ($(TARGET),js)
-  CC = emcc -s 
-  CFLAGS = -O3 -std=c++17 -flto -Wformat=0 WASM=0
+  CC = emcc 
+  CFLAGS = -O3 -std=c++17 -flto -Wformat=0 -s WASM=0
 else
   CC = g++
   CFLAGS = -O3 -std=c++17 -flto -Wformat=0
