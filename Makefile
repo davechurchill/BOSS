@@ -1,12 +1,12 @@
 ifeq ($(TARGET),js)
-  CC = emcc -s WASM=0 
+  CC = emcc
   CC = g++
 endif
 
 CFLAGS = -O3 -std=c++17 -flto -Wformat=0
 LDFLAGS=-O3 -flto
 LDFLAGS_SFML=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
-JSFLAGS= --memory-init-file 0 -s EXPORTED_FUNCTIONS="['_BOSS_JS_Init', '_BOSS_JS_GetBuildOrderPlot']" -s EXTRA_EXPORTED_RUNTIME_METHODS=["cwrap"] --preload-file bin/
+JSFLAGS=-s WASM=0 --memory-init-file 0 -s EXPORTED_FUNCTIONS="['_BOSS_JS_Init', '_BOSS_JS_GetBuildOrderPlot']" -s EXTRA_EXPORTED_RUNTIME_METHODS=["cwrap"] --preload-file bin/
 
 INCLUDES=-Isrc -Isrc/BOSS -Isrc/json -Isrc/search -Isrc/test -Isrc/sfml
 
