@@ -1,34 +1,189 @@
+<html>
+<head>
 
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="BOSS.js"></script>
-Warning: Experimental build, currently supports protoss units and terran non-addons<br>
-Please wait a few seconds before clicking the button, dealing with async js loading issues<br>
-Malformed config JSON will print an error in the JS console<br>
-<br>
-<textarea id='config' rows=17 cols=160 style='white-space:nowrap;'>
-{ "BuildOrders" : [ 
-    { "Name" : "Dragoon Rush", 
-      "State" : { "minerals" : 50, "gas" : 0, "units" : [ ["Probe", 4], ["Nexus", 1] ] },
-      "BuildOrder" : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "Probe", "CyberneticsCore", "Probe", "Pylon", "Probe", "Gateway", "Dragoon", "Gateway", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon"]
-    },
-    { "Name" : "Zealot Rush", 
-      "State" : { "minerals" : 50, "gas" : 0, "units" : [ ["Probe", 4], ["Nexus", 1] ] },
-      "BuildOrder" : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Gateway", "Probe", "Probe", "Zealot", "Pylon", "Zealot", "Zealot", "Probe", "Zealot", "Zealot", "Probe", "Pylon", "Zealot", "Gateway", "Probe", "Pylon", "Probe", "Zealot", "Probe", "Zealot", "Zealot", "Zealot", "Zealot", "Pylon", "Probe", "Zealot", "Zealot", "Zealot" ]
-    },
-    { "Name" : "Dark Templar Rush", 
-      "State" : { "minerals" : 50, "gas" : 0, "units" : [ ["Probe", 4], ["Nexus", 1] ] },
-      "BuildOrder" : [ "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "CyberneticsCore", "Probe", "Probe", "CitadelofAdun", "Probe", "Probe", "Probe", "TemplarArchives", "Gateway", "Pylon", "DarkTemplar", "DarkTemplar", "DarkTemplar", "DarkTemplar", "Probe", "Pylon", "Probe"]
-    }
-]}
-</textarea>
-<br><br><button id='funcButton'>Draw Build Order(s)</button><br><br>
 
-BOSS stdout console:
-<div id='console' style='width:800;height:200;border:1px solid #000;overflow-y:scroll;'></div>
+<style>
+select {
+  width: 150;
+  height: 350;
+  overflow-y: auto;
+} 
+input {
+  width: 50;
+}
+
+#UnitTypes {
+    height: 600;
+}
+
+#S1 { height: 150; }
+#S2 { height: 150; }
+#S3 { height: 150; }
+</style>
+</head>
+<body>
+
+<table>
+<tr>
+<td valign="top" rowspan=2>
+    <center>
+        Unit Types<br>
+        <SELECT id="UnitTypes" size="20" cols=80 multiple> 
+        </SELECT><br>
+        <button onclick="SetUnitTypes('Protoss')">P</button>
+        <button onclick="SetUnitTypes('Terran')">T</button>
+        <button onclick="SetUnitTypes('Zerg')">Z</button>
+    </center>
+</td>
+<td valign="middle">
+    <button onclick="CopySelected('UnitTypes', ['S1', 'S2', 'S3'])">> S*</button> <br>
+    <button onclick="CopySelected('UnitTypes', ['S1'])">> S1</button> <br>
+    <button onclick="CopySelected('UnitTypes', ['S2'])">> S2</button> <br>
+    <button onclick="CopySelected('UnitTypes', ['S3'])">> S3</button> <br>
+    
+</td>
+<td align="center">
+    
+        Start State 1<br><br>
+        M <input id="M1" type="number" min="0" max="10000" step="1" value="50" size="4">
+        G <input id="G1" type="number" min="0" max="10000" step="1" value="0" size="4"><br>
+        <select id="S1" size="6" multiple width=200>
+            <option>Nexus</option>
+            <option>Probe</option>
+            <option>Probe</option>
+            <option>Probe</option>
+            <option>Probe</option>
+        </select><br>
+        <button onclick="MoveSelected('S1', -1)">-</button>
+        <button onclick="MoveSelected('S1', 1)">+</button>
+        <button onclick="DeleteSelected('S1')">X</button>
+        <button onclick="DeleteAll('S1')">X*</button><br>
+        <button onclick="SelectAll('S1')">*</button>
+        <button onclick="CopySelected('S1', ['S2'])">> S2</button>
+        <button onclick="CopySelected('S1', ['S3'])">> S3</button><br><br>
+</td>
+<td align="center">
+    
+        Start State 2<br><br>
+        M <input id="M2" type="number" min="0" max="10000" step="1" value="50" size="4">
+        G <input id="G2" type="number" min="0" max="10000" step="1" value="0" size="4"><br>
+        <select id="S2" size="6" multiple width=200>
+            <option>CommandCenter</option>
+            <option>SCV</option>
+            <option>SCV</option>
+            <option>SCV</option>
+            <option>SCV</option>
+        </select><br>
+        <button onclick="MoveSelected('S2', -1)">-</button>
+        <button onclick="MoveSelected('S2', 1)">+</button>
+        <button onclick="DeleteSelected('S2')">X</button>
+        <button onclick="DeleteAll('S2')">X*</button><br>
+        <button onclick="SelectAll('S2')">*</button>
+        <button onclick="CopySelected('S2', ['S1'])">< S1</button>
+        <button onclick="CopySelected('S2', ['S3'])">> S3</button><br><br>
+    
+</td>
+<td align="center">
+    
+        Start State 3<br><br>
+        M <input id="M3" type="number" min="0" max="10000" step="1" value="50" size="4">
+        G <input id="G3" type="number" min="0" max="10000" step="1" value="0" size="4"><br>
+        <select id="S3" size="6" multiple width=200>
+            <option>Hatchery</option>
+            <option>Overlord</option>
+            <option>Drone</option>
+            <option>Drone</option>
+            <option>Drone</option>
+            <option>Drone</option>
+        </select><br>
+        <button onclick="MoveSelected('S3', -1)">-</button>
+        <button onclick="MoveSelected('S3', 1)">+</button>
+        <button onclick="DeleteSelected('S3')">X</button>
+        <button onclick="DeleteAll('S3')">X*</button><br>
+        <button onclick="SelectAll('S3')">*</button>
+        <button onclick="CopySelected('S3', ['S1'])">< S1</button>
+        <button onclick="CopySelected('S3', ['S2'])">< S2</button><br><br>
+</td>
+</tr>
+<tr>
+<td valign="middle">
+    <button onclick="CopySelected('UnitTypes', ['BO1', 'BO2', 'BO3'])">> B*</button> <br>
+    <button onclick="CopySelected('UnitTypes', ['BO1'])">> B1</button> <br>
+    <button onclick="CopySelected('UnitTypes', ['BO2'])">> B2</button> <br>
+    <button onclick="CopySelected('UnitTypes', ['BO3'])">> B3</button> <br>
+</td>
+<td align="center">
+    Build Order 1<br>
+    <select id="BO1" size="12" multiple width=200></select><br>
+    <button onclick="MoveSelected('BO1', -1)">-</button>
+    <button onclick="MoveSelected('BO1', 1)">+</button>
+    <button onclick="DeleteSelected('BO1')">X</button>
+    <button onclick="DeleteAll('BO1')">X*</button><br>
+    <button onclick="SelectAll('BO1')">*</button>
+    <button onclick="CopySelected('BO1', ['BO2'])">> B2</button>
+    <button onclick="CopySelected('BO1', ['BO3'])">> B3</button>
+</td>
+<td align="center">
+    Build Order 2<br>
+    <select id="BO2" size="12" multiple></select><br>
+    <button onclick="MoveSelected('BO2', -1)">-</button>
+    <button onclick="MoveSelected('BO2', 1)">+</button>
+    <button onclick="DeleteSelected('BO2')">X</button>
+    <button onclick="DeleteAll('BO2')">X*</button><br>
+    <button onclick="SelectAll('BO2')">*</button>
+    <button onclick="CopySelected('BO2', ['BO1'])">< B1</button>
+    <button onclick="CopySelected('BO2', ['BO3'])">> B3</button>
+</td>
+<td align="center">
+
+    Build Order 3<br>
+    <select id="BO3" size="12" multiple></select><br>
+    <button onclick="MoveSelected('BO3', -1)">-</button>
+    <button onclick="MoveSelected('BO3', 1)">+</button>
+    <button onclick="DeleteSelected('BO3')">X</button>
+    <button onclick="DeleteAll('BO3')">X*</button><br>
+    <button onclick="SelectAll('BO3')">*</button>
+    <button onclick="CopySelected('BO3', ['BO1'])">< B1</button>
+    <button onclick="CopySelected('BO3', ['BO2'])">< B2</button>
+</td>
+</tr>
+</table>
+
+<br><br><button id='funcButton'>Draw Build Order(s)</button><br><br>
 <br>
+
 <div id='drawArea' style='position:relative;'></div>
 
+
+<!--BOSS stdout console:<div id='console' style='width:800;height:200;border:1px solid #000;overflow-y:scroll;'></div>-->
+<br>
 <script>
+
+var request = new XMLHttpRequest();
+request.open("GET", "BWData.json", false);
+request.send(null)
+var BWData = JSON.parse(request.responseText);
+
+let bo1 = ["Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "CyberneticsCore", "Probe", "Probe", "CitadelofAdun", "Probe", "Probe", "Probe", "TemplarArchives", "Gateway", "Pylon", "DarkTemplar", "DarkTemplar", "DarkTemplar", "DarkTemplar"];
+let bo2 = ["SCV", "SCV", "SCV", "SCV", "SCV", "SupplyDepot", "Refinery", "Barracks",  "SCV", "SCV", "SCV", "Factory", "SCV", "SCV", "SupplyDepot", "SCV", "Starport", "Starport", "SCV", "SCV", "SupplyDepot", "ScienceFacility","ControlTower", "SCV",  "SCV", "SupplyDepot", "ControlTower", "SCV","PhysicsLab", "SCV", "Battlecruiser", "Battlecruiser"]
+let bo3 = ["Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Overlord", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk"]
+SetInitialBuildOrder('BO1', bo1);
+SetInitialBuildOrder('BO2', bo2);
+SetInitialBuildOrder('BO3', bo3);
+
+AllTypes = {};
+for (prop in BWData["Types"]) {
+    let type = BWData["Types"][prop];
+    AllTypes[type["name"]] = type;
+}
+
+SetUnitTypes('Protoss');
+
+SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
+
+GetBOSSJSON();
 
 Module['print'] = function(text) { 
     $('#console').append(text + '<br>'); 
@@ -49,7 +204,7 @@ $( "#funcButton" ).click(function() {
         bossInit = true;
     }
     $('#drawArea').empty();
-    var returnString = BOSS_GetPlot($("#config").val());
+    var returnString = BOSS_GetPlot(GetBOSSJSON());
     eval(returnString);
     draw(plots);
 });
@@ -62,6 +217,171 @@ var xScale = 0.15;
 var yScale = 1;
 var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
+function GetBOSSJSON() {
+    
+    let str = "{ \"BuildOrders\" : [" 
+    let builds = 3;
+
+    let obj = {
+        BuildOrders : []
+    };
+
+    for (let b=1; b<=builds; b++) {
+        let startList = document.getElementById('S'  + b);
+        let boList    = document.getElementById('BO' + b);
+        // if this build order or starting state is empty, skip it
+        if (startList.options.length == 0) { continue; }
+        if (boList.options.length == 0) { continue; }
+
+        let boObj = {
+            Name : "Build Order " + b,
+            State : {
+                minerals : document.getElementById('M' + b).value,
+                gas : document.getElementById('G' + b).value,
+                units : []
+            },
+            BuildOrder : []
+        }
+
+        // calculate the unit count types from the starting units
+        for (let s=0; s < startList.options.length; s++) {
+            let type = startList.options[s].text;
+            let found = false;
+            for (let t=0; t < boObj.State.units.length; t++) {
+                if (boObj.State.units[t][0] == type) {
+                    boObj.State.units[t][1] += 1;
+                    found = true;
+                }
+            }
+            if (!found) { boObj.State.units.push([type, 1]); }
+        }
+
+        for (let s=0; s < boList.options.length; s++) {
+            let type = boList.options[s].text;
+            boObj.BuildOrder.push(type);
+        }
+
+        obj.BuildOrders.push(boObj);
+    }
+
+    console.log(obj);
+    return JSON.stringify(obj);
+}
+
+function SetInitialBuildOrder(listID, bo) {
+    let listb = document.getElementById(listID);
+    for (let i=0; i<bo.length; i++) {
+        let newOption = document.createElement("option");
+        newOption.text = bo[i];
+        listb.options.add(newOption, null);
+    }
+}
+
+function SetUnitTypes(race) {
+    DeleteAll('UnitTypes');
+    let listb = document.getElementById("UnitTypes");
+    for (prop in BWData["Types"]) {
+        let type = BWData["Types"][prop];
+        if (type["race"] == race && type["name"] != "Larva") {
+            let newOption = document.createElement("option");
+            newOption.text = type["name"];
+            listb.options.add(newOption, null);
+        }
+    }
+    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
+}
+
+function SetColors(listIDs) {
+    for (let l=0; l<listIDs.length; l++)
+    {
+        let listb = document.getElementById(listIDs[l]); 
+        for (let i=0; i<listb.options.length; i++)
+        {
+            let type = listb.options[i].text;
+            if (AllTypes[type]["isWorker"]) {
+                listb.options[i].style.background = '#d9ffff';
+            } else if (AllTypes[type]["isSupplyProvider"]) {
+                listb.options[i].style.background = '#fff9d9';
+            } else if (AllTypes[type]["isRefinery"]) {
+                listb.options[i].style.background = '#d9ffd9';
+            } else if (AllTypes[type]["isBuilding"]) {
+                listb.options[i].style.background = '#f1dfdf';
+            } else {
+                listb.options[i].style.background = '#bebebe';
+            }
+        }
+    }
+}
+
+function SelectAll(listID) {  
+    let listb = document.getElementById(listID); 
+    for (let i=0; i<listb.options.length; i++) {
+        listb.options[i].selected = true;
+    }
+    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
+}  
+
+function DeleteAll(listID) {  
+    let listb = document.getElementById(listID); 
+    let size = listb.size; 
+    while (listb.options.length > 0)
+    {
+        listb.options.remove(0);
+    }
+    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
+}  
+
+function DeleteSelected(listID) {  
+    let listb = document.getElementById(listID);  
+    let len = listb.options.length;  
+    for (let i = listb.options.length-1 ; i >= 0 ; i--) {  
+        if (listb.options[i].selected == true) {  
+            listb.options.remove(i);  
+        }  
+    }
+    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
+}  
+
+function CopySelected(sourceID, destIDs) {
+    for (let d=0; d<destIDs.length; d++) {
+        var src = document.getElementById(sourceID);
+        var dest = document.getElementById(destIDs[d]);
+        for(let i=0; i < src.options.length; i++) {
+            if(src.options[i].selected == true) {
+                let option = src.options[i];
+                let newOption = document.createElement("option");
+                newOption.value = option.value;
+                newOption.text = option.text;
+                //newOption.selected = true;
+                try { dest.add(newOption, null); }
+                catch(error) { dest.add(newOption); }
+            }
+        }
+    }
+    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
+}
+
+function MoveSelected(listID, increment) {
+
+    let listbox = document.getElementById(listID);
+    let selIndex = listbox.selectedIndex;
+
+    if(selIndex == -1) { return; }
+
+    if((selIndex + increment) < 0 ||
+        (selIndex + increment) > (listbox.options.length-1)) {
+        return;
+    }
+
+    var selValue = listbox.options[selIndex].value;
+    var selText = listbox.options[selIndex].text;
+    listbox.options[selIndex].value = listbox.options[selIndex + increment].value
+    listbox.options[selIndex].text = listbox.options[selIndex + increment].text
+    listbox.options[selIndex + increment].value = selValue;
+    listbox.options[selIndex + increment].text = selText;
+    listbox.selectedIndex = selIndex + increment;
+    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
+}
 
 var getRectDiv = function (text, color, x, y, width, height) {
     
@@ -137,3 +457,4 @@ var draw = function(plots) {
 </script>
 
 </body>
+</html>
