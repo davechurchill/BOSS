@@ -5,6 +5,11 @@
 <script src="BOSS.js"></script>
 
 <style>
+
+body {
+    background-color: #ffffff;
+}
+
 select {
   width: 150;
   height: 350;
@@ -15,7 +20,15 @@ input {
 }
 
 #UnitTypes {
-    height: 600;
+    height: 625;
+}
+
+.centered {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 #S1 { height: 150; }
@@ -151,7 +164,7 @@ input {
 </tr>
 </table>
 
-<br><br><button id='funcButton'>Draw Build Order(s)</button><br><br>
+<br><br><button onclick="DrawBuildOrders()">Draw Build Order(s)</button><br><br>
 <br>
 
 <div id='drawArea' style='position:relative;'></div>
@@ -198,7 +211,11 @@ var bossInit = false;
 BOSS_Init = Module.cwrap('BOSS_JS_Init', 'string', ['string']);
 BOSS_GetPlot = Module.cwrap('BOSS_JS_GetBuildOrderPlot', 'string', ['string']);
 
-$( "#funcButton" ).click(function() {
+var xScale = 0.15;
+var yScale = 1;
+var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+function DrawBuildOrders() {
     if (!bossInit) {
         var initReturnString = BOSS_Init("Hello BOSS!");
         bossInit = true;
@@ -207,15 +224,7 @@ $( "#funcButton" ).click(function() {
     var returnString = BOSS_GetPlot(GetBOSSJSON());
     eval(returnString);
     draw(plots);
-});
-
-$( "#drawButton" ).click(function() {
-    draw();
-});
-
-var xScale = 0.15;
-var yScale = 1;
-var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+}
 
 function GetBOSSJSON() {
     
@@ -236,8 +245,8 @@ function GetBOSSJSON() {
         let boObj = {
             Name : "Build Order " + b,
             State : {
-                minerals : document.getElementById('M' + b).value,
-                gas : document.getElementById('G' + b).value,
+                minerals : parseInt(document.getElementById('M' + b).value),
+                gas : parseInt(document.getElementById('G' + b).value),
                 units : []
             },
             BuildOrder : []
@@ -264,7 +273,6 @@ function GetBOSSJSON() {
         obj.BuildOrders.push(boObj);
     }
 
-    console.log(obj);
     return JSON.stringify(obj);
 }
 
@@ -349,6 +357,15 @@ function CopySelected(sourceID, destIDs) {
         for(let i=0; i < src.options.length; i++) {
             if(src.options[i].selected == true) {
                 let option = src.options[i];
+                // check to see if the destination has other race units
+                let race = AllTypes[option.text].race;
+                for (let j=0; j<dest.options.length; j++) {
+                    if (AllTypes[dest.options[j].text].race != race) {
+                        alert('Destination cannot contain unit(s) of another race\n\nTrying to place ' + race + " unit(s) with " + AllTypes[dest.options[j].text].race + " unit(s)");
+                        good = false;
+                        return;
+                    }
+                }
                 let newOption = document.createElement("option");
                 newOption.value = option.value;
                 newOption.text = option.text;
@@ -391,7 +408,8 @@ var getRectDiv = function (text, color, x, y, width, height) {
     div += 'box-sizing: border-box;';
     div += 'font-family:"arial";';
     div += 'font-size:12px;';
-    div += 'text-align:center;';
+    //div += 'text-align:center;';
+    //div += 'vertical-align: middle;'
     div += 'position:absolute;';
     div += 'top:' + y + ';';
     div += 'left:' + x + ';'
@@ -400,7 +418,7 @@ var getRectDiv = function (text, color, x, y, width, height) {
     div += 'border:1px solid #000;';
     div += 'background-color:' + color + ';';
     div += '\'>';
-    div += text;
+    div += "<div class='centered'>" + text + "</div>";
     div += '</div>';
     return div;
 }
@@ -411,8 +429,8 @@ var drawDetails = function(x, y, item) {
 }
 
 var draw = function(plots) {
-    console.log(plots);
-    var boxHeight = 30;
+    
+    var boxHeight = 25;
     var boxHeightBuffer = 4;
     var maxLayer = 0;
     var currentY = 0;
@@ -435,15 +453,14 @@ var draw = function(plots) {
         boDiv += 'border:1px solid #ccc;';
         boDiv += 'border-style:dashed;';
         boDiv += 'top:' + currentY + '\'>';
-        
-        currentY += (maxY + 50);
+        console.log(bo)
+        currentY += (maxY + 30);
         for (var i=0; i < bo.length; ++i) {
             
             var x = bo[i][1] * xScale;
             var y = bo[i][5] * (boxHeight + boxHeightBuffer) * yScale;
             var w = (bo[i][2] - bo[i][1]) * xScale;
             var h = boxHeight * yScale;
-            
             boDiv += getRectDiv(bo[i][0], bo[i][6], x, y, w, h);
         }
         
