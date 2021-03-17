@@ -208,30 +208,12 @@ std::string BuildOrderPlotter::getPlotJSON(const std::vector<BuildOrderPlotData>
             ss << plots[p].m_gas[i*2 + 1].second << ", ";
             ss << plots[p].m_layers[i] << ", ";
             
-            if (buildOrder[i].isWorker())
-            {
-                ss << "\"rgb(217, 255, 255)\"";
-            }
-            else if (buildOrder[i].isSupplyProvider())
-            {
-                ss << "\"rgb(255, 249, 217)\"";
-            }
-            else if (buildOrder[i].isRefinery())
-            {
-                ss << "\"rgb(217, 255, 217)\"";
-            }
-            else if (buildOrder[i].isBuilding())
-            {
-                ss << "\"rgb(241, 223, 223)\"";
-            }
-            else if (buildOrder[i].isUpgrade())
-            {
-                ss << "\"rgb(255, 217, 255)\"";
-            }
-            else
-            {
-                ss << "\"rgb(190, 190, 190)\"";
-            }
+                 if (buildOrder[i].isWorker())          { ss << "\"rgb(217, 255, 255)\""; }
+            else if (buildOrder[i].isSupplyProvider())  { ss << "\"rgb(255, 249, 217)\""; }
+            else if (buildOrder[i].isRefinery())        { ss << "\"rgb(217, 255, 217)\""; }
+            else if (buildOrder[i].isBuilding())        { ss << "\"rgb(241, 223, 223)\""; }
+            else if (buildOrder[i].isUpgrade())         { ss << "\"rgb(255, 217, 255)\""; }
+            else                                        { ss << "\"rgb(190, 190, 190)\""; }
                         
             ss << "]";
             if (i < buildOrder.size() - 1) { ss << ", "; }
