@@ -17,6 +17,6 @@ bin/gnuplot
 bin/results
 
 *.gpl
-*.js
 emscripten/BOSS.data
+emscripten/BOSS.js
 *.o

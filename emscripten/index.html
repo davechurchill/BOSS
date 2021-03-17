@@ -2,6 +2,8 @@
 <head>
 
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="BuildOrderPlotter.js"></script>
+<script src="BuildOrderSelector.js"></script>
 <script src="BOSS.js"></script>
 
 <style>
@@ -21,6 +23,14 @@ input {
 
 #UnitTypes {
     height: 625;
+}
+
+.buildOrderItem {
+    box-sizing: border-box;
+    font-family: "arial";
+    font-size:12px;
+    position:absolute;
+    border:1px solid #000000;
 }
 
 .centered {
@@ -170,15 +180,23 @@ input {
 <div id='drawArea' style='position:relative;'></div>
 
 
+
 <!--BOSS stdout console:<div id='console' style='width:800;height:200;border:1px solid #000;overflow-y:scroll;'></div>-->
 <br>
 <script>
 
-var request = new XMLHttpRequest();
+// Get the BW Data from JSON so we can display it on screen
+let request = new XMLHttpRequest();
 request.open("GET", "BWData.json", false);
 request.send(null)
-var BWData = JSON.parse(request.responseText);
+let BWData = JSON.parse(request.responseText);
+AllTypes = {};
+for (prop in BWData["Types"]) {
+    let type = BWData["Types"][prop];
+    AllTypes[type["name"]] = type;
+}
 
+// Load some example build orders to display
 let bo1 = ["Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Gateway", "Probe", "Assimilator", "Probe", "CyberneticsCore", "Probe", "Probe", "CitadelofAdun", "Probe", "Probe", "Probe", "TemplarArchives", "Gateway", "Pylon", "DarkTemplar", "DarkTemplar", "DarkTemplar", "DarkTemplar"];
 let bo2 = ["SCV", "SCV", "SCV", "SCV", "SCV", "SupplyDepot", "Refinery", "Barracks",  "SCV", "SCV", "SCV", "Factory", "SCV", "SCV", "SupplyDepot", "SCV", "Starport", "Starport", "SCV", "SCV", "SupplyDepot", "ScienceFacility","ControlTower", "SCV",  "SCV", "SupplyDepot", "ControlTower", "SCV","PhysicsLab", "SCV", "Battlecruiser", "Battlecruiser"]
 let bo3 = ["Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Overlord", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk"]
@@ -186,288 +204,29 @@ SetInitialBuildOrder('BO1', bo1);
 SetInitialBuildOrder('BO2', bo2);
 SetInitialBuildOrder('BO3', bo3);
 
-AllTypes = {};
-for (prop in BWData["Types"]) {
-    let type = BWData["Types"][prop];
-    AllTypes[type["name"]] = type;
-}
-
+// Display Protoss Units by default
 SetUnitTypes('Protoss');
-
 SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
 
-GetBOSSJSON();
-
-Module['print'] = function(text) { 
-    $('#console').append(text + '<br>'); 
-    $("#console").scrollTop($("#console")[0].scrollHeight);
-    if (text === 'complete') {
-        alert('Boss Initialization Completed');
-    }
-};
-
-var bossInit = false;
-
+// Wrap the emscripten functions so we can call them
+let bossInit = false;
 BOSS_Init = Module.cwrap('BOSS_JS_Init', 'string', ['string']);
 BOSS_GetPlot = Module.cwrap('BOSS_JS_GetBuildOrderPlot', 'string', ['string']);
-
-var xScale = 0.15;
-var yScale = 1;
-var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+let plotData = [];
 
 function DrawBuildOrders() {
     if (!bossInit) {
-        var initReturnString = BOSS_Init("Hello BOSS!");
+        let initReturnString = BOSS_Init("Hello BOSS!");
         bossInit = true;
     }
     $('#drawArea').empty();
-    var returnString = BOSS_GetPlot(GetBOSSJSON());
+    let returnString = BOSS_GetPlot(GetBOSSJSON());
     eval(returnString);
-    draw(plots);
+    plotData = plots;
+    console.log(plots);
+    DrawBuildOrderPlots();
 }
 
-function GetBOSSJSON() {
-    
-    let str = "{ \"BuildOrders\" : [" 
-    let builds = 3;
-
-    let obj = {
-        BuildOrders : []
-    };
-
-    for (let b=1; b<=builds; b++) {
-        let startList = document.getElementById('S'  + b);
-        let boList    = document.getElementById('BO' + b);
-        // if this build order or starting state is empty, skip it
-        if (startList.options.length == 0) { continue; }
-        if (boList.options.length == 0) { continue; }
-
-        let boObj = {
-            Name : "Build Order " + b,
-            State : {
-                minerals : parseInt(document.getElementById('M' + b).value),
-                gas : parseInt(document.getElementById('G' + b).value),
-                units : []
-            },
-            BuildOrder : []
-        }
-
-        // calculate the unit count types from the starting units
-        for (let s=0; s < startList.options.length; s++) {
-            let type = startList.options[s].text;
-            let found = false;
-            for (let t=0; t < boObj.State.units.length; t++) {
-                if (boObj.State.units[t][0] == type) {
-                    boObj.State.units[t][1] += 1;
-                    found = true;
-                }
-            }
-            if (!found) { boObj.State.units.push([type, 1]); }
-        }
-
-        for (let s=0; s < boList.options.length; s++) {
-            let type = boList.options[s].text;
-            boObj.BuildOrder.push(type);
-        }
-
-        obj.BuildOrders.push(boObj);
-    }
-
-    return JSON.stringify(obj);
-}
-
-function SetInitialBuildOrder(listID, bo) {
-    let listb = document.getElementById(listID);
-    for (let i=0; i<bo.length; i++) {
-        let newOption = document.createElement("option");
-        newOption.text = bo[i];
-        listb.options.add(newOption, null);
-    }
-}
-
-function SetUnitTypes(race) {
-    DeleteAll('UnitTypes');
-    let listb = document.getElementById("UnitTypes");
-    for (prop in BWData["Types"]) {
-        let type = BWData["Types"][prop];
-        if (type["race"] == race && type["name"] != "Larva") {
-            let newOption = document.createElement("option");
-            newOption.text = type["name"];
-            listb.options.add(newOption, null);
-        }
-    }
-    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
-}
-
-function SetColors(listIDs) {
-    for (let l=0; l<listIDs.length; l++)
-    {
-        let listb = document.getElementById(listIDs[l]); 
-        for (let i=0; i<listb.options.length; i++)
-        {
-            let type = listb.options[i].text;
-            if (AllTypes[type]["isWorker"]) {
-                listb.options[i].style.background = '#d9ffff';
-            } else if (AllTypes[type]["isSupplyProvider"]) {
-                listb.options[i].style.background = '#fff9d9';
-            } else if (AllTypes[type]["isRefinery"]) {
-                listb.options[i].style.background = '#d9ffd9';
-            } else if (AllTypes[type]["isBuilding"]) {
-                listb.options[i].style.background = '#f1dfdf';
-            } else {
-                listb.options[i].style.background = '#bebebe';
-            }
-        }
-    }
-}
-
-function SelectAll(listID) {  
-    let listb = document.getElementById(listID); 
-    for (let i=0; i<listb.options.length; i++) {
-        listb.options[i].selected = true;
-    }
-    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
-}  
-
-function DeleteAll(listID) {  
-    let listb = document.getElementById(listID); 
-    let size = listb.size; 
-    while (listb.options.length > 0)
-    {
-        listb.options.remove(0);
-    }
-    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
-}  
-
-function DeleteSelected(listID) {  
-    let listb = document.getElementById(listID);  
-    let len = listb.options.length;  
-    for (let i = listb.options.length-1 ; i >= 0 ; i--) {  
-        if (listb.options[i].selected == true) {  
-            listb.options.remove(i);  
-        }  
-    }
-    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
-}  
-
-function CopySelected(sourceID, destIDs) {
-    for (let d=0; d<destIDs.length; d++) {
-        var src = document.getElementById(sourceID);
-        var dest = document.getElementById(destIDs[d]);
-        for(let i=0; i < src.options.length; i++) {
-            if(src.options[i].selected == true) {
-                let option = src.options[i];
-                // check to see if the destination has other race units
-                let race = AllTypes[option.text].race;
-                for (let j=0; j<dest.options.length; j++) {
-                    if (AllTypes[dest.options[j].text].race != race) {
-                        alert('Destination cannot contain unit(s) of another race\n\nTrying to place ' + race + " unit(s) with " + AllTypes[dest.options[j].text].race + " unit(s)");
-                        good = false;
-                        return;
-                    }
-                }
-                let newOption = document.createElement("option");
-                newOption.value = option.value;
-                newOption.text = option.text;
-                //newOption.selected = true;
-                try { dest.add(newOption, null); }
-                catch(error) { dest.add(newOption); }
-            }
-        }
-    }
-    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
-}
-
-function MoveSelected(listID, increment) {
-
-    let listbox = document.getElementById(listID);
-    let selIndex = listbox.selectedIndex;
-
-    if(selIndex == -1) { return; }
-
-    if((selIndex + increment) < 0 ||
-        (selIndex + increment) > (listbox.options.length-1)) {
-        return;
-    }
-
-    var selValue = listbox.options[selIndex].value;
-    var selText = listbox.options[selIndex].text;
-    listbox.options[selIndex].value = listbox.options[selIndex + increment].value
-    listbox.options[selIndex].text = listbox.options[selIndex + increment].text
-    listbox.options[selIndex + increment].value = selValue;
-    listbox.options[selIndex + increment].text = selText;
-    listbox.selectedIndex = selIndex + increment;
-    SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
-}
-
-var getRectDiv = function (text, color, x, y, width, height) {
-    
-    var p = '<p style=\'position:absolute;\'>' + text + '</p>';
-    
-    var div = '<div style=\'';
-    div += 'box-sizing: border-box;';
-    div += 'font-family:"arial";';
-    div += 'font-size:12px;';
-    //div += 'text-align:center;';
-    //div += 'vertical-align: middle;'
-    div += 'position:absolute;';
-    div += 'top:' + y + ';';
-    div += 'left:' + x + ';'
-    div += 'width:' + width + 'px;';
-    div += 'height:' + height + 'px;';
-    div += 'border:1px solid #000;';
-    div += 'background-color:' + color + ';';
-    div += '\'>';
-    div += "<div class='centered'>" + text + "</div>";
-    div += '</div>';
-    return div;
-}
-
-var drawDetails = function(x, y, item) {
-    
-
-}
-
-var draw = function(plots) {
-    
-    var boxHeight = 25;
-    var boxHeightBuffer = 4;
-    var maxLayer = 0;
-    var currentY = 0;
-    for (var p = 0; p < plots.length; ++p)
-    {
-        var bo = plots[p].buildOrder;
-    
-        // figure out the dimensions of this plot
-        var maxX = 0;
-        var maxY = 0;
-        for (var i=0; i < bo.length; ++i) {
-            maxX = Math.max(maxX, bo[i][2]) * xScale;
-            maxY = Math.max(maxY, (bo[i][5] + 1) * (boxHeight + boxHeightBuffer) * yScale);
-        }
-    
-        var boDiv = '<div style=\'';
-        boDiv += 'width:' + maxX + ';';
-        boDiv += 'height:' + maxY + ';';
-        boDiv += 'position:absolute;';
-        boDiv += 'border:1px solid #ccc;';
-        boDiv += 'border-style:dashed;';
-        boDiv += 'top:' + currentY + '\'>';
-        console.log(bo)
-        currentY += (maxY + 30);
-        for (var i=0; i < bo.length; ++i) {
-            
-            var x = bo[i][1] * xScale;
-            var y = bo[i][5] * (boxHeight + boxHeightBuffer) * yScale;
-            var w = (bo[i][2] - bo[i][1]) * xScale;
-            var h = boxHeight * yScale;
-            boDiv += getRectDiv(bo[i][0], bo[i][6], x, y, w, h);
-        }
-        
-        boDiv += '</div>';
-        $('#drawArea').append(boDiv);
-    }
-}
    
    
 
