@@ -35,8 +35,8 @@ function GetBuildOrderItemDiv(buildOrder, index) {
     title += "State\n";
     title += "    Start: " + GetTime(data[1]) + "\n";
     title += "    End: " + GetTime(data[2]) + "\n"
-    title += "    Minerals: " + parseInt(data[3]/1000) + "\n"
-    title += "    Gas: " + parseInt(data[4]/1000) + "\n"
+    title += "    Minerals: " + parseInt(data[3]) + "\n"
+    title += "    Gas: " + parseInt(data[4]) + "\n"
 
     let p = '<p style=\'position:absolute;\'>' + text + '</p>';
     

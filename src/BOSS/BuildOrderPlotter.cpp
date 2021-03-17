@@ -204,8 +204,8 @@ std::string BuildOrderPlotter::getPlotJSON(const std::vector<BuildOrderPlotData>
             ss << "[\"" << buildOrder[i].getName() << "\", ";
             ss << plots[p].m_startTimes[i] << ", "; 
             ss << plots[p].m_finishTimes[i] << ", ";
-            ss << plots[p].m_minerals[i].second << ", ";
-            ss << plots[p].m_gas[i].second << ", ";
+            ss << plots[p].m_minerals[i*2 + 1].second << ", ";
+            ss << plots[p].m_gas[i*2 + 1].second << ", ";
             ss << plots[p].m_layers[i] << ", ";
             
             if (buildOrder[i].isWorker())
