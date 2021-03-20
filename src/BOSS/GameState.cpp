@@ -285,6 +285,10 @@ void GameState::addUnit(const ActionType type, int builderID)
 
 int GameState::whenCanBuild(const ActionType action) const
 {
+    if (action.getName() == "Lair")
+    {
+        int a = 6;
+    }
     // figure out when prerequisites will be ready
     int maxTime         = m_currentFrame;
     int prereqTime      = whenPrerequisitesReady(action);
@@ -377,7 +381,7 @@ int GameState::whenResourcesReady(const ActionType action) const
         int mineralsNeeded      = mineralDifference - addedMinerals;
         int gasNeeded           = gasDifference - addedGas;
         int mineralTimeNeeded   = mineralIncome == 0 ? 0 : (mineralsNeeded / mineralIncome);
-        int gasTimeNeeded       = gasIncome     == 0 ? 0 : (gasDifference / gasIncome);
+        int gasTimeNeeded       = gasIncome     == 0 ? 0 : (gasNeeded / gasIncome);
 
         // since this is integer division, check to see if we need one more step to go above required resources
         if (mineralTimeNeeded * mineralIncome < mineralsNeeded) { mineralTimeNeeded += 1; }

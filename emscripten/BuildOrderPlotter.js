@@ -20,7 +20,7 @@ function GetCostString(type) {
 function GetBuildOrderItemDiv(buildOrder, index) {
     
     let data = plotData[buildOrder].buildOrder[index];
-    console.log(buildOrder, index, data);
+    
     let x = data[1] * xScale;
     let y = data[5] * (boxHeight + boxHeightBuffer) * yScale;
     let w = (data[2] - data[1]) * xScale;
@@ -30,12 +30,13 @@ function GetBuildOrderItemDiv(buildOrder, index) {
 
     let title = data[0] + "\n";
     title += "    Cost: " + GetCostString(data[0]) + "\n";
-    title += "    Build: " + GetTime(AllTypes[data[0]].buildTime) + "\n\n";
+    title += "    Build: " + AllTypes[data[0]].buildTime + " (" + GetTime(AllTypes[data[0]].buildTime) + ")\n\n";
 
     title += "State\n";
-    title += "    Start: " + GetTime(data[1]) + "\n";
-    title += "    End: " + GetTime(data[2]) + "\n"
+    title += "    Start: " + data[1] + " (" + GetTime(data[1]) + ")\n";
+    title += "    End: " + data[2] + " (" + GetTime(data[2]) + ")\n"
     title += "    Minerals: " + parseInt(data[3]) + "\n"
+    title += "    Gas: " + parseInt(data[4]) + "\n"
     title += "    Gas: " + parseInt(data[4]) + "\n"
 
     let p = '<p style=\'position:absolute;\'>' + text + '</p>';
