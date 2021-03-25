@@ -76,6 +76,10 @@ void ActionTypeData::Init(const std::string & filename)
             JSONTools::ReadBool("isResourceDepot",  actions[a], data.isDepot);
             JSONTools::ReadBool("isAddon",          actions[a], data.isAddon);
 
+            // muptiply here so we don't have to do it everywhere else
+            // only matters for zergling and scourge
+            data.supplyCost *= data.numProduced;
+
             if (data.name == "Hatchery" || data.name == "Lair" || data.name == "Hive")
             {
                 data.isHatchery = true;
