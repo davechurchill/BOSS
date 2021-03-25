@@ -451,7 +451,7 @@ void FastForwardTo(GameState& state, const ActionType& type)
 TEST_CASE("Zerg FF vs Frames")
 {
     std::vector<std::string> bos = { "Drone", "Drone", "Drone", "Drone", "Drone", "SpawningPool", "Drone", "Extractor", "Drone", "Overlord", "Lair", "Drone" };
-    //bos = { "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Overlord", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk" };
+    bos = { "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Overlord", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk" };
 
     BOSS::GameState state1;
     state1.addUnit(ActionType("Drone"));
@@ -467,8 +467,6 @@ TEST_CASE("Zerg FF vs Frames")
     for (size_t i = 0; i < bos.size(); i++)
     {
         ActionType type(bos[i]);
-
-        std::cout << bos[i] << " ready on " << state1.whenCanBuild(type) << " " << state2.whenCanBuild(type) << "\n";
 
         SimulateEachFrameTo(state1, type);
         state1.doAction(type);

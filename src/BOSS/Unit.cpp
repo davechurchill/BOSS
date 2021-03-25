@@ -157,9 +157,12 @@ void Unit::useLarva()
 {
     BOSS_ASSERT(m_numLarva > 0, "Can't use a larva when we have none");
 
+    if (m_numLarva == 3)
+    {
+        m_timeUntilLarva = 13 * 24;
+    }
+        
     m_numLarva--;
-
-    m_timeUntilLarva = 13 * 24;
 }
 
 int Unit::getTimeUntilBuilt() const
