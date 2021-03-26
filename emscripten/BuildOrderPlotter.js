@@ -17,6 +17,85 @@ function GetCostString(type) {
     return cost;
 }
 
+function pad(num, size) {
+    let str = num + "";
+    while (str.length < size) str = "0" + str;
+    return str;
+}
+
+
+function SetFromConfigString(str) {
+
+    let arr = str.split(',')
+    
+    let i = 0;
+    for (let pid=1; pid<=3; pid++) {
+        DeleteAll("S" + pid); 
+        let state = document.getElementById("S" + pid);
+
+        while (true) {
+            if (arr[i] == "X") { i++; break; }
+            let newOption = document.createElement("option");
+            newOption.text = arr[i];
+            state.add(newOption);
+            i++;
+        }
+    }
+
+    for (let pid=1; pid<=3; pid++) {
+        DeleteAll("BO" + pid); 
+        let state = document.getElementById("BO" + pid);
+
+        while (true) {
+            if (arr[i] == "X") { i++; break; }
+            let newOption = document.createElement("option");
+            newOption.text = arr[i];
+            state.add(newOption);
+            i++;
+        }
+    }
+}
+
+function getConfigString() {
+    let config = "";
+
+    for (let pid=1; pid<=3; pid++) {
+
+        let state = document.getElementById("S" + pid);
+        for (let i=0; i<state.options.length; i++) {
+            config += state.options[i].text + ",";
+        }
+
+        config += "X,";
+    }
+
+    for (let pid=1; pid<=3; pid++) {
+
+        let state = document.getElementById("BO" + pid);
+        for (let i=0; i<state.options.length; i++) {
+            config += state.options[i].text + ",";
+        }
+
+        config += "X";
+        if (pid < 3) { config += ",";}
+    }
+
+    return config;
+}
+
+
+function CopyURL() {
+    let text = 'http://www.cs.mun.ca/~dchurchill/boss/?config=' + this.getConfigString();
+    let input = document.createElement('textarea');
+    input.innerHTML = text;
+    document.body.appendChild(input);
+    input.select();
+    let result = document.execCommand('copy');
+    document.body.removeChild(input);
+    alert('URL Copied To Clipboard\n\n' + text)
+    return result;
+}
+
 function GetBuildOrderItemDiv(buildOrder, index) {
     
     let data = plotData[buildOrder].buildOrder[index];
@@ -53,6 +132,20 @@ function GetBuildOrderItemDiv(buildOrder, index) {
     return div;
 }
 
+function GetVerticalLine(x, y, w, h, color) {
+    let div = '<div style=\'';
+    div += 'top:' + y + ';';
+    div += 'left:' + x + ';'
+    div += 'width:' + w + 'px;';
+    div += 'height:' + h + 'px;';
+    //div += 'background-color:' + color + ';';
+    div += 'position:absolute;';
+    div += 'border:1px dashed #dddddd;';
+    div += '\'>';
+    div += '</div>';
+    return div;
+}
+
 function DrawBuildOrderPlots() {
     
     let maxLayer = 0;
@@ -76,7 +169,11 @@ function DrawBuildOrderPlots() {
         boDiv += 'border:1px solid #ccc;';
         boDiv += 'border-style:dashed;';
         boDiv += 'top:' + currentY + '\'>';
-        currentY += (maxY + 30);
+        currentY += (maxY + 50);
+
+        for (let i=1440*xScale; i < maxX; i+=1440*xScale) {
+            boDiv += GetVerticalLine(i, -20, 0, maxY + 20, '#000000');
+        }
         for (let i=0; i < bo.length; ++i) {
             boDiv += GetBuildOrderItemDiv(p, i);
         }

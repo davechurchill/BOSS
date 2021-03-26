@@ -48,7 +48,7 @@ input {
 </head>
 <body>
 
-<table>
+<table id="selectorTable">
 <tr>
 <td valign="top" rowspan=2>
     <center>
@@ -174,7 +174,8 @@ input {
 </tr>
 </table>
 
-<br><br><button onclick="DrawBuildOrders()">Draw Build Order(s)</button><br><br>
+<br><br><button id="drawButton"  onclick="DrawBuildOrders()">Draw Build Order(s)</button>
+ <button id="copyButton" onclick="CopyURL()">Copy Build Order URL</button><br><br>
 <br>
 
 <div id='drawArea' style='position:relative;'></div>
@@ -190,7 +191,7 @@ let request = new XMLHttpRequest();
 request.open("GET", "BWData.json", false);
 request.send(null)
 let BWData = JSON.parse(request.responseText);
-AllTypes = {};
+let AllTypes = {};
 for (prop in BWData["Types"]) {
     let type = BWData["Types"][prop];
     AllTypes[type["name"]] = type;
@@ -206,13 +207,30 @@ SetInitialBuildOrder('BO3', bo3);
 
 // Display Protoss Units by default
 SetUnitTypes('Protoss');
-SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
 
 // Wrap the emscripten functions so we can call them
 let bossInit = false;
 BOSS_Init = Module.cwrap('BOSS_JS_Init', 'string', ['string']);
 BOSS_GetPlot = Module.cwrap('BOSS_JS_GetBuildOrderPlot', 'string', ['string']);
 let plotData = [];
+
+const urlParams = new URLSearchParams(window.location.search);
+const config = urlParams.get('config');
+const visOnly = urlParams.get('visOnly');
+
+if (config != null) {
+    this.SetFromConfigString(config);
+}
+
+if (visOnly != null) {
+
+    document.getElementById("selectorTable").style.display = 'none';
+    document.getElementById("drawButton").style.display = 'none';
+    document.getElementById("copyButton").style.display = 'none';
+    DrawBuildOrders();
+}
+
+SetColors(['UnitTypes', 'BO1', 'BO2', 'BO3', 'S1', 'S2', 'S3']);
 
 function DrawBuildOrders() {
     if (!bossInit) {
@@ -223,7 +241,6 @@ function DrawBuildOrders() {
     let returnString = BOSS_GetPlot(GetBOSSJSON());
     eval(returnString);
     plotData = plots;
-    console.log(plots);
     DrawBuildOrderPlots();
 }
 
