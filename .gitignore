@@ -2,6 +2,7 @@
 vs/.vs/
 vs/Debug
 vs/Release
+vs/x64
 
 bin/CommandCenter
 bin/*.exe
