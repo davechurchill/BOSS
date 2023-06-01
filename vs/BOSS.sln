@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31005.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BOSS", "BOSS.vcxproj", "{9F8709E3-AC4F-45F2-8105-4A99D8E2A127}"
 EndProject
@@ -16,6 +16,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BOSS_test", "BOSS_test.vcxp
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BOSS_experiments", "BOSS_experiments.vcxproj", "{BD4AD06D-B208-433D-B340-DDAF56A6D050}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9F8709E3-AC4F-45F2-8105-4A99D8E2A127} = {9F8709E3-AC4F-45F2-8105-4A99D8E2A127}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
