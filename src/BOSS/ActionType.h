@@ -28,6 +28,7 @@ public:
     int  supplyCost()       const;
     int  supplyProvided()   const;
     int  numProduced()      const;
+    int  buildLimit()       const;
     bool isUnit()           const;
     bool isUpgrade()        const;
     bool isAbility()        const;
@@ -39,6 +40,7 @@ public:
     bool isAddon()          const;
     bool isMorphed()        const;
     bool isHatchery()       const;
+    bool isTech()           const;
 
     ActionType whatBuilds() const;
     ActionType whatBuildsAddon() const;
@@ -49,6 +51,7 @@ public:
     bool operator == (const ActionType rhs)     const;
     bool operator != (const ActionType rhs)     const;
     bool operator <  (const ActionType rhs)     const;
+    bool isEquivalentTo(const ActionType other)   const;
 };
 
 namespace ActionTypes

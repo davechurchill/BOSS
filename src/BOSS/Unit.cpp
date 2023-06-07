@@ -131,9 +131,11 @@ void Unit::fastForward(const int frames)
 // returns when this Unit can build a given type, -1 if it can't
 int Unit::whenCanBuild(const ActionType & type) const
 {
-    // check to see if this type can build the given type
-    // TODO: check equivalent types (hatchery gspire etc)
-    if (type.whatBuilds() != m_type) { return -1; }
+    // if morphing, the builder must be equal to, not simply equivalent to, the needed type
+    if (type.whatBuilds() != m_type && type.isMorphed()) { return -1; }
+
+    // check to see if this type is an equivalent that can build the given type
+    if (!m_type.isEquivalentTo(type.whatBuilds())) { return -1; }
 
     // if we want to build an addon but we already have an addon then we can never build it
     if (type.isAddon() && hasAddon()) { return -1; }

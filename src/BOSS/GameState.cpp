@@ -53,6 +53,9 @@ bool GameState::isLegal(const ActionType action) const
     const size_t numRefineries  = m_numRefineries + refineriesInProgress;
     const size_t numDepots      = m_numDepots + getNumInProgress(ActionTypes::GetResourceDepot(m_race));
 
+    // check that if it is a technology, that we don't already have it
+    if (action.buildLimit() != -1 && action.buildLimit() <= getNumTotal(action)) { return false; }
+
     // check to see if we will ever have enough resources to build this thing
     if ((m_minerals < action.mineralPrice()) && (mineralWorkers == 0)) { return false; }
     // TODO: do we want to check if we won't have enough workers for the extractor?
@@ -65,7 +68,6 @@ bool GameState::isLegal(const ActionType action) const
     // TODO: require an extra for refineries byt not buildings
     // rules for buildings which are built by workers
     if (action.isBuilding() && !action.isMorphed() && !action.isAddon() && (mineralWorkers == 0)) { return false; }
-
     // if we have no mineral income we'll never have a minerla unit
     if ((m_minerals < action.mineralPrice()) && (mineralWorkers == 0)) { return false; }
 
@@ -458,13 +460,16 @@ int GameState::whenPrerequisitesReady(const ActionType action) const
     int whenPrereqReady = 0;
     for (auto & req : action.required())
     {
+
         // find the minimum time that this particular prereq will be ready
         int minReady = std::numeric_limits<int>::max();
         for (auto & unit : m_units)
         {
-            if (unit.getType() != req) { continue; }
-            minReady = std::min(minReady, unit.getTimeUntilFree());
-            if (unit.getTimeUntilFree() == 0) { break; }
+            if (!unit.getType().isEquivalentTo(req)) { continue; }
+            bool morphEvolution = unit.getType().isMorphed() && unit.getType().whatBuilds().isEquivalentTo(req);
+            int timeTillReqFilled = morphEvolution ? 0 : unit.getTimeUntilBuilt();
+            minReady = std::min(minReady, timeTillReqFilled);
+            if (timeTillReqFilled == 0) { break; }
         }
         // we can only build the type after the LAST of the prereqs are ready
         whenPrereqReady = std::max(whenPrereqReady, minReady);
@@ -514,7 +519,21 @@ bool GameState::haveBuilder(const ActionType type) const
 bool GameState::havePrerequisites(const ActionType type) const
 {
     return std::all_of(type.required().begin(), type.required().end(), 
-           [this](const ActionType & req) { return this->haveType(req); });
+           [this](const ActionType & req) 
+        { 
+            if (this->haveType(req))
+            {
+                return true;
+            }
+            for (auto& equi : req.equivalent())
+            {
+                if (this->haveType(equi))
+                {
+                    return true;
+                }
+            }
+            return false;
+        });
 }
 
 size_t GameState::getNumInProgress(const ActionType action) const

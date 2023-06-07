@@ -21,6 +21,7 @@ struct ActionTypeData
     int                         numProduced     = 1;
     int                         startingEnergy  = 0;
     int                         maxEnergy       = 0;
+    int                         buildLimit = -1;
     bool                        isUnit          = false;
     bool                        isUpgrade       = false;
     bool                        isAbility       = false;
@@ -32,6 +33,7 @@ struct ActionTypeData
     bool                        isAddon         = false;
     bool                        isHatchery      = false;
     bool                        isMorphed       = false;
+    bool                        isTech          = false;
     ActionType                  whatBuilds      = 0;
     size_t                      whatBuildsCount = 1;
     ActionType                  whatBuildsAddon = 0;

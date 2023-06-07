@@ -20,6 +20,10 @@ void DoLegalCheck(GameState& state, std::map<std::string, bool>& legal, const st
     { 
         REQUIRE(state.isLegal(build)); 
         state.doAction(build); 
+        if (ActionType(build).buildLimit() == state.getNumTotal(build))
+        {
+            legal[build] = false;
+        }
     }
 
     for (auto& kv : legal)
@@ -30,7 +34,7 @@ void DoLegalCheck(GameState& state, std::map<std::string, bool>& legal, const st
         }
         else
         {
-            std::cout << build << " Legal Fail: " << kv.first << std::endl;
+            std::cout << build << " Legal Fail: " << kv.first << " Should be " << (kv.second ? "legal" : "illegal") << ", is " << (kv.second ? "illegal" : "legal") << std::endl;
             REQUIRE(false);
         }
         
@@ -107,10 +111,10 @@ TEST_CASE("Protoss Tech Tree")
     DoLegalCheck(state, legal, "RoboticsSupportBay", { "Reaver" });
     DoLegalCheck(state, legal, "Observatory", { "Observer" });
     DoLegalCheck(state, legal, "CitadelofAdun", { "TemplarArchives" });
-    DoLegalCheck(state, legal, "TemplarArchives", { "HighTemplar", "DarkTemplar" });
+    DoLegalCheck(state, legal, "TemplarArchives", { "HighTemplar", "DarkTemplar", "PsionicStorm", "Hallucination", "MindControl", "Maelstrom"});
     DoLegalCheck(state, legal, "Stargate", { "Corsair", "Scout", "FleetBeacon", "ArbiterTribunal" });
-    DoLegalCheck(state, legal, "FleetBeacon", { "Carrier" });
-    DoLegalCheck(state, legal, "ArbiterTribunal", { "Arbiter" });
+    DoLegalCheck(state, legal, "FleetBeacon", { "Carrier", "DisruptionWeb"});
+    DoLegalCheck(state, legal, "ArbiterTribunal", { "Arbiter", "Recall", "StasisField" });
     DoLegalCheck(state, legal, "Nexus", { "Assimilator" });
 }
 
@@ -173,13 +177,13 @@ TEST_CASE("Terran Tech Tree")
     DoLegalCheck(state, legal, "Barracks", { "Marine", "Bunker", "Academy", "Factory" });
     DoLegalCheck(state, legal, "Marine", { });
     DoLegalCheck(state, legal, "Bunker", { });
-    DoLegalCheck(state, legal, "Academy", { "Medic", "Firebat", "ComsatStation" });
+    DoLegalCheck(state, legal, "Academy", { "Medic", "Firebat", "ComsatStation", "StimPacks", "Restoration", "OpticalFlare"});
     DoLegalCheck(state, legal, "Medic", { });
     DoLegalCheck(state, legal, "SupplyDepot", { });
     DoLegalCheck(state, legal, "Firebat", { });
     DoLegalCheck(state, legal, "Factory", { "Vulture", "MachineShop", "Starport", "Armory" });
     DoLegalCheck(state, legal, "Factory", { });
-    DoLegalCheck(state, legal, "MachineShop", { "SiegeTank" });
+    DoLegalCheck(state, legal, "MachineShop", { "SiegeTank", "SpiderMines", "TankSiegeMode"});
     DoLegalCheck(state, legal, "SiegeTank", { });
     DoLegalCheck(state, legal, "Armory", { "Goliath" });
     DoLegalCheck(state, legal, "Goliath", { });
@@ -187,15 +191,15 @@ TEST_CASE("Terran Tech Tree")
     DoLegalCheck(state, legal, "Wraith", { });
     DoLegalCheck(state, legal, "SupplyDepot", { });
     DoLegalCheck(state, legal, "Starport", { });
-    DoLegalCheck(state, legal, "ControlTower", { "Valkyrie",  "Dropship" });
+    DoLegalCheck(state, legal, "ControlTower", { "Valkyrie",  "Dropship", "CloakingField"});
     DoLegalCheck(state, legal, "Valkyrie", { });
     DoLegalCheck(state, legal, "Dropship", { });
-    DoLegalCheck(state, legal, "ScienceFacility", {  "PhysicsLab", "CovertOps", "ScienceVessel" });
+    DoLegalCheck(state, legal, "ScienceFacility", {  "PhysicsLab", "CovertOps", "ScienceVessel", "EMPShockwave", "Irradiate" });
     DoLegalCheck(state, legal, "ScienceFacility", {  });
-    DoLegalCheck(state, legal, "PhysicsLab", { "Battlecruiser" });
+    DoLegalCheck(state, legal, "PhysicsLab", { "Battlecruiser", "YamatoGun" });
     DoLegalCheck(state, legal, "SupplyDepot", { });
     DoLegalCheck(state, legal, "Battlecruiser", { });
-    DoLegalCheck(state, legal, "CovertOps", { "Ghost", "NuclearSilo" });
+    DoLegalCheck(state, legal, "CovertOps", { "Ghost", "NuclearSilo", "Lockdown", "PersonnelCloaking"});
     DoLegalCheck(state, legal, "ScienceFacility", {  });
     DoLegalCheck(state, legal, "SupplyDepot", { });
     DoLegalCheck(state, legal, "Battlecruiser", { });
@@ -281,6 +285,7 @@ TEST_CASE("Zerg Tech Tree")
     state.doAction(ActionType("Drone"));
     state.doAction(ActionType("Drone"));
 
+    DoLegalCheck(state, legal, "", { "Burrowing" });
     // build stuff in order in the tech tree, testing legality as we go
     DoLegalCheck(state, legal, "CreepColony", {});
     DoLegalCheck(state, legal, "CreepColony", {});
@@ -291,14 +296,15 @@ TEST_CASE("Zerg Tech Tree")
     DoLegalCheck(state, legal, "SporeColony", { });
     DoLegalCheck(state, legal, "SunkenColony", { });
     DoLegalCheck(state, legal, "HydraliskDen", { "Hydralisk" });
-    DoLegalCheck(state, legal, "Hydralisk", { "Lurker" });
-    DoLegalCheck(state, legal, "Lair", { "QueensNest", "Spire" });
+    DoLegalCheck(state, legal, "Hydralisk", {});
+    DoLegalCheck(state, legal, "Lair", { "QueensNest", "Spire", "LurkerAspect"});
+    DoLegalCheck(state, legal, "LurkerAspect", { "Lurker" });
     DoLegalCheck(state, legal, "Spire", { "Mutalisk", "Scourge" });
-    DoLegalCheck(state, legal, "QueensNest", { "Queen", "Hive" });
+    DoLegalCheck(state, legal, "QueensNest", { "Queen", "Hive", "Ensnare", "SpawnBroodlings" });
     DoLegalCheck(state, legal, "Queen", { });
     DoLegalCheck(state, legal, "Lair", { }); // 2nd lair so hive won't be illegal next
     DoLegalCheck(state, legal, "Hive", { "DefilerMound", "NydusCanal", "UltraliskCavern", "GreaterSpire" });
-    DoLegalCheck(state, legal, "DefilerMound", { "Defiler" });
+    DoLegalCheck(state, legal, "DefilerMound", { "Defiler", "Consume", "Plague"});
     DoLegalCheck(state, legal, "Defiler", { });
     DoLegalCheck(state, legal, "Overlord", { });
     DoLegalCheck(state, legal, "UltraliskCavern", { "Ultralisk" });
@@ -481,4 +487,59 @@ TEST_CASE("Zerg FF vs Frames")
 
         REQUIRE(state1.getCurrentFrame() == state2.getCurrentFrame());
     }
+}
+
+TEST_CASE("Tech Test")
+{
+    BOSS::GameState state;
+    state.addUnit(ActionType("Hatchery"));
+    state.setMinerals(100);
+    state.setGas(100);
+    // Basic test
+    auto act = ActionType("Burrowing");
+    state.doAction(act);
+    REQUIRE(state.haveType(act));
+
+    // Test that techs cannot be built twice
+    state.setMinerals(100);
+    state.setGas(100);
+    REQUIRE(!state.isLegal(act));
+}
+
+TEST_CASE("Equivalencies")
+{
+    // test isEquivalentTo() method
+    ActionType hive("Hive");
+    ActionType hatchery("Hatchery");
+    REQUIRE(hive.isEquivalentTo(hatchery));
+    REQUIRE(!hatchery.isEquivalentTo(hive));
+
+    BOSS::GameState state1;
+    state1.addUnit(hive);
+    state1.setMinerals(100);
+    state1.setGas(100);
+
+    // test that equivalency works for non-morphing building
+    auto act1 = ActionType("Burrowing");
+    state1.doAction(act1);
+    REQUIRE(state1.haveType(act1));
+
+    state1.addUnit(ActionType("Drone"));
+
+    // test that equivalency isn't allowed for morphing
+    REQUIRE(!state1.isLegal(ActionType("Lair")));
+    
+    // test that equivalency works for requirements
+    REQUIRE(state1.isLegal(ActionType("EvolutionChamber")));
+
+    // Tests that requirements met by a unit continue to be met while it morphes into another unit that also meets those requirements
+    BOSS::GameState state2;
+    state2.addUnit(ActionType("Drone"));
+    state2.addUnit(ActionType("Hatchery"));
+    state2.addUnit(ActionType("SpawningPool"));
+    state2.setGas(100);
+    state2.setMinerals(225);
+    state2.doAction(ActionType("Lair"));
+    REQUIRE(state2.isLegal(ActionType("EvolutionChamber")));
+    REQUIRE(state2.whenCanBuild(ActionType("EvolutionChamber"))==state2.getCurrentFrame());
 }

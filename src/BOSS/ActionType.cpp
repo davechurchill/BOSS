@@ -43,6 +43,7 @@ int  ActionType::gasPrice()          const { return ActionTypeData::GetActionTyp
 int  ActionType::supplyCost()        const { return ActionTypeData::GetActionTypeData(m_id).supplyCost; }
 int  ActionType::supplyProvided()    const { return ActionTypeData::GetActionTypeData(m_id).supplyProvided; }
 int  ActionType::numProduced()       const { return 1; }
+int  ActionType::buildLimit()        const { return ActionTypeData::GetActionTypeData(m_id).buildLimit; }
 bool ActionType::isAddon()           const { return ActionTypeData::GetActionTypeData(m_id).isAddon; }
 bool ActionType::isRefinery()        const { return ActionTypeData::GetActionTypeData(m_id).isRefinery; }
 bool ActionType::isWorker()          const { return ActionTypeData::GetActionTypeData(m_id).isWorker; }
@@ -54,6 +55,7 @@ bool ActionType::isUpgrade()         const { return ActionTypeData::GetActionTyp
 bool ActionType::isAbility()         const { return ActionTypeData::GetActionTypeData(m_id).isAbility; }
 bool ActionType::isMorphed()         const { return ActionTypeData::GetActionTypeData(m_id).isMorphed; }
 bool ActionType::isHatchery()        const { return ActionTypeData::GetActionTypeData(m_id).isHatchery; }
+bool ActionType::isTech()            const { return ActionTypeData::GetActionTypeData(m_id).isTech; }
 
 ActionType ActionType::whatBuilds() const
 {
@@ -89,6 +91,17 @@ const ActionSet & ActionType::getRecursivePrerequisiteActionCount() const
 bool ActionType::operator == (const ActionType rhs)     const { return m_id == rhs.m_id; }
 bool ActionType::operator != (const ActionType rhs)     const { return m_id != rhs.m_id; }
 bool ActionType::operator <  (const ActionType rhs)     const { return m_id < rhs.m_id; }
+
+bool ActionType::isEquivalentTo(const ActionType other)   const 
+{
+    if (*this != other)
+    {
+        auto& equivalents = other.equivalent();
+        auto it = std::find(equivalents.begin(), equivalents.end(), *this);
+        if (it == equivalents.end()) { return false; }
+    }
+    return true;
+};
 
 namespace BOSS
 {

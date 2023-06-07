@@ -66,6 +66,7 @@ void ActionTypeData::Init(const std::string & filename)
             JSONTools::ReadInt("numProduced",       actions[a], data.numProduced);
             JSONTools::ReadInt("startingEnergy",    actions[a], data.startingEnergy);
             JSONTools::ReadInt("maxEnergy",         actions[a], data.maxEnergy);
+            JSONTools::ReadInt("buildLimit",        actions[a], data.buildLimit);
             JSONTools::ReadBool("isUnit",           actions[a], data.isUnit);
             JSONTools::ReadBool("isUpgrade",        actions[a], data.isUpgrade);
             JSONTools::ReadBool("isAbility",        actions[a], data.isAbility);
@@ -75,7 +76,7 @@ void ActionTypeData::Init(const std::string & filename)
             JSONTools::ReadBool("isSupplyProvider", actions[a], data.isSupplyProvider);
             JSONTools::ReadBool("isResourceDepot",  actions[a], data.isDepot);
             JSONTools::ReadBool("isAddon",          actions[a], data.isAddon);
-
+            JSONTools::ReadBool("isTech",           actions[a], data.isTech);
             // muptiply here so we don't have to do it everywhere else
             // only matters for zergling and scourge
             data.supplyCost *= data.numProduced;
@@ -85,11 +86,20 @@ void ActionTypeData::Init(const std::string & filename)
                 data.isHatchery = true;
             }
 
+            // Limit each tech to 1
+            if (data.buildLimit == -1 && data.isTech)
+            {
+                data.buildLimit = 1;
+            }
+
             BOSS_ASSERT(actions[a].count("whatBuilds"), "no 'whatBuilds' member");
             auto & whatBuilds = actions[a]["whatBuilds"];
-            data.whatBuildsStr = whatBuilds[0].get<std::string>();
-            data.whatBuildsCount = whatBuilds[1];
-            data.whatBuildsStatus = whatBuilds[2].get<std::string>();
+            if (whatBuilds.size() > 0)
+            {
+                data.whatBuildsStr = whatBuilds[0].get<std::string>();
+                data.whatBuildsCount = whatBuilds[1];
+                data.whatBuildsStatus = whatBuilds[2].get<std::string>();
+            }
             data.isMorphed = (data.whatBuildsStatus == "Morphed");
             if (whatBuilds.size() == 4) 
             { 
