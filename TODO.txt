@@ -2,6 +2,7 @@ BOSS TODO:
 
 - Do Terran Tech Tree unit tests
 - Gas units not legal while refinery building?
+- Add upgrade support
 
 
 
@@ -20,7 +21,6 @@ DFBB_BuildOrderStackSearch::generateLegalActions
 
 To Implement:
 
-GameState::getSupplyInProgress
 GameState::getLastActionFinishTime
 
 BuildOrder::sortByPrerequisites
