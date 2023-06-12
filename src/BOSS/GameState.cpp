@@ -53,8 +53,8 @@ bool GameState::isLegal(const ActionType action) const
     const size_t numRefineries  = m_numRefineries + refineriesInProgress;
     const size_t numDepots      = m_numDepots + getNumInProgress(ActionTypes::GetResourceDepot(m_race));
 
-    // check that if it is a technology, that we don't already have it
-    if (action.buildLimit() != -1 && action.buildLimit() <= getNumTotal(action)) { return false; }
+    // check that the build limit is not surpassed
+    if (action.buildLimit() && action.buildLimit() <= getNumTotal(action)) { return false; }
 
     // check to see if we will ever have enough resources to build this thing
     if ((m_minerals < action.mineralPrice()) && (mineralWorkers == 0)) { return false; }
@@ -224,7 +224,7 @@ void GameState::addUnit(const ActionType type, int builderID)
     {
         Unit unit(type, m_units.size(), builderID);
         m_units.push_back(unit);
-        if (builderID != -1) { getUnit(builderID).addLarva(); }
+        getUnit(builderID).addLarva();
     }
     // if there's no builder, complete the unit now and skip the unit in progress step
     else if (builderID == -1)
@@ -256,7 +256,7 @@ void GameState::addUnit(const ActionType type, int builderID)
             Unit& builder = getUnit(builderID);
 
             // if the builder is a larva, we need to subtract from its hatchery's count
-            if (builder.getType() == larva && builder.getBuilderID() != -1)
+            if (builder.getType() == larva)
             {
                 getUnit(builder.getBuilderID()).useLarva();;
             }

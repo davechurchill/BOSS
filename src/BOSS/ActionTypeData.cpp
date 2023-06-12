@@ -87,19 +87,16 @@ void ActionTypeData::Init(const std::string & filename)
             }
 
             // Limit each tech to 1
-            if (data.buildLimit == -1 && data.isTech)
+            if (data.buildLimit == 0 && data.isTech)
             {
                 data.buildLimit = 1;
             }
 
             BOSS_ASSERT(actions[a].count("whatBuilds"), "no 'whatBuilds' member");
             auto & whatBuilds = actions[a]["whatBuilds"];
-            if (whatBuilds.size() > 0)
-            {
-                data.whatBuildsStr = whatBuilds[0].get<std::string>();
-                data.whatBuildsCount = whatBuilds[1];
-                data.whatBuildsStatus = whatBuilds[2].get<std::string>();
-            }
+            data.whatBuildsStr = whatBuilds[0].get<std::string>();
+            data.whatBuildsCount = whatBuilds[1];
+            data.whatBuildsStatus = whatBuilds[2].get<std::string>();
             data.isMorphed = (data.whatBuildsStatus == "Morphed");
             if (whatBuilds.size() == 4) 
             { 

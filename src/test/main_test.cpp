@@ -452,7 +452,7 @@ TEST_CASE("Morph Supply Test")
     state.addUnit(ActionType("Overlord"));
     state.addUnit(ActionType("HydraliskDen"));
     state.addUnit(ActionType("LurkerAspect"));
-    state.addUnit(ActionType("Larva"));
+    state.addUnit(ActionType("Hatchery"));
     int supply = state.getCurrentSupply();
     state.setGas(125);
     state.setMinerals(125);
