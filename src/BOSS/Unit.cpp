@@ -138,7 +138,7 @@ int Unit::whenCanBuild(const ActionType & type) const
     if (!m_type.isEquivalentTo(type.whatBuilds())) { return -1; }
 
     // if we want to build an addon but we already have an addon then we can never build it
-    if (type.isAddon() && hasAddon()) { return -1; }
+    if (type.isAddon() && (hasAddon() || getBuildType().isAddon())) { return -1; }
 
     // if it requires an addon that we can't get, we can't build it
     if (type.whatBuildsAddon() != ActionTypes::None &&  // if it requires an addon

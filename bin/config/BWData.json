@@ -1215,6 +1215,31 @@
       "whatBuilds": [ "CommandCenter", 1, "Busy" ],
       "required": [ "ScienceFacility", "CovertOps" ]
     },
+    {
+      "name": "NuclearMissile",
+      "race": "Terran",
+      "mineralCost": 200,
+      "gasCost": 200,
+      "supplyCost": 8,
+      "energyCost": 0,
+      "supplyProvided": 0,
+      "buildTime": 1500,
+      "numProduced": 1,
+      "startingEnergy": 0,
+      "maxEnergy": 0,
+      "isUnit": true,
+      "isUpgrade": false,
+      "isAbility": false,
+      "isBuilding": false,
+      "isWorker": false,
+      "isRefinery": false,
+      "isSupplyProvider": false,
+      "isResourceDepot": false,
+      "isAddon": false,
+      "equivalent": [],
+      "whatBuilds": [ "NuclearSilo", 1, "Busy" ],
+      "required": []
+    },
 
 
     {

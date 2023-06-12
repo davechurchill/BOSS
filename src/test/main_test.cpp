@@ -18,9 +18,10 @@ void DoLegalCheck(GameState& state, std::map<std::string, bool>& legal, const st
 
     if (build.size() > 0) 
     { 
-        REQUIRE(state.isLegal(build)); 
-        state.doAction(build); 
-        if (ActionType(build).buildLimit() == state.getNumTotal(build))
+        REQUIRE(state.isLegal(build));
+        ActionType act(build);
+        state.doAction(act); 
+        if (act.buildLimit() == state.getNumTotal(build))
         {
             legal[build] = false;
         }
@@ -37,7 +38,6 @@ void DoLegalCheck(GameState& state, std::map<std::string, bool>& legal, const st
             std::cout << build << " Legal Fail: " << kv.first << " Should be " << (kv.second ? "legal" : "illegal") << ", is " << (kv.second ? "illegal" : "legal") << std::endl;
             REQUIRE(false);
         }
-        
     }
 }
 
@@ -194,14 +194,18 @@ TEST_CASE("Terran Tech Tree")
     DoLegalCheck(state, legal, "ControlTower", { "Valkyrie",  "Dropship", "CloakingField"});
     DoLegalCheck(state, legal, "Valkyrie", { });
     DoLegalCheck(state, legal, "Dropship", { });
-    DoLegalCheck(state, legal, "ScienceFacility", {  "PhysicsLab", "CovertOps", "ScienceVessel", "EMPShockwave", "Irradiate" });
-    DoLegalCheck(state, legal, "ScienceFacility", {  });
+    DoLegalCheck(state, legal, "ScienceFacility", { "PhysicsLab", "CovertOps", "ScienceVessel", "EMPShockwave", "Irradiate" });
+    DoLegalCheck(state, legal, "ScienceFacility", { });
     DoLegalCheck(state, legal, "PhysicsLab", { "Battlecruiser", "YamatoGun" });
     DoLegalCheck(state, legal, "SupplyDepot", { });
     DoLegalCheck(state, legal, "Battlecruiser", { });
-    DoLegalCheck(state, legal, "CovertOps", { "Ghost", "NuclearSilo", "Lockdown", "PersonnelCloaking"});
-    DoLegalCheck(state, legal, "ScienceFacility", {  });
+    legal["CovertOps"] = false;
+    legal["PhysicsLab"] = false;
+    DoLegalCheck(state, legal, "CovertOps", { "Ghost", "NuclearSilo", "Lockdown", "PersonnelCloaking" });
     DoLegalCheck(state, legal, "SupplyDepot", { });
+    DoLegalCheck(state, legal, "CommandCenter", {"Refinery"});
+    DoLegalCheck(state, legal, "NuclearSilo", { "NuclearMissile" });
+    DoLegalCheck(state, legal, "ScienceFacility", { "CovertOps", "PhysicsLab" });
     DoLegalCheck(state, legal, "Battlecruiser", { });
     DoLegalCheck(state, legal, "Ghost", { });
 }
@@ -352,13 +356,13 @@ TEST_CASE("Zerg 3 Drones Gas Only")
     state.addUnit(ActionType("Drone"));
     state.addUnit(ActionType("Overlord"));
     state.addUnit(ActionType("Hatchery"));
-    state.setMinerals(50);*/
+    state.setMinerals(50);
 
-    //state.doAction(ActionType("SpawningPool"));
-    //state.doAction(ActionType("Extractor"));
-    //state.fastForward(state.getCurrentFrame() + 500);
+    state.doAction(ActionType("SpawningPool"));
+    state.doAction(ActionType("Extractor"));
+    state.fastForward(state.getCurrentFrame() + 500);
 
-    //REQUIRE(!state.isLegal(ActionType("SpawningPool")));
+    REQUIRE(!state.isLegal(ActionType("SpawningPool")));*/
 }
 
 void SupplySanityCheck(const GameState& state)
@@ -439,6 +443,23 @@ TEST_CASE("Zerg Supply Legal Test")
     REQUIRE(!state.isLegal(ActionType("Drone")));
     REQUIRE(!state2.isLegal(ActionType("Drone")));
     REQUIRE(!state2.isLegal(ActionType("Zergling")));
+}
+
+TEST_CASE("Morph Supply Test")
+{
+    // Checks that supply is not being double counted when a unit morphs into another unit that uses supply
+    BOSS::GameState state;
+    state.addUnit(ActionType("Overlord"));
+    state.addUnit(ActionType("HydraliskDen"));
+    state.addUnit(ActionType("LurkerAspect"));
+    state.addUnit(ActionType("Larva"));
+    int supply = state.getCurrentSupply();
+    state.setGas(125);
+    state.setMinerals(125);
+    state.doAction(ActionType("Hydralisk"));
+    REQUIRE(state.getCurrentSupply() == supply + 2);
+    state.doAction(ActionType("Lurker"));
+    REQUIRE(state.getCurrentSupply() == supply + 4);
 }
 
 void SimulateEachFrameTo(GameState& state, const ActionType& type)
@@ -542,4 +563,23 @@ TEST_CASE("Equivalencies")
     state2.doAction(ActionType("Lair"));
     REQUIRE(state2.isLegal(ActionType("EvolutionChamber")));
     REQUIRE(state2.whenCanBuild(ActionType("EvolutionChamber"))==state2.getCurrentFrame());
+    // Tests that the time till builder is available is correctly estimated for equivalents to builder
+    state2.setGas(100);
+    state2.setMinerals(100);
+    REQUIRE(state2.whenCanBuild(ActionType("Burrowing")) == state2.getNextFinishTime(ActionType("Lair")));
+}
+
+TEST_CASE("Addons")
+{
+    BOSS::GameState state;
+    ActionType command("CommandCenter");
+    state.addUnit(command);
+    state.setGas(200);
+    state.setMinerals(200);
+    state.addUnit(ActionType("ScienceFacility"));
+    state.addUnit(ActionType("CovertOps"));
+    ActionType silo("NuclearSilo");
+    REQUIRE(state.isLegal(silo));
+    state.doAction(silo);
+    REQUIRE(!state.isLegal(silo));
 }

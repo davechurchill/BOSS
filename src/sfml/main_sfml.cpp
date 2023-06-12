@@ -103,18 +103,18 @@ void test()
     text.setFont(font);
     text.setCharacterSize(16);
 
-    GameState state = GetZergStartState();
+    GameState state = GetProtossStartState();
 
     std::vector<std::string> bos =
     { "Probe",  "Pylon", "Probe", "Probe", "Gateway", "Probe",
     "Assimilator", "Probe", "Probe", "CyberneticsCore", "Probe", "Pylon", "Probe", "Gateway",
     "Dragoon", "Gateway", "Dragoon", "Dragoon", "Probe", "Gateway", "Pylon", "Probe", "Dragoon", "Dragoon", "Dragoon" };
 
-    bos = { "SiegeTank", "SiegeTank" };
-    bos = { "Drone", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Extractor", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "HydraliskDen", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hydralisk", "Hydralisk", "Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk", "Hatchery", "Extractor" };
-    bos = { "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Overlord", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk" };
-    bos = {  "Drone", "Drone", "Overlord", "EvolutionChamber", "Zergling", "Zergling", "Zergling" };
-    bos = { "Drone", "Drone", "Overlord", "Drone", "Extractor", "HydraliskDen", "Hydralisk", "Lair", "LurkerAspect", "Lurker", "CreepColony", "SunkenColony", "Spire"};
+    //bos = { "Starport", "ScienceFacility", "ControlTower", "PhysicsLab", "SupplyDepot", "Battlecruiser", "YamatoGun"};
+    //bos = { "Drone", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Extractor", "Drone", "Drone", "Drone", "Drone", "Drone", "Drone", "HydraliskDen", "Drone", "Overlord", "Drone", "Drone", "Drone", "Hydralisk", "Hydralisk", "Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk", "Hydralisk","Hydralisk","Hydralisk","Hydralisk", "Hatchery", "Extractor" };
+    //bos = { "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Drone", "Drone", "Hatchery", "SpawningPool", "Drone", "Drone", "Hatchery", "Extractor", "Drone", "Drone", "Drone", "Overlord", "Lair", "Extractor", "Drone", "Drone", "Zergling", "Zergling", "Zergling", "Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Overlord", "Drone", "Overlord", "Spire", "Overlord", "Drone", "Drone", "Drone", "Drone", "Drone", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk", "Mutalisk" };
+    //bos = {  "Drone", "Drone", "Overlord", "EvolutionChamber", "Zergling", "Zergling", "Zergling" };
+    //bos = { "Drone", "Drone", "Overlord", "Drone", "Extractor", "HydraliskDen", "Hydralisk", "Lair", "LurkerAspect", "Lurker", "CreepColony", "SunkenColony", "Spire"};
 
     std::vector<ActionType> buildOrder;
 
@@ -175,11 +175,11 @@ void test()
         text.setString(state.toStringResources());
         window.draw(text);
 
-        text.setPosition(sf::Vector2f(800, 300));
+        text.setPosition(sf::Vector2f(800, 260));
         text.setString(state.toStringCompleted());
         window.draw(text);
 
-        text.setPosition(sf::Vector2f(800, 400));
+        text.setPosition(sf::Vector2f(1000, 260));
         text.setString(state.toStringInProgress());
         window.draw(text);
 

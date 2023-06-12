@@ -101,7 +101,11 @@ void GameState::doAction(const ActionType type)
     m_gas           -= scaleResource(type.gasPrice());
     m_currentSupply += type.supplyCost();
 
-    // TODO: supply cose from muta to guardian?
+    // Adjusts the supply to match the unit being morphed, rather than the combination of that unit and its builder's supply
+    if (type.isMorphed())
+    {
+        m_currentSupply -= type.whatBuilds().supplyCost();
+    }
 
     // if it's a Terran building that's not an addon, the worker removed from minerals
     if (type.getRace() == Races::Terran && type.isBuilding() && !type.isAddon())
@@ -114,7 +118,6 @@ void GameState::doAction(const ActionType type)
     if (type.getRace() == Races::Zerg && type.whatBuilds().isWorker())
     {
         m_mineralWorkers--;     // the worker is no longer on minerals
-        m_currentSupply -= 2;   // the worker supply is no longer being used up
     }
 
     // get a builder for this type and start building it
@@ -221,7 +224,7 @@ void GameState::addUnit(const ActionType type, int builderID)
     {
         Unit unit(type, m_units.size(), builderID);
         m_units.push_back(unit);
-        getUnit(builderID).addLarva();
+        if (builderID != -1) { getUnit(builderID).addLarva(); }
     }
     // if there's no builder, complete the unit now and skip the unit in progress step
     else if (builderID == -1)
@@ -253,7 +256,7 @@ void GameState::addUnit(const ActionType type, int builderID)
             Unit& builder = getUnit(builderID);
 
             // if the builder is a larva, we need to subtract from its hatchery's count
-            if (builder.getType() == larva)
+            if (builder.getType() == larva && builder.getBuilderID() != -1)
             {
                 getUnit(builder.getBuilderID()).useLarva();;
             }
@@ -777,7 +780,7 @@ std::string GameState::toStringInProgress() const
     char buf[2048];
     ss << std::setfill('0') << std::setw(7);
 
-    ss << "\nUnits In Progress:\n";
+    ss << "Units In Progress:\n";
     for (auto& id : m_unitsBeingBuilt)
     {
         auto& unit = getUnit(id);
