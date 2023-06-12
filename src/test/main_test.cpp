@@ -462,6 +462,47 @@ TEST_CASE("Morph Supply Test")
     REQUIRE(state.getCurrentSupply() == supply + 4);
 }
 
+TEST_CASE("Morph Supply Test 2")
+{
+    BOSS::GameState state;
+    state.addUnit(ActionType("Drone")); // 2
+    state.addUnit(ActionType("Drone")); // 4
+    state.addUnit(ActionType("Drone")); // 6
+    state.addUnit(ActionType("Drone")); // 8
+    state.addUnit(ActionType("Hatchery"));
+    state.addUnit(ActionType("Overlord"));
+    state.setMinerals(50);
+
+    std::vector<std::string> bo = 
+    {"Drone", // 10
+        "Drone", // 12
+        "SpawningPool", // 10 
+        "Extractor", // 8
+        "Drone", // 10
+        "Overlord", // 10
+        "Drone", // 12
+        "Drone", // 14
+        "Drone", // 16
+        "Drone", // 18
+        "Lair", // 18
+        "Spire", // 16
+        "Mutalisk", // 20
+        "QueensNest", // 18
+        "Hive", // 18
+        "GreaterSpire", // 18 
+        "Guardian"}; // 18
+    for (auto& ac : bo)
+    {
+        state.doAction(ac);
+    }
+    REQUIRE(state.getCurrentSupply() == 18);
+    state.doAction(ActionType("HydraliskDen")); // 16
+    state.doAction(ActionType("LurkerAspect")); // 16
+    state.doAction(ActionType("Hydralisk")); // 18
+    state.doAction(ActionType("Lurker")); // 20
+    REQUIRE(state.getCurrentSupply() == 20);
+}
+
 void SimulateEachFrameTo(GameState& state, const ActionType& type)
 {
     while (!state.canBuildNow(type))
@@ -582,4 +623,43 @@ TEST_CASE("Addons")
     REQUIRE(state.isLegal(silo));
     state.doAction(silo);
     REQUIRE(!state.isLegal(silo));
+}
+
+TEST_CASE("Gas legality")
+{
+    // Tests that units that require gas become legal once a gas extractor begins construction
+    {
+        BOSS::GameState state;
+        state.addUnit(ActionType("Drone"));
+        state.setMinerals(1000);
+        state.addUnit(ActionType("Drone"));
+        state.addUnit(ActionType("Drone"));
+        state.addUnit(ActionType("Drone"));
+        state.addUnit(ActionType("Overlord"));
+        state.addUnit(ActionType("Hatchery"));
+        state.addUnit(ActionType("SpawningPool"));
+        REQUIRE(!state.isLegal(ActionType("HydraliskDen")));
+        state.doAction(ActionType("Extractor"));
+        REQUIRE(state.isLegal(ActionType("HydraliskDen")));
+    }
+
+    // extra test for refinery
+    {
+        BOSS::GameState state;
+        state.addUnit(ActionType("SCV"));
+        state.addUnit(ActionType("SCV"));
+        state.addUnit(ActionType("SCV"));
+        state.addUnit(ActionType("SCV"));
+        state.addUnit(ActionType("SCV"));
+        state.setMinerals(1000);
+        state.addUnit(ActionType("CommandCenter"));
+
+        state.doAction(ActionType("SCV"));
+        state.doAction(ActionType("SCV"));
+        state.doAction(ActionType("Barracks"));
+
+        REQUIRE(!state.isLegal(ActionType("Factory")));
+        state.doAction(ActionType("Refinery"));
+        REQUIRE(state.isLegal(ActionType("Factory")));
+    }
 }
