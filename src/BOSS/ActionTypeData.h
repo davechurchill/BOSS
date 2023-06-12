@@ -21,7 +21,7 @@ struct ActionTypeData
     int                         numProduced     = 1;
     int                         startingEnergy  = 0;
     int                         maxEnergy       = 0;
-    int                         buildLimit = -1;
+    int                         buildLimit      = 0;
     bool                        isUnit          = false;
     bool                        isUpgrade       = false;
     bool                        isAbility       = false;
