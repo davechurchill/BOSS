@@ -6,7 +6,6 @@
 
 namespace BOSS
 {
-
 class GameState
 {
     std::vector<Unit>	m_units;
@@ -35,7 +34,7 @@ class GameState
     int     whenResourcesReady(const ActionType action)     const;
     int     whenBuilderReady(const ActionType action)       const;
     int     scaleResource(int baseResourceValue)            const;
-    void    completeUnit(Unit & Unit);
+    void    registerUnit(Unit & Unit);
 
 public:
 
@@ -68,6 +67,8 @@ public:
     void    addUnit(const ActionType unit, int builderID = -1);
     void    setMinerals(const int minerals);
     void    setGas(const int gas);
+
+    bool    operator == (const GameState & rhs)         const; // compares everything except previous frame
 
     std::string toString() const;
 

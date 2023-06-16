@@ -25,7 +25,7 @@ class Unit
     int         m_timeUntilFree     = 0;                    // time remaining until this Unit can build again
     int         m_numLarva          = 0;                    // number of larva this building currently has (Hatch only)
     int         m_timeUntilLarva    = 0;
-    int         m_larvaToAdd        = 0;
+    std::vector<int> m_larvaToAdd;
 
 public:
 
@@ -43,7 +43,7 @@ public:
     bool hasAddon() const;
     int timeUntilLarva() const;
     int numLarva() const;
-    int larvaToAdd() const;
+    std::vector<int>& larvaToAdd();
 
 
     int whenCanBuild(const ActionType & type) const;
@@ -55,6 +55,8 @@ public:
     void fastForward(const int frames);
     void useLarva();
     void addLarva();
+
+    bool operator == (const Unit& rhs) const = default;
 };
 
 }

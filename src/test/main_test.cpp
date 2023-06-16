@@ -663,3 +663,138 @@ TEST_CASE("Gas legality")
         REQUIRE(state.isLegal(ActionType("Factory")));
     }
 }
+
+bool testFF(BOSS::GameState state, std::vector<std::string> buildOrder)
+{
+    BOSS::GameState slowState = state;
+    for (auto& build : buildOrder)
+    {
+        auto x = state.whenCanBuild(build);
+        auto y = slowState.whenCanBuild(build);
+        if (x != y) { return false; }
+        state.fastForward(x);
+        state.doAction(build);
+        for (int i = slowState.getCurrentFrame() + 1; i <= y; ++i)
+        {
+            slowState.fastForward(i);
+        }
+        slowState.doAction(build);
+        if (slowState != state)
+        {
+            auto& units = state.getUnits();
+            auto& unitss = slowState.getUnits();
+            for (int i = 0; i < units.size(); ++i)
+            {
+                if (units[i] != unitss[i])
+                {
+                    std::cout << i << " " << units[i].getType().getName() << " " << units[i].getBuilderID() << " " << unitss[i].getType().getName() << " " << unitss[i].getBuilderID() << std::endl;
+                }
+            }
+            return false;
+        }
+    }
+     return slowState == state;
+}
+
+TEST_CASE("Larva FF")
+{
+    BOSS::GameState state;
+    ActionType hatch("Hatchery");
+    state.addUnit(hatch);
+    state.addUnit(hatch);
+    state.addUnit(ActionType("Drone"));
+    state.setMinerals(2000000);
+    
+    REQUIRE(testFF(state, { "Overlord", "Drone", "Drone", "Overlord", "Hatchery", "Drone", "Extractor", "Hatchery", }));
+
+    BOSS::GameState state2;
+    state2.addUnit(ActionType("Hatchery"));
+    state2.setMinerals(50);
+    state2.doAction(ActionType("Drone"));
+    auto state3 = state2;
+    int x = state2.getUnits()[0].timeUntilLarva();
+    state2.fastForward(x);
+    for (int i = 1; i <= x; ++i)
+    {
+        state3.fastForward(i);
+    }
+    REQUIRE(state2 == state3);
+}
+
+
+TEST_CASE("Fastforward Zerg")
+{
+    BOSS::GameState state;
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Overlord"));
+    state.addUnit(ActionType("Hatchery"));
+    state.setMinerals(50);
+    auto state2 = state;
+    auto state3 = state;
+    auto state4 = state;
+    std::vector<std::string> bos = {"Drone", "Drone", "Drone", "Extractor", "Drone", "Overlord", "SpawningPool", "HydraliskDen", "Drone", "Drone", "Lair", "LurkerAspect", "Hydralisk", "QueensNest", "Lurker", "Hive", "UltraliskCavern", "Ultralisk"};
+    REQUIRE(testFF(state, bos));
+    bos = {"Drone", "Drone", "Drone", "SpawningPool", "Extractor", "Drone", "Drone", "Overlord", "Lair", "Spire", "Mutalisk", "QueensNest", "Burrowing", "Hive", "Queen", "GreaterSpire", "Guardian"};
+    REQUIRE(testFF(state2, bos));
+    bos = {"Drone", "SpawningPool", "Overlord", "Drone", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Drone", "EvolutionChamber", "CreepColony", "SporeColony"};
+    REQUIRE(testFF(state3, bos));
+    bos = {"Drone", "Drone", "Overlord", "Hatchery", "Drone", "Extractor", "Hatchery" ,"Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "SpawningPool", "HydraliskDen", "Lair", "LurkerAspect", "Hydralisk", "Hydralisk", "Lurker", "Lurker", "QueensNest", "Hive", "Lair", "NydusCanal", "DefilerMound", "Defiler", "Defiler", "Plague"};
+    REQUIRE(testFF(state4, bos));
+}
+
+TEST_CASE("Fastforward Protoss")
+{
+    BOSS::GameState state;
+    ActionType probe("Probe");
+    state.addUnit(probe);
+    state.addUnit(probe);
+    state.addUnit(probe);
+    state.addUnit(probe);
+    state.addUnit(ActionType("Nexus"));
+    state.setMinerals(50);
+    auto state2 = state;
+    auto state3 = state;
+    auto state4 = state;
+
+    std::vector<std::string> bos = {"Probe", "Pylon", "Pylon", "Pylon", "Probe", "Probe", "Probe", "Probe", "Probe", "Probe", "Probe", "Probe", "Probe", "Nexus", "Nexus", "Pylon", "Probe", "Probe", "Probe", "Probe", "Assimilator", "Assimilator", "Probe", "Gateway", "CyberneticsCore", "Stargate", "FleetBeacon", "Carrier", "CitadelofAdun", "TemplarArchives", "ArbiterTribunal", "Recall", "Arbiter", "Arbiter", "StasisField"};
+    REQUIRE(testFF(state, bos));
+    bos = {"Probe", "Pylon", "Probe", "Probe", "Probe", "Assimilator", "Pylon", "Gateway", "CyberneticsCore", "CitadelofAdun", "TemplarArchives", "DarkTemplar", "DarkTemplar", "PsionicStorm", "Hallucination"};
+    REQUIRE(testFF(state2, bos));
+    bos = { "Probe", "Pylon", "Probe", "Probe", "Probe", "Assimilator", "Pylon", "Gateway", "ShieldBattery", "ShieldBattery", "Forge", "PhotonCannon", "CyberneticsCore", "RoboticsFacility", "Observatory", "Observer", "RoboticsSupportBay", "Pylon", "Reaver", "Reaver"};
+    REQUIRE(testFF(state3, bos));
+    bos = { "Pylon", "Probe", "Probe", "Probe", "Probe", "Assimilator", "Gateway", "Zealot", "Zealot", "Pylon", "Pylon", "CyberneticsCore", "CitadelofAdun", "TemplarArchives", "HighTemplar", "HighTemplar", "HighTemplar"};
+    REQUIRE(testFF(state4, bos));
+}
+
+TEST_CASE("Fastforward Terran")
+{
+    BOSS::GameState state;
+    state.addUnit(ActionType("CommandCenter"));
+    state.addUnit(ActionType("SCV"));
+    state.addUnit(ActionType("SCV"));
+    state.addUnit(ActionType("SCV"));
+    state.addUnit(ActionType("SCV"));
+    state.setMinerals(50);
+
+    auto state2 = state;
+    auto state3 = state;
+    auto state4 = state;
+    std::vector<std::string> bos = {"SCV", "SCV", "SCV", "SCV", "SupplyDepot", "SupplyDepot", "Refinery", "CommandCenter", "CommandCenter", "SCV", "SCV", "SCV", "SCV", "SupplyDepot", "Barracks", "EngineeringBay", "MissileTurret", "Factory", "Starport", "ScienceFacility", "ControlTower", "PhysicsLab"};
+    REQUIRE(testFF(state, bos));
+    bos = { "SCV", "SCV", "SupplyDepot", "Barracks", "Marine", "Marine", "Marine", "Bunker", "SCV", "SCV", "SupplyDepot", "Refinery", "Factory", "MachineShop", "SiegeTank", "SiegeTank", "TankSiegeMode"};
+    REQUIRE(testFF(state2, bos));
+    bos = { "SCV", "SCV", "SCV", "SCV", "SupplyDepot", "Barracks", "Refinery", "Factory", "Armory", "Goliath", "Academy", "ComsatStation", "Starport", "ScienceFacility", "CovertOps", "CommandCenter", "NuclearSilo", "NuclearMissile"};
+    REQUIRE(testFF(state3, bos));
+    bos = { "SCV", "SCV", "SCV", "SCV", "SupplyDepot", "SupplyDepot", "Refinery", "Barracks", "EngineeringBay", "MissileTurret", "Factory", "Starport", "ScienceFacility", "ControlTower", "PhysicsLab", "YamatoGun", "Battlecruiser", "Battlecruiser" };
+    REQUIRE(testFF(state4, bos));
+}
+
+TEST_CASE("Unit Completion")
+{
+    BOSS::GameState state;
+    state.addUnit(ActionType("Hatchery"));
+    REQUIRE(state.getUnits()[0].getTimeUntilBuilt() == 0);
+}

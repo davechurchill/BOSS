@@ -62,13 +62,13 @@ void Unit::startMorphing(const ActionType & type)
 
 void Unit::complete()
 {
-    //m_timeUntilFree = 0;
-    //m_timeUntilBuilt = 0;
+    m_timeUntilFree = 0;
+    m_timeUntilBuilt = 0;
 }
 
 void Unit::fastForward(const int frames)
 {
-    m_larvaToAdd = 0;
+    m_larvaToAdd.clear();
 
     // if we are completing the thing that this Unit is building
     if ((m_buildType != ActionTypes::None) && frames >= m_timeUntilFree)
@@ -92,16 +92,16 @@ void Unit::fastForward(const int frames)
     bool ffLarva = m_timeUntilLarva > 0;
 
     // but don't fast forward larva counter of unbuilt hatcheries
-    if (m_type == hatchery && m_timeUntilFree > frames) { ffLarva = false; }
+    if (m_type == hatchery && m_timeUntilBuilt > frames) { ffLarva = false; }
 
     if (ffLarva)
     {
         BOSS_ASSERT(m_numLarva < 3, "Shouldn't have less than 3 larva and a non-zero timer");
         
         int ff = frames;
-        if (m_type == hatchery && m_timeUntilFree <= frames)
+        if (m_type == hatchery && m_timeUntilBuilt <= frames)
         {
-            ff -= m_timeUntilFree;
+            ff -= m_timeUntilBuilt;
         }
 
         while (m_numLarva < 3 && ff > 0)
@@ -114,12 +114,12 @@ void Unit::fastForward(const int frames)
             else
             {
                 ff -= m_timeUntilLarva;
-                m_larvaToAdd++;
+                m_larvaToAdd.push_back(ff);
                 m_timeUntilLarva = 13 * 24;
             }
 
             // don't add too many larva
-            if (m_numLarva + m_larvaToAdd >= 3) { break; }
+            if (m_numLarva + m_larvaToAdd.size() >= 3) { break; }
         }
     }
 
@@ -241,7 +241,8 @@ void Unit::addLarva()
     if (m_numLarva == 3) { m_timeUntilLarva = 0; }
 }
 
-int Unit::larvaToAdd() const
+std::vector<int>& Unit::larvaToAdd() 
 {
     return m_larvaToAdd;
 }
+

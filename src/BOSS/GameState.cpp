@@ -63,6 +63,7 @@ bool GameState::isLegal(const ActionType action) const
     if ((m_gas < action.gasPrice()) && (m_gasWorkers == 0) && (numRefineries == 0)) { return false; }
         	
     // if we won't have enough supply eventually to build this item, it's not legal
+    // assumes there will never be a situation where one unit builds another, and both have supply costs > 0, unless it is a morph
     if ((m_currentSupply + action.supplyCost() - action.whatBuilds().supplyCost()) > (m_maxSupply + getSupplyInProgress())) { return false; }
 
     // TODO: require an extra for refineries byt not buildings
@@ -157,8 +158,8 @@ void GameState::fastForward(const int toFrame)
             m_mineralWorkers++;
         }
 
-        // complete the action and remove it from the list
-        completeUnit(unit);
+        // register the action and remove it from the list
+        registerUnit(unit);
         m_unitsBeingBuilt.pop_back();
     }
 
@@ -168,22 +169,37 @@ void GameState::fastForward(const int toFrame)
     m_gas           += timeElapsed * GPWPF * m_gasWorkers;
 
     // update all the intances to the ff time
-    for (size_t i=0; i<m_units.size(); i++)
+    std::map<int, std::vector<size_t>> larvae;
+    for (size_t i = 0; i < m_units.size(); i++)
     {
         m_units[i].fastForward(toFrame - previousFrame);
-        static const ActionType larva("Larva");
-        for (int l = 0; l < m_units[i].larvaToAdd(); l++)
+        for (auto l : m_units[i].larvaToAdd())
+        {
+            larvae[l].push_back(i);
+        }
+        m_units[i].larvaToAdd().clear();
+    }
+
+    // Add larva in order
+    static const ActionType larva("Larva");
+    for (auto iter = larvae.rbegin(); iter != larvae.rend(); ++iter)
+    {
+        for (int i : iter->second)
         {
             addUnit(larva, m_units[i].getID());
+            if (iter->first + previousFrame != toFrame)
+            {
+                auto& newLarva = m_units.back();
+                newLarva.complete();
+            }
         }
     }
 
     m_currentFrame = toFrame;
 }
 
-void GameState::completeUnit(Unit & unit)
+void GameState::registerUnit(Unit & unit)
 {
-	unit.complete();
     m_maxSupply += unit.getType().supplyProvided();
 
     // if it's a worker, assign it to the correct job
@@ -198,7 +214,7 @@ void GameState::completeUnit(Unit & unit)
     else if (unit.getType().isRefinery())
     {
         m_numRefineries++;
-        BOSS_ASSERT(m_numRefineries <= m_numDepots, "Shouldn't have more refineries than depots");
+        BOSS_ASSERT(m_numRefineries <= m_numDepots + getNumInProgress(ActionTypes::GetResourceDepot(m_race)), "Shouldn't have more refineries than depots");
         int needGasWorkers = std::max(0, (WorkersPerRefinery*m_numRefineries - m_gasWorkers));
         BOSS_ASSERT(needGasWorkers < m_mineralWorkers, "Shouldn't need more gas workers than we have mineral workers");
         m_mineralWorkers -= needGasWorkers;
@@ -229,9 +245,9 @@ void GameState::addUnit(const ActionType type, int builderID)
     // if there's no builder, complete the unit now and skip the unit in progress step
     else if (builderID == -1)
     {
-        Unit unit(type, m_units.size(), builderID);
+        Unit unit(type, m_units.size(), builderID); // unit is completed in constructor
         m_units.push_back(unit);
-        completeUnit(unit);
+        registerUnit(unit);
 
         m_currentSupply += type.supplyCost();
 
@@ -290,10 +306,6 @@ void GameState::addUnit(const ActionType type, int builderID)
 
 int GameState::whenCanBuild(const ActionType action) const
 {
-    if (action.getName() == "Lair")
-    {
-        int a = 6;
-    }
     // figure out when prerequisites will be ready
     int maxTime         = m_currentFrame;
     int prereqTime      = whenPrerequisitesReady(action);
@@ -515,7 +527,7 @@ int GameState::getBuilderID(const ActionType action) const
 
 bool GameState::haveBuilder(const ActionType type) const
 {
-    return std::any_of(m_units.begin(), m_units.end(), 
+    return type.whatBuildsCount() <= std::count_if(m_units.begin(), m_units.end(), 
            [&type](const Unit & u){ return u.whenCanBuild(type) != -1; });
 }
 
@@ -617,6 +629,11 @@ void GameState::setMinerals(const int minerals)
 void GameState::setGas(const int gas)
 {
     m_gas = scaleResource(gas);
+}
+
+bool BOSS::GameState::operator==(const GameState& rhs) const
+{
+    return tie(m_units, m_unitsBeingBuilt, m_race, m_minerals, m_gas, m_currentSupply, m_maxSupply, m_currentFrame, m_mineralWorkers, m_gasWorkers, m_buildingWorkers, m_numRefineries, m_numDepots, m_previousAction) == tie(rhs.m_units, rhs.m_unitsBeingBuilt, rhs.m_race, rhs.m_minerals, rhs.m_gas, rhs.m_currentSupply, rhs.m_maxSupply, rhs.m_currentFrame, rhs.m_mineralWorkers, rhs.m_gasWorkers, rhs.m_buildingWorkers, rhs.m_numRefineries, rhs.m_numDepots, rhs.m_previousAction);
 }
 
 int GameState::getRace() const
