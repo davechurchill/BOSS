@@ -44,6 +44,7 @@ public:
 
     ActionType whatBuilds() const;
     ActionType whatBuildsAddon() const;
+    int whatBuildsCount() const;
     const std::vector<ActionType> & required() const;
     const std::vector<ActionType> & equivalent() const;
     const ActionSet & getPrerequisiteActionCount() const;

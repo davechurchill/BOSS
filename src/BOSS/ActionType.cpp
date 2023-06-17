@@ -67,6 +67,11 @@ ActionType ActionType::whatBuildsAddon() const
     return ActionTypeData::GetActionTypeData(m_id).whatBuildsAddon;
 }
 
+int ActionType::whatBuildsCount() const
+{
+    return ActionTypeData::GetActionTypeData(m_id).whatBuildsCount;
+}
+
 const std::vector<ActionType> & ActionType::required() const
 {
     return ActionTypeData::GetActionTypeData(m_id).required;
