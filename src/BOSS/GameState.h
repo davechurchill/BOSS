@@ -34,7 +34,7 @@ class GameState
     int     whenResourcesReady(const ActionType action)     const;
     int     whenBuilderReady(const ActionType action)       const;
     int     scaleResource(int baseResourceValue)            const;
-    void    registerUnit(Unit & Unit);
+    void    completeUnit(Unit & Unit);
 
 public:
 
