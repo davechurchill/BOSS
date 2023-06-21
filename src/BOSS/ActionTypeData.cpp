@@ -86,12 +86,6 @@ void ActionTypeData::Init(const std::string & filename)
                 data.isHatchery = true;
             }
 
-            // Limit each tech to 1
-            if (data.buildLimit == 0 && data.isTech)
-            {
-                data.buildLimit = 1;
-            }
-
             BOSS_ASSERT(actions[a].count("whatBuilds"), "no 'whatBuilds' member");
             auto & whatBuilds = actions[a]["whatBuilds"];
             data.whatBuildsStr = whatBuilds[0].get<std::string>();
