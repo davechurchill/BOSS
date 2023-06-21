@@ -159,7 +159,7 @@ void GameState::fastForward(const int toFrame)
         }
 
         // register the action and remove it from the list
-        registerUnit(unit);
+        completeUnit(unit);
         m_unitsBeingBuilt.pop_back();
     }
 
@@ -198,7 +198,7 @@ void GameState::fastForward(const int toFrame)
     m_currentFrame = toFrame;
 }
 
-void GameState::registerUnit(Unit & unit)
+void GameState::completeUnit(Unit & unit)
 {
     m_maxSupply += unit.getType().supplyProvided();
 
@@ -247,7 +247,7 @@ void GameState::addUnit(const ActionType type, int builderID)
     {
         Unit unit(type, m_units.size(), builderID); // unit is completed in constructor
         m_units.push_back(unit);
-        registerUnit(unit);
+        completeUnit(unit);
 
         m_currentSupply += type.supplyCost();
 
