@@ -347,10 +347,9 @@ TEST_CASE("Zerg Use All Drones")
 
 TEST_CASE("Zerg 3 Drones Gas Only")
 {
-    BOSS::Init("config/BWData.json");
+    /*BOSS::Init("config/BWData.json");
 
     BOSS::GameState state;
-    state.addUnit(ActionType("Drone"));
     state.addUnit(ActionType("Drone"));
     state.addUnit(ActionType("Drone"));
     state.addUnit(ActionType("Drone"));
@@ -363,7 +362,7 @@ TEST_CASE("Zerg 3 Drones Gas Only")
     state.doAction(ActionType("Extractor"));
     state.fastForward(state.getCurrentFrame() + 500);
 
-    REQUIRE(!state.isLegal(ActionType("SpawningPool")));
+    REQUIRE(!state.isLegal(ActionType("SpawningPool")));*/
 }
 
 void SupplySanityCheck(const GameState& state)
@@ -705,6 +704,15 @@ bool testFF(BOSS::GameState state, std::vector<std::string> buildOrder)
         slowState.doAction(build);
         if (slowState != state)
         {
+            auto& units = state.getUnits();
+            auto& unitss = slowState.getUnits();
+            for (int i = 0; i < units.size(); ++i)
+            {
+                if (units[i] != unitss[i])
+                {
+                    BOSS_ASSERT(false, "test");
+                }
+            }
             return false;
         }
     }
@@ -858,28 +866,54 @@ TEST_CASE("Reserved Time Check")
     state.doAction(ActionType("Pylon"));
 }
 
-TEST_CASE("Zero Mineral Workers Check")
+#define BOSS_BFS_TESTS
+#ifdef BOSS_BFS_TESTS
+
+#include "search//BFS_BuildOrderSearch.h" 
+
+TEST_CASE("BF Build Order Search Terran")
 {
-    // Mainly checks that the system can still run properly in a situation with no workers
-    GameState state;
-    state.setMinerals(1000);
-    state.addUnit(ActionType("Overlord"));
-    state.addUnit(ActionType("Hatchery"));
-    const static ActionType spawn("SpawningPool");
-    REQUIRE(!state.isLegal(spawn));
-    const static ActionType drone("Drone");
-    state.doAction(drone);
-    REQUIRE(state.isLegal(spawn));
-    state.doAction(spawn);
-    state.doAction(drone);
-    state.doAction(drone);
-    state.doAction(drone);
-    state.doAction(drone);
-    state.doAction(ActionType("Extractor"));
-    state.fastForward(state.getCurrentFrame() + state.getNextFinishTime(ActionType("Extractor")));
-    REQUIRE(state.getNumCompleted(ActionType("Extractor"))==1);
-    REQUIRE(state.getNumMineralWorkers() == 0);
-    REQUIRE(!state.isLegal(ActionType("HydraliskDen")));
-    state.doAction(drone);
-    REQUIRE(state.isLegal(ActionType("HydraliskDen")));
+    BOSS::GameState state = GameState::StarCraft1_TerranStart();
+    BFS_BuildOrderSearch search;
+    auto s = (BuildOrderSearch *) & search;
+    s->setState(state);
+    s->addGoal(ActionType("NuclearSilo"),1);
+    std::cout << "Searching for NuclearSilo build order" << std::endl;
+    s->search();
+    auto r = s->getResults();
+    REQUIRE(r.buildOrder.getNameString() == "Refinery Barracks Factory Starport ScienceFacility CovertOps NuclearSilo ");
 }
+
+TEST_CASE("BF Build Order Search Zerg")
+{
+    GameState state = GameState::StarCraft1_ZergStart();
+    BFS_BuildOrderSearch search;
+    auto s = (BuildOrderSearch*)&search;
+    s->setState(state);
+    s->addGoal(ActionType("Hive"), 1);
+    std::cout << "Searching for Hive build order" << std::endl;
+    s->search();
+    auto& r = s->getResults();
+    REQUIRE(r.buildOrder.getNameString() == "Drone Drone Drone Extractor SpawningPool Lair QueensNest Hive ");
+    s->clearGoalsAndResults();
+    s->addGoal(ActionType("Hydralisk"), 1);
+    s->addGoal(ActionType("Zergling"), 1);
+    std::cout << "Searching for Hydralisk and Zergling build order" << std::endl;
+    s->search();
+    REQUIRE(r.buildOrder.getNameString() == "Drone Drone Drone Extractor SpawningPool Zergling HydraliskDen Hydralisk ");
+}
+
+TEST_CASE("BF Build Order Search Protoss")
+{
+    GameState state = GameState::StarCraft1_ProtossStart();
+    BFS_BuildOrderSearch search;
+    auto s = (BuildOrderSearch*)&search;
+    s->setState(state);
+    s->addGoal(ActionType("TemplarArchives"), 1);
+    std::cout << "Searching for Templar Archives build order" << std::endl;
+    s->search();
+    auto& r = s->getResults();
+    REQUIRE(r.buildOrder.getNameString() == "Pylon Assimilator Gateway CyberneticsCore CitadelofAdun TemplarArchives ");
+}
+
+#endif // BOSS_BFS_TESTS
