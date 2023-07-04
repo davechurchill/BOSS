@@ -81,7 +81,10 @@ void Unit::fastForward(const int frames)
         m_buildID = 0;
 
         // go back to minerals if this is a worker
-        m_job = m_type.isWorker() ? UnitJobs::Minerals : UnitJobs::None;
+        if (m_job != UnitJobs::Gas)
+        {
+            m_job = m_type.isWorker() ? UnitJobs::Minerals : UnitJobs::None;
+        }
     }
 
     // compute the number of larva this building should have
@@ -151,6 +154,9 @@ int Unit::whenCanBuild(const ActionType & type) const
 
     // if this is a worker and it's harvesting gas, it can't build
     if (m_type.isWorker() && (m_job == UnitJobs::Gas)) { return -1; }
+
+    // if this is reserved and the action requires morphing, cannot build
+    if (m_reservedForID != -1 && type.isMorphed()) { return -1; }
 
     return m_timeUntilFree;
 }
@@ -232,6 +238,16 @@ int Unit::numLarva() const
     return m_numLarva;
 }
 
+int BOSS::Unit::reservedFor() const
+{
+    return m_reservedForID;
+}
+
+UnitJobs BOSS::Unit::getJob() const
+{
+    return m_job;
+}
+
 void Unit::addLarva()
 {
     BOSS_ASSERT(m_numLarva < 3, "Can't have more than 3 larva");
@@ -239,6 +255,16 @@ void Unit::addLarva()
 
     // make sure we reset the timer if we have 3 larva
     if (m_numLarva == 3) { m_timeUntilLarva = 0; }
+}
+
+void BOSS::Unit::reserve(const int refineryID)
+{
+    m_reservedForID = refineryID;
+}
+
+void BOSS::Unit::setJob(const UnitJobs job)
+{
+    m_job = job;
 }
 
 std::vector<int>& Unit::larvaToAdd() 

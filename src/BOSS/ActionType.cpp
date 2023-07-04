@@ -1,6 +1,7 @@
 #include "ActionType.h"
 #include "ActionTypeData.h"
 #include "ActionSet.h"
+#include <vector>
 
 using namespace BOSS;
 
@@ -200,9 +201,14 @@ namespace ActionTypes
     {
         ActionSet count;
 
-        // add everything from whatBuilds and required
+        count.add(action.whatBuilds());
+        auto addon = action.whatBuildsAddon();
+        if (addon != None) { count.add(addon); }
 
-        //printf("Finish Prerequisites\n");
+        for (auto& req : action.required())
+        {
+            count.add(req);
+        }
         return count;
     }
 
@@ -215,14 +221,12 @@ namespace ActionTypes
             pre.add(ActionTypes::GetRefinery(action.getRace()));
         }
 
-        for (size_t a(0); a < pre.size(); ++a)
+        for (auto& act : pre)
         {
-            const ActionType & actionType(a);
-            
-            if (pre.contains(actionType) && !allActions.contains(actionType))
+            if (!allActions.contains(act))
             {
-                allActions.add(actionType);
-                CalculateRecursivePrerequisites(allActions, actionType);
+                allActions.add(act);
+                CalculateRecursivePrerequisites(allActions, act);
             }
         }
     }

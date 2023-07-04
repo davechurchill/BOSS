@@ -297,7 +297,7 @@ void DFBB_BuildOrderSmartSearch::search()
     doSearch();
 }
 
-const DFBB_BuildOrderSearchResults & DFBB_BuildOrderSmartSearch::getResults() const
+const BuildOrderSearchResults & DFBB_BuildOrderSmartSearch::getResults() const
 {
     return m_results;
 }

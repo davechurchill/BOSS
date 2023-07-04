@@ -250,7 +250,7 @@ TEST_CASE("Zerg Tech Tree")
     }
 
     // test the base legal units
-    DoLegalCheck(state, legal, "", { "Drone", "Overlord", "SpawningPool", "Extractor", "Hatchery", "CreepColony", "EvolutionChamber" });
+    DoLegalCheck(state, legal, "", { "Drone", "Overlord", "SpawningPool", "Hatchery", "CreepColony", "EvolutionChamber", "Extractor" });
 
     // build some more workers and gas so everything will eventually be legal
     // zerg needs a ton of drones so just make them all in the beginning
@@ -289,7 +289,7 @@ TEST_CASE("Zerg Tech Tree")
     state.doAction(ActionType("Drone"));
     state.doAction(ActionType("Drone"));
 
-    DoLegalCheck(state, legal, "", { "Burrowing" });
+    DoLegalCheck(state, legal, "", { "Burrowing"});
     // build stuff in order in the tech tree, testing legality as we go
     DoLegalCheck(state, legal, "CreepColony", {});
     DoLegalCheck(state, legal, "CreepColony", {});
@@ -503,6 +503,28 @@ TEST_CASE("Morph Supply Test 2")
     REQUIRE(state.getCurrentSupply() == 20);
 }
 
+TEST_CASE("Morph Supply Test 3")
+{
+    GameState state = GameState::StarCraft1_ZergStart();
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+
+    REQUIRE(state.getMaxSupply() == state.getCurrentSupply());
+    REQUIRE(!state.isLegal(ActionType("Drone")));
+    REQUIRE(state.isLegal(ActionType("SpawningPool")));
+    state.doAction(ActionType("SpawningPool"));
+    REQUIRE(state.getMaxSupply() - 2 == state.getCurrentSupply());
+    state.addUnit(ActionType("Drone"));
+    state.doAction(ActionType("Hatchery"));
+    state.addUnit(ActionType("Drone"));
+    REQUIRE(state.getMaxSupply() == state.getCurrentSupply());
+    REQUIRE(state.isLegal(ActionType("Drone")));
+    REQUIRE(state.whenCanBuild(ActionType("Drone"))==state.getCurrentFrame() + state.getNextFinishTime(ActionType("Hatchery")));
+}
+
 void SimulateEachFrameTo(GameState& state, const ActionType& type)
 {
     while (!state.canBuildNow(type))
@@ -635,6 +657,7 @@ TEST_CASE("Gas legality")
         state.addUnit(ActionType("Drone"));
         state.addUnit(ActionType("Drone"));
         state.addUnit(ActionType("Drone"));
+        state.addUnit(ActionType("Drone"));
         state.addUnit(ActionType("Overlord"));
         state.addUnit(ActionType("Hatchery"));
         state.addUnit(ActionType("SpawningPool"));
@@ -687,7 +710,7 @@ bool testFF(BOSS::GameState state, std::vector<std::string> buildOrder)
             {
                 if (units[i] != unitss[i])
                 {
-                    std::cout << i << " " << units[i].getType().getName() << " " << units[i].getBuilderID() << " " << unitss[i].getType().getName() << " " << unitss[i].getBuilderID() << std::endl;
+                    BOSS_ASSERT(false, "test");
                 }
             }
             return false;
@@ -705,7 +728,7 @@ TEST_CASE("Larva FF")
     state.addUnit(ActionType("Drone"));
     state.setMinerals(2000000);
     
-    REQUIRE(testFF(state, { "Overlord", "Drone", "Drone", "Overlord", "Hatchery", "Drone", "Extractor", "Hatchery", }));
+    REQUIRE(testFF(state, { "Overlord", "Drone", "Drone", "Overlord", "Hatchery", "Drone", "Drone", "Drone", "Drone", "Extractor", "Hatchery", }));
 
     BOSS::GameState state2;
     state2.addUnit(ActionType("Hatchery"));
@@ -724,72 +747,42 @@ TEST_CASE("Larva FF")
 
 TEST_CASE("Fastforward Zerg")
 {
-    BOSS::GameState state;
-    state.addUnit(ActionType("Drone"));
-    state.addUnit(ActionType("Drone"));
-    state.addUnit(ActionType("Drone"));
-    state.addUnit(ActionType("Drone"));
-    state.addUnit(ActionType("Overlord"));
-    state.addUnit(ActionType("Hatchery"));
-    state.setMinerals(50);
-    auto state2 = state;
-    auto state3 = state;
-    auto state4 = state;
+    BOSS::GameState state = GameState::StarCraft1_ZergStart();
     std::vector<std::string> bos = {"Drone", "Drone", "Drone", "Extractor", "Drone", "Overlord", "SpawningPool", "HydraliskDen", "Drone", "Drone", "Lair", "LurkerAspect", "Hydralisk", "QueensNest", "Lurker", "Hive", "UltraliskCavern", "Ultralisk"};
     REQUIRE(testFF(state, bos));
     bos = {"Drone", "Drone", "Drone", "SpawningPool", "Extractor", "Drone", "Drone", "Overlord", "Lair", "Spire", "Mutalisk", "QueensNest", "Burrowing", "Hive", "Queen", "GreaterSpire", "Guardian"};
-    REQUIRE(testFF(state2, bos));
+    REQUIRE(testFF(state, bos));
     bos = {"Drone", "SpawningPool", "Overlord", "Drone", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Drone", "EvolutionChamber", "CreepColony", "SporeColony"};
-    REQUIRE(testFF(state3, bos));
+    REQUIRE(testFF(state, bos));
     bos = {"Drone", "Drone", "Overlord", "Hatchery", "Drone", "Extractor", "Hatchery" ,"Drone", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "SpawningPool", "HydraliskDen", "Lair", "LurkerAspect", "Hydralisk", "Hydralisk", "Lurker", "Lurker", "QueensNest", "Hive", "Lair", "NydusCanal", "DefilerMound", "Defiler", "Defiler", "Plague"};
-    REQUIRE(testFF(state4, bos));
+    REQUIRE(testFF(state, bos));
 }
 
 TEST_CASE("Fastforward Protoss")
 {
-    BOSS::GameState state;
-    ActionType probe("Probe");
-    state.addUnit(probe);
-    state.addUnit(probe);
-    state.addUnit(probe);
-    state.addUnit(probe);
-    state.addUnit(ActionType("Nexus"));
-    state.setMinerals(50);
-    auto state2 = state;
-    auto state3 = state;
-    auto state4 = state;
+    BOSS::GameState state = GameState::StarCraft1_ProtossStart();
 
     std::vector<std::string> bos = {"Probe", "Pylon", "Pylon", "Pylon", "Probe", "Probe", "Probe", "Probe", "Probe", "Probe", "Probe", "Probe", "Probe", "Nexus", "Nexus", "Pylon", "Probe", "Probe", "Probe", "Probe", "Assimilator", "Assimilator", "Probe", "Gateway", "CyberneticsCore", "Stargate", "FleetBeacon", "Carrier", "CitadelofAdun", "TemplarArchives", "ArbiterTribunal", "Recall", "Arbiter", "Arbiter", "StasisField"};
     REQUIRE(testFF(state, bos));
     bos = {"Probe", "Pylon", "Probe", "Probe", "Probe", "Assimilator", "Pylon", "Gateway", "CyberneticsCore", "CitadelofAdun", "TemplarArchives", "DarkTemplar", "DarkTemplar", "PsionicStorm", "Hallucination"};
-    REQUIRE(testFF(state2, bos));
+    REQUIRE(testFF(state, bos));
     bos = { "Probe", "Pylon", "Probe", "Probe", "Probe", "Assimilator", "Pylon", "Gateway", "ShieldBattery", "ShieldBattery", "Forge", "PhotonCannon", "CyberneticsCore", "RoboticsFacility", "Observatory", "Observer", "RoboticsSupportBay", "Pylon", "Reaver", "Reaver"};
-    REQUIRE(testFF(state3, bos));
+    REQUIRE(testFF(state, bos));
     bos = { "Pylon", "Probe", "Probe", "Probe", "Probe", "Assimilator", "Gateway", "Zealot", "Zealot", "Pylon", "Pylon", "CyberneticsCore", "CitadelofAdun", "TemplarArchives", "HighTemplar", "HighTemplar", "HighTemplar"};
-    REQUIRE(testFF(state4, bos));
+    REQUIRE(testFF(state, bos));
 }
 
 TEST_CASE("Fastforward Terran")
 {
-    BOSS::GameState state;
-    state.addUnit(ActionType("CommandCenter"));
-    state.addUnit(ActionType("SCV"));
-    state.addUnit(ActionType("SCV"));
-    state.addUnit(ActionType("SCV"));
-    state.addUnit(ActionType("SCV"));
-    state.setMinerals(50);
-
-    auto state2 = state;
-    auto state3 = state;
-    auto state4 = state;
+    auto state = GameState::StarCraft1_TerranStart();
     std::vector<std::string> bos = {"SCV", "SCV", "SCV", "SCV", "SupplyDepot", "SupplyDepot", "Refinery", "CommandCenter", "CommandCenter", "SCV", "SCV", "SCV", "SCV", "SupplyDepot", "Barracks", "EngineeringBay", "MissileTurret", "Factory", "Starport", "ScienceFacility", "ControlTower", "PhysicsLab"};
     REQUIRE(testFF(state, bos));
     bos = { "SCV", "SCV", "SupplyDepot", "Barracks", "Marine", "Marine", "Marine", "Bunker", "SCV", "SCV", "SupplyDepot", "Refinery", "Factory", "MachineShop", "SiegeTank", "SiegeTank", "TankSiegeMode"};
-    REQUIRE(testFF(state2, bos));
+    REQUIRE(testFF(state, bos));
     bos = { "SCV", "SCV", "SCV", "SCV", "SupplyDepot", "Barracks", "Refinery", "Factory", "Armory", "Goliath", "Academy", "ComsatStation", "Starport", "ScienceFacility", "CovertOps", "CommandCenter", "NuclearSilo", "NuclearMissile"};
-    REQUIRE(testFF(state3, bos));
+    REQUIRE(testFF(state, bos));
     bos = { "SCV", "SCV", "SCV", "SCV", "SupplyDepot", "SupplyDepot", "Refinery", "Barracks", "EngineeringBay", "MissileTurret", "Factory", "Starport", "ScienceFacility", "ControlTower", "PhysicsLab", "YamatoGun", "Battlecruiser", "Battlecruiser" };
-    REQUIRE(testFF(state4, bos));
+    REQUIRE(testFF(state, bos));
 }
 
 TEST_CASE("Unit Completion")
@@ -798,3 +791,129 @@ TEST_CASE("Unit Completion")
     state.addUnit(ActionType("Hatchery"));
     REQUIRE(state.getUnits()[0].getTimeUntilBuilt() == 0);
 }
+
+TEST_CASE("Terran Refinery Check")
+{
+    GameState state;
+    state.addUnit(ActionType("SCV"));
+    state.addUnit(ActionType("SCV"));
+    state.addUnit(ActionType("CommandCenter"));
+    state.setMinerals(150);
+    const static ActionType refinery("Refinery");
+    REQUIRE(!state.isLegal(refinery));
+    state.doAction(ActionType("SCV"));
+    REQUIRE(state.isLegal(refinery));
+    state.doAction(refinery);
+    REQUIRE(state.getNumInProgress(ActionType("SCV")) == 1);
+    REQUIRE(state.getNumMineralWorkers() == 1);
+    state.fastForward(state.getLastActionFinishTime());
+    REQUIRE(state.getNumGasWorkers() == 3);
+    REQUIRE(state.getNumMineralWorkers() == 0);
+    REQUIRE(state.getNumInProgress(ActionType("SCV")) == 0);
+}
+
+TEST_CASE("Zerg Refinery Check")
+{
+    // Test for morph working with worker reservations
+    GameState state;
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Hatchery"));
+    state.setMinerals(100);
+    state.addUnit(ActionType("Overlord"));
+    REQUIRE(!state.isLegal(ActionType("Extractor")));
+    state.addUnit(ActionType("Drone"));
+    REQUIRE(state.isLegal(ActionType("Extractor")));
+    state.doAction(ActionType("Extractor"));
+    REQUIRE(state.getNumMineralWorkers() == 3);
+    state.fastForward(state.getLastActionFinishTime());
+    REQUIRE(state.getNumGasWorkers() == 3);
+    REQUIRE(state.getNumMineralWorkers() == 0);
+}
+
+TEST_CASE("Protoss Refinery Check")
+{
+    GameState state;
+    state.addUnit(ActionType("Probe"));
+    state.addUnit(ActionType("Probe"));
+    state.addUnit(ActionType("Nexus"));
+    state.setMinerals(150);
+    const static ActionType refinery("Assimilator");
+    REQUIRE(!state.isLegal(refinery));
+    state.doAction(ActionType("Probe"));
+    REQUIRE(state.isLegal(refinery));
+    state.doAction(refinery);
+    REQUIRE(state.getNumInProgress(ActionType("Probe")) == 1);
+    REQUIRE(state.getNumMineralWorkers() == 2);
+    state.fastForward(state.getLastActionFinishTime());
+    REQUIRE(state.getNumGasWorkers() == 3);
+    REQUIRE(state.getNumMineralWorkers() == 0);
+    REQUIRE(state.getNumInProgress(ActionType("Probe")) == 0);
+}
+
+TEST_CASE("Reserved Time Check")
+{
+    // checks that a reserved unit can still build stuff so long as it would finish before the refinery the worker is waiting on finishes
+    GameState state;
+    state.addUnit(ActionType("Probe"));
+    state.addUnit(ActionType("Probe"));
+    state.addUnit(ActionType("Probe"));
+    state.addUnit(ActionType("Probe"));
+    state.addUnit(ActionType("Nexus"));
+    state.doAction(ActionType("Assimilator"));
+    REQUIRE(state.isLegal(ActionType("Pylon")));
+    state.doAction(ActionType("Pylon"));
+}
+
+#define BOSS_BFS_TESTS
+#ifdef BOSS_BFS_TESTS
+
+#include "search//BFS_BuildOrderSearch.h" 
+
+TEST_CASE("BF Build Order Search Terran")
+{
+    BOSS::GameState state = GameState::StarCraft1_TerranStart();
+    BFS_BuildOrderSearch search;
+    auto s = (BuildOrderSearch *) & search;
+    s->setState(state);
+    s->addGoal(ActionType("NuclearSilo"),1);
+    std::cout << "Searching for NuclearSilo build order" << std::endl;
+    s->search();
+    auto r = s->getResults();
+    REQUIRE(r.buildOrder.getNameString() == "Refinery Barracks Factory Starport ScienceFacility CovertOps NuclearSilo ");
+}
+
+TEST_CASE("BF Build Order Search Zerg")
+{
+    GameState state = GameState::StarCraft1_ZergStart();
+    BFS_BuildOrderSearch search;
+    auto s = (BuildOrderSearch*)&search;
+    s->setState(state);
+    s->addGoal(ActionType("Hive"), 1);
+    std::cout << "Searching for Hive build order" << std::endl;
+    s->search();
+    auto& r = s->getResults();
+    REQUIRE(r.buildOrder.getNameString() == "Drone Drone Drone Extractor SpawningPool Lair QueensNest Hive ");
+    s->clearGoalsAndResults();
+    s->addGoal(ActionType("Hydralisk"), 1);
+    s->addGoal(ActionType("Zergling"), 1);
+    std::cout << "Searching for Hydralisk and Zergling build order" << std::endl;
+    s->search();
+    REQUIRE(r.buildOrder.getNameString() == "Drone Drone Drone Extractor SpawningPool Zergling HydraliskDen Hydralisk ");
+}
+
+TEST_CASE("BF Build Order Search Protoss")
+{
+    GameState state = GameState::StarCraft1_ProtossStart();
+    BFS_BuildOrderSearch search;
+    auto s = (BuildOrderSearch*)&search;
+    s->setState(state);
+    s->addGoal(ActionType("TemplarArchives"), 1);
+    std::cout << "Searching for Templar Archives build order" << std::endl;
+    s->search();
+    auto& r = s->getResults();
+    REQUIRE(r.buildOrder.getNameString() == "Pylon Assimilator Gateway CyberneticsCore CitadelofAdun TemplarArchives ");
+}
+
+#endif // BOSS_BFS_TESTS

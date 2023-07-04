@@ -61,7 +61,7 @@ void DFBB_BuildOrderStackSearch::search()
     }
 }
 
-const DFBB_BuildOrderSearchResults & DFBB_BuildOrderStackSearch::getResults() const
+const BuildOrderSearchResults & DFBB_BuildOrderStackSearch::getResults() const
 {
     return m_results;
 }

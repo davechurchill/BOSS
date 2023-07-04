@@ -27,6 +27,8 @@ public:
 
     ActionType & operator[] (const size_t index);
     ActionType operator[] (const size_t index) const;
+    std::vector<ActionType>::const_iterator begin() const;
+    std::vector<ActionType>::const_iterator end() const;
 
     const std::string toString() const;
 };

@@ -6,10 +6,10 @@
 namespace BOSS
 {
 
-namespace UnitJobs
-{
-    enum { None, Minerals, Gas, Build };
-}
+    enum class UnitJobs
+    {
+        None, Minerals, Gas, Build
+    };
 
 class Unit
 {
@@ -20,7 +20,8 @@ class Unit
     size_t      m_addonID           = 0;                    // id of the addon unit for this unit
     ActionType  m_buildType         = ActionTypes::None;    // type of the Unit currently being built by this Unit
     size_t      m_buildID           = 0;                    // id of the Unit currently being built by this Unit
-    int         m_job               = UnitJobs::None;       // current job this Unit has (UnitJobs::XXX)
+    UnitJobs    m_job               = UnitJobs::None;       // current job this Unit has (UnitJobs::XXX)
+    int         m_reservedForID     = -1;
     int         m_timeUntilBuilt    = 0;                    // time remaining until this Unit is completed
     int         m_timeUntilFree     = 0;                    // time remaining until this Unit can build again
     int         m_numLarva          = 0;                    // number of larva this building currently has (Hatch only)
@@ -43,6 +44,8 @@ public:
     bool hasAddon() const;
     int timeUntilLarva() const;
     int numLarva() const;
+    int reservedFor() const;
+    UnitJobs getJob() const;
     std::vector<int>& larvaToAdd();
 
 
@@ -55,6 +58,8 @@ public:
     void fastForward(const int frames);
     void useLarva();
     void addLarva();
+    void reserve(const int refineryID);
+    void setJob(const UnitJobs job);
 
     bool operator == (const Unit& rhs) const = default;
 };
