@@ -35,7 +35,6 @@ class GameState
     int     whenBuilderReady(const ActionType action)       const;
     int     scaleResource(int baseResourceValue)            const;
     void    completeUnit(Unit & Unit);
-    std::vector<int> findReservableWorkers(const int buildTime, const bool legalMorphed) const;
 
 public:
 
@@ -71,8 +70,6 @@ public:
 
     bool    operator == (const GameState & rhs)         const; // compares everything except previous frame
 
-    ActionType getLastAction()                          const;
-
     std::string toString() const;
 
     std::string toStringAllUnits() const;
@@ -82,10 +79,5 @@ public:
     std::string toStringLegalActions() const;
 
     const std::vector<Unit>& getUnits() const;
-
-    const static GameState StarCraft1_ZergStart();
-    const static GameState StarCraft1_TerranStart();
-    const static GameState StarCraft1_ProtossStart();
-
 };
 }

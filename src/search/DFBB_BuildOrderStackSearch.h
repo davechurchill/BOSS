@@ -2,7 +2,7 @@
 
 #include "Common.h"
 #include "ActionType.h"
-#include "BuildOrderSearchResults.h"
+#include "DFBB_BuildOrderSearchResults.h"
 #include "DFBB_BuildOrderSearchParameters.h"
 #include "Timer.hpp"
 #include "BuildOrder.h"
@@ -36,7 +36,7 @@ public:
 class DFBB_BuildOrderStackSearch
 {
 	DFBB_BuildOrderSearchParameters     m_params;                      //parameters that will be used in this search
-	BuildOrderSearchResults        m_results;                     //the results of the search so far
+	DFBB_BuildOrderSearchResults        m_results;                     //the results of the search so far
 					
     Timer                               m_searchTimer;
     BuildOrder                          m_buildOrder;
@@ -61,7 +61,7 @@ public:
 	
     void setTimeLimit(double ms);
 	void search();
-    const BuildOrderSearchResults & getResults() const;
+    const DFBB_BuildOrderSearchResults & getResults() const;
 	
 	void DFBB();
 };

@@ -37,8 +37,6 @@
     <ClCompile Include="..\src\BOSS\Tools.cpp" />
     <ClCompile Include="..\src\BOSS\Unit.cpp" />
     <ClCompile Include="..\src\emscripten\ExternalInterface.cpp" />
-    <ClCompile Include="..\src\search\BFS_BuildOrderSearch.cpp" />
-    <ClCompile Include="..\src\search\BuildOrderSearch.cpp" />
     <ClCompile Include="..\src\search\BuildOrderSearchGoal.cpp" />
     <ClCompile Include="..\src\search\CombatSearch.cpp" />
     <ClCompile Include="..\src\search\CombatSearchParameters.cpp" />
@@ -50,7 +48,7 @@
     <ClCompile Include="..\src\search\CombatSearch_Integral.cpp" />
     <ClCompile Include="..\src\search\CombatSearch_IntegralData.cpp" />
     <ClCompile Include="..\src\search\DFBB_BuildOrderSearchParameters.cpp" />
-    <ClCompile Include="..\src\search\BuildOrderSearchResults.cpp" />
+    <ClCompile Include="..\src\search\DFBB_BuildOrderSearchResults.cpp" />
     <ClCompile Include="..\src\search\DFBB_BuildOrderSmartSearch.cpp" />
     <ClCompile Include="..\src\search\DFBB_BuildOrderStackSearch.cpp" />
     <ClCompile Include="..\src\search\NaiveBuildOrderSearch.cpp" />
@@ -75,8 +73,6 @@
     <ClInclude Include="..\src\BOSS\Tools.h" />
     <ClInclude Include="..\src\BOSS\Unit.h" />
     <ClInclude Include="..\src\json\json.hpp" />
-    <ClInclude Include="..\src\search\BFS_BuildOrderSearch.h" />
-    <ClInclude Include="..\src\search\BuildOrderSearch.h" />
     <ClInclude Include="..\src\search\BuildOrderSearchGoal.h" />
     <ClInclude Include="..\src\search\CombatSearch.h" />
     <ClInclude Include="..\src\search\CombatSearchParameters.h" />
@@ -88,7 +84,7 @@
     <ClInclude Include="..\src\search\CombatSearch_Integral.h" />
     <ClInclude Include="..\src\search\CombatSearch_IntegralData.h" />
     <ClInclude Include="..\src\search\DFBB_BuildOrderSearchParameters.h" />
-    <ClInclude Include="..\src\search\BuildOrderSearchResults.h" />
+    <ClInclude Include="..\src\search\DFBB_BuildOrderSearchResults.h" />
     <ClInclude Include="..\src\search\DFBB_BuildOrderSmartSearch.h" />
     <ClInclude Include="..\src\search\DFBB_BuildOrderStackSearch.h" />
     <ClInclude Include="..\src\search\NaiveBuildOrderSearch.h" />

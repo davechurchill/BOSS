@@ -1,8 +1,8 @@
-#include "BuildOrderSearchResults.h"
+#include "DFBB_BuildOrderSearchResults.h"
 
 using namespace BOSS;
 
-BuildOrderSearchResults::BuildOrderSearchResults()
+DFBB_BuildOrderSearchResults::DFBB_BuildOrderSearchResults()
     : solved(false)
     , timedOut(false)
     , solutionFound(false)
@@ -12,7 +12,7 @@ BuildOrderSearchResults::BuildOrderSearchResults()
 {
 }
 
-void BuildOrderSearchResults::printResults(bool pbo) const
+void DFBB_BuildOrderSearchResults::printResults(bool pbo) const
 {
     printf("%12d%14llu%12.2lf       ",upperBound,nodesExpanded,timeElapsed);
 
@@ -24,7 +24,7 @@ void BuildOrderSearchResults::printResults(bool pbo) const
     printf("\n");
 }
 
-void BuildOrderSearchResults::printBuildOrder() const
+void DFBB_BuildOrderSearchResults::printBuildOrder() const
 {
     for (size_t i(0); i<buildOrder.size(); ++i)
     {

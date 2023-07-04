@@ -23,7 +23,7 @@ class DFBB_BuildOrderSmartSearch
     Timer							    m_searchTimer;
 
     DFBB_BuildOrderStackSearch          m_stackSearch;
-    BuildOrderSearchResults        m_results;
+    DFBB_BuildOrderSearchResults        m_results;
 
     void doSearch();
     void calculateSearchSettings();
@@ -49,7 +49,7 @@ public:
 
     void search();
 
-    const BuildOrderSearchResults & getResults() const;
+    const DFBB_BuildOrderSearchResults & getResults() const;
     const DFBB_BuildOrderSearchParameters & getParameters();
 };
 

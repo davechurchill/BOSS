@@ -78,13 +78,3 @@ ActionType ActionSet::operator[] (const size_t index) const
 {
     return m_actions[index];
 }
-
-std::vector<ActionType>::const_iterator ActionSet::begin() const
-{
-    return m_actions.begin();
-}
-
-std::vector<ActionType>::const_iterator ActionSet::end() const
-{
-    return m_actions.end();
-}

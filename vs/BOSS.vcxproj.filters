@@ -7,7 +7,7 @@
     <ClCompile Include="..\src\search\DFBB_BuildOrderSearchParameters.cpp">
       <Filter>search\BuildOrderSearch</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\search\BuildOrderSearchResults.cpp">
+    <ClCompile Include="..\src\search\DFBB_BuildOrderSearchResults.cpp">
       <Filter>search\BuildOrderSearch</Filter>
     </ClCompile>
     <ClCompile Include="..\src\search\DFBB_BuildOrderSmartSearch.cpp">
@@ -88,12 +88,6 @@
     <ClCompile Include="..\src\BOSS\GameState.cpp" />
     <ClCompile Include="..\src\BOSS\Unit.cpp" />
     <ClCompile Include="..\src\emscripten\ExternalInterface.cpp" />
-    <ClCompile Include="..\src\search\BFS_BuildOrderSearch.cpp">
-      <Filter>search\BuildOrderSearch</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\search\BuildOrderSearch.cpp">
-      <Filter>search\BuildOrderSearch</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\json\json.hpp">
@@ -105,7 +99,7 @@
     <ClInclude Include="..\src\search\DFBB_BuildOrderSearchParameters.h">
       <Filter>search\BuildOrderSearch</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\search\BuildOrderSearchResults.h">
+    <ClInclude Include="..\src\search\DFBB_BuildOrderSearchResults.h">
       <Filter>search\BuildOrderSearch</Filter>
     </ClInclude>
     <ClInclude Include="..\src\search\DFBB_BuildOrderSmartSearch.h">
@@ -188,12 +182,6 @@
     <ClInclude Include="..\src\BOSS\BuildOrder.h" />
     <ClInclude Include="..\src\BOSS\GameState.h" />
     <ClInclude Include="..\src\BOSS\Unit.h" />
-    <ClInclude Include="..\src\search\BFS_BuildOrderSearch.h">
-      <Filter>search\BuildOrderSearch</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\search\BuildOrderSearch.h">
-      <Filter>search\BuildOrderSearch</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="common">

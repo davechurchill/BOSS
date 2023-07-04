@@ -7,7 +7,7 @@
 
 namespace BOSS
 {
-class BuildOrderSearchResults
+class DFBB_BuildOrderSearchResults
 {
 
 public:
@@ -26,7 +26,7 @@ public:
 
     GameState                   finalState;
 	
-	BuildOrderSearchResults();
+	DFBB_BuildOrderSearchResults();
 		
 	void printResults(bool pbo = true) const;
 	void printBuildOrder() const;
