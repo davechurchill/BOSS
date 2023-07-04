@@ -434,7 +434,7 @@ int GameState::whenResourcesReady(const ActionType action) const
     int mineralsNeeded = mineralDifference - addedMinerals;
     int gasNeeded = gasDifference - addedGas;
 
-    if ((mineralsNeeded && currentMineralWorkers == 0) || (gasNeeded && currentGasWorkers == 0))
+    if ((mineralsNeeded > 0 && currentMineralWorkers == 0) || (gasNeeded > 0 && currentGasWorkers == 0))
     {
         return -1;
     }
