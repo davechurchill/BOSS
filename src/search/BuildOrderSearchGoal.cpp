@@ -106,31 +106,13 @@ std::string BuildOrderSearchGoal::toString() const
 
 bool BuildOrderSearchGoal::isAchievedBy(const GameState & state)
 {
-    static const ActionType & Hatchery      = ActionTypes::GetActionType("Zerg_Hatchery");
-    static const ActionType & Lair          = ActionTypes::GetActionType("Zerg_Lair");
-    static const ActionType & Hive          = ActionTypes::GetActionType("Zerg_Hive");
-    static const ActionType & Spire         = ActionTypes::GetActionType("Zerg_Spire");
-    static const ActionType & GreaterSpire  = ActionTypes::GetActionType("Zerg_Greater_Spire");
-
     for (auto & actionType : ActionTypes::GetAllActionTypes())
     {
         size_t have = state.getNumTotal(actionType);
 
-        if (state.getRace() == Races::Zerg)
+        for (auto& equi : actionType.equivalent())
         {
-            if (actionType == Hatchery)
-            {
-                have += state.getNumTotal(Lair);
-                have += state.getNumTotal(Hive);
-            }
-            else if (actionType == Lair)
-            {
-                have += state.getNumTotal(Hive);
-            }
-            else if (actionType == Spire)
-            {
-                have += state.getNumTotal(GreaterSpire);
-            }
+            have += state.getNumTotal(equi);
         }
 
         if (have < getGoal(actionType))

@@ -200,9 +200,13 @@ namespace ActionTypes
     {
         ActionSet count;
 
-        // add everything from whatBuilds and required
-
-        //printf("Finish Prerequisites\n");
+        count.add(action.whatBuilds());
+        auto addon = action.whatBuildsAddon();
+        if (addon != None) { count.add(addon); }
+        for (auto& req : action.required())
+        {
+            count.add(req);
+        }
         return count;
     }
 
