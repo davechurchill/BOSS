@@ -447,7 +447,7 @@ int GameState::whenBuilderReady(const ActionType action) const
 
 int GameState::whenSupplyReady(const ActionType action) const
 {
-    int supplyNeeded = action.supplyCost() + m_currentSupply - m_maxSupply;
+    int supplyNeeded = action.supplyCost() - action.whatBuilds().supplyCost() + m_currentSupply - m_maxSupply;
     if (supplyNeeded <= 0) { return m_currentFrame; }
 
     // search the actions in progress in reverse for the first supply provider
@@ -578,8 +578,8 @@ bool GameState::haveType(const ActionType action) const
 
 int GameState::getSupplyInProgress() const
 {
-    return std::accumulate(m_unitsBeingBuilt.begin(), m_unitsBeingBuilt.end(), 0, 
-           [this](size_t lhs, size_t rhs) { return lhs + this->getUnit(rhs).getType().supplyProvided(); });
+    return std::accumulate(m_unitsBeingBuilt.begin(), m_unitsBeingBuilt.end(), 0,
+           [this](int lhs, size_t rhs) { return lhs + this->getUnit(rhs).getType().supplyProvided(); });
 }
 
 int GameState::scaleResource(int baseResourceValue) const

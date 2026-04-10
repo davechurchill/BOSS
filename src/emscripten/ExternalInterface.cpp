@@ -17,7 +17,7 @@ const char * BOSS_JS_Init(char * text)
         // Read in the config parameters that will be used for experiments
         //BOSS::BOSSConfig::Instance().ParseConfig("bin/confog/BOSS_Config.txt");
     }
-    catch (std::exception e)
+    catch (const std::exception & e)
     {
         std::cout << e.what();
         return e.what();
@@ -52,7 +52,7 @@ const char * BOSS_JS_GetBuildOrderPlot(char * text)
         returnString = plotter.getPlotJSON(plotter.getPlots());
         return returnString.c_str();
     }
-    catch (std::exception e)
+    catch (const std::exception & e)
     {
         return e.what();
     }

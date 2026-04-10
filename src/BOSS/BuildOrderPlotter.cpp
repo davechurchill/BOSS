@@ -97,6 +97,8 @@ void BuildOrderPlotter::writeResourcePlot(const BuildOrderPlotData & plot, const
 
 void BuildOrderPlotter::writeBuildOrderPlot(const std::vector<BuildOrderPlotData> & plots, const std::string & filename)
 {
+    if (plots.empty()) { return; }
+
     std::stringstream ss;
     int maxY = 0;
     for (size_t p(0); p < plots.size(); ++p)

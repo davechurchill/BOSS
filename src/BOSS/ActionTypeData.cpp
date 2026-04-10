@@ -53,7 +53,7 @@ void ActionTypeData::Init(const std::string & filename)
         {
             ActionTypeData data;
 
-            data.id = a;
+            data.id = AllActionTypeData.size();
             JSONTools::ReadString("name",           actions[a], data.name);
             JSONTools::ReadString("race",           actions[a], data.raceName);
             data.race = (int)Races::GetRaceID(data.raceName);

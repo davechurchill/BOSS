@@ -21,6 +21,7 @@ CombatSearchParameters::CombatSearchParameters()
     , m_repetitionValues              (ActionTypes::GetAllActionTypes().size(), 1)
     , m_repetitionThresholds          (ActionTypes::GetAllActionTypes().size(), 0)
     , m_printNewBest                  (false)
+    , m_frameTimeLimit                (0)
 {
     
 }

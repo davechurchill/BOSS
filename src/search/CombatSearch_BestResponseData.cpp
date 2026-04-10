@@ -47,7 +47,7 @@ double CombatSearch_BestResponseData::compareBuildOrder(const GameState & initia
     double sumDiff = 0;
     int n = 0;
 
-    if (m_selfArmyValues.empty()) { return maxDiff; }
+    if (m_selfArmyValues.empty()) { return std::numeric_limits<double>::max(); }
 
     for (size_t ei(0); ei < m_enemyArmyValues.size(); ++ei)
     {

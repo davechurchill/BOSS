@@ -23,7 +23,8 @@ const size_t CombatSearch_BucketData::numBuckets() const
 
 const size_t CombatSearch_BucketData::getBucketIndex(const GameState & state) const
 {
-    return (size_t)(((double)state.getCurrentFrame() / (double)m_frameLimit) * m_buckets.size());
+    size_t index = (size_t)(((double)state.getCurrentFrame() / (double)m_frameLimit) * m_buckets.size());
+    return index < m_buckets.size() ? index : m_buckets.size() - 1;
 }
 
 void CombatSearch_BucketData::update(const GameState & state, const BuildOrder & buildOrder)
@@ -48,7 +49,7 @@ void CombatSearch_BucketData::update(const GameState & state, const BuildOrder &
         // update every bucket for which this is a new record
         for (size_t b=bucketIndex; b < m_buckets.size(); ++b)
         {
-            if (m_buckets[b].eval >= eval)
+            if (m_buckets[b].eval > eval)
             {
                 break;
             }
