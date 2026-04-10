@@ -76,10 +76,7 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
     BuildOrder buildOrder;
     for (size_t a(0); a < requiredToBuild.size(); ++a)
     {
-        if (requiredToBuild.contains(a))
-        {
-            buildOrder.add(ActionType(a));
-        }
+        buildOrder.add(requiredToBuild[a]);
     }
 
     // Add some workers to the build order if we don't have many, this usually gives a lower upper bound

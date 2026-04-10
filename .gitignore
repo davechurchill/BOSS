@@ -21,3 +21,4 @@ bin/results
 emscripten/BOSS.data
 emscripten/BOSS.js
 *.o
+/.claude

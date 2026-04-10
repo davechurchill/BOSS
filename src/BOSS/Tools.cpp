@@ -322,14 +322,17 @@ void Tools::InsertActionIntoBuildOrder(BuildOrder & result, const BuildOrder & b
     }
 
     result.clear();
-    for (size_t a(0); a<buildOrder.size(); ++a)
+    for (size_t a(0); a < buildOrder.size(); ++a)
     {
-        if (bestInsertIndex == a)
+        if (bestInsertIndex == (int)a)
         {
             result.add(action);
         }
-
         result.add(buildOrder[a]);
+    }
+    if (bestInsertIndex == -1)
+    {
+        result.add(action);
     }
 }
 

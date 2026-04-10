@@ -164,11 +164,11 @@ size_t DFBB_BuildOrderStackSearch::getRepetitions(const GameState & state, const
     // make sure we don't repeat to more than we need for this unit type
     if (m_params.m_goal.getGoal(a))
     {
-        repeat = std::min(repeat, (int)m_params.m_goal.getGoal(a) - (int)state.getNumTotal(a));
+        repeat = std::min(repeat, std::max(0, (int)m_params.m_goal.getGoal(a) - (int)state.getNumTotal(a)));
     }
     else if (m_params.m_goal.getGoalMax(a))
     {
-        repeat = std::min(repeat, (int)m_params.m_goal.getGoalMax(a) - (int)state.getNumTotal(a));
+        repeat = std::min(repeat, std::max(0, (int)m_params.m_goal.getGoalMax(a) - (int)state.getNumTotal(a)));
     }
     
     return repeat;

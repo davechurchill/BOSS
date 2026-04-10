@@ -198,14 +198,14 @@ void DFBB_BuildOrderSmartSearch::recurseOverStrictDependencies(const ActionType 
 
     for (size_t a(0); a < recursivePrerequisites.size(); ++a)
     {
-        const ActionType & actionType = recursivePrerequisites[a];
+        const ActionType & prereq = recursivePrerequisites[a];
 
-        if (actionType.isDepot() ||actionType.isWorker() || actionType.isSupplyProvider() || actionType.isRefinery())
+        if (prereq.isDepot() || prereq.isWorker() || prereq.isSupplyProvider() || prereq.isRefinery())
         {
             continue;
         }
 
-        m_goal.setGoalMax(actionType, std::max((size_t)1, m_goal.getGoalMax(actionType)));
+        m_goal.setGoalMax(prereq, std::max((size_t)1, m_goal.getGoalMax(prereq)));
     }
 }
 

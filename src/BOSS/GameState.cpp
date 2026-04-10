@@ -156,6 +156,7 @@ void GameState::fastForward(const int toFrame)
         if (type.getRace() == Races::Terran && type.isBuilding() && !type.isAddon())
         {
             m_mineralWorkers++;
+            m_buildingWorkers--;
         }
 
         // register the action and remove it from the list
@@ -207,7 +208,7 @@ void GameState::completeUnit(Unit & unit)
     {
         m_mineralWorkers++;
         int needGasWorkers = std::max(0, (WorkersPerRefinery*m_numRefineries - m_gasWorkers));
-        BOSS_ASSERT(needGasWorkers < m_mineralWorkers, "Shouldn't need more gas workers than we have mineral workers");
+        BOSS_ASSERT(needGasWorkers <= m_mineralWorkers, "Shouldn't need more gas workers than we have mineral workers");
         m_mineralWorkers -= needGasWorkers;
         m_gasWorkers += needGasWorkers;
     }
@@ -216,7 +217,7 @@ void GameState::completeUnit(Unit & unit)
         m_numRefineries++;
         BOSS_ASSERT(m_numRefineries <= m_numDepots + getNumInProgress(ActionTypes::GetResourceDepot(m_race)), "Shouldn't have more refineries than depots");
         int needGasWorkers = std::max(0, (WorkersPerRefinery*m_numRefineries - m_gasWorkers));
-        BOSS_ASSERT(needGasWorkers < m_mineralWorkers, "Shouldn't need more gas workers than we have mineral workers");
+        BOSS_ASSERT(needGasWorkers <= m_mineralWorkers, "Shouldn't need more gas workers than we have mineral workers");
         m_mineralWorkers -= needGasWorkers;
         m_gasWorkers += needGasWorkers;
     }
@@ -379,8 +380,8 @@ int GameState::whenResourcesReady(const ActionType action) const
         // finishing a refinery adjusts the worker count
         else if (unit.getType().isRefinery())
         {
-            BOSS_ASSERT(currentMineralWorkers > WorkersPerRefinery, "Not enough mineral workers \n");
-            currentMineralWorkers -= WorkersPerRefinery; 
+            BOSS_ASSERT(currentMineralWorkers >= WorkersPerRefinery, "Not enough mineral workers \n");
+            currentMineralWorkers -= WorkersPerRefinery;
             currentGasWorkers += WorkersPerRefinery;
         }
 
@@ -453,7 +454,7 @@ int GameState::whenSupplyReady(const ActionType action) const
     for (size_t i(0); i < m_unitsBeingBuilt.size(); ++i)
     {
         const Unit & unit = getUnit(m_unitsBeingBuilt[m_unitsBeingBuilt.size() - 1 - i]);   
-        if (unit.getType().supplyProvided() > supplyNeeded)
+        if (unit.getType().supplyProvided() >= supplyNeeded)
         {
             return m_currentFrame + unit.getTimeUntilBuilt();
         }
@@ -658,7 +659,7 @@ size_t GameState::getNumGasWorkers() const
 
 int GameState::getLastActionFinishTime() const
 {
-    return m_unitsBeingBuilt.empty() ? getCurrentFrame() : m_units[m_unitsBeingBuilt.front()].getTimeUntilBuilt();
+    return m_currentFrame + (m_unitsBeingBuilt.empty() ? 0 : m_units[m_unitsBeingBuilt.front()].getTimeUntilBuilt());
 }
 
 int GameState::getNextFinishTime(const ActionType type) const
@@ -666,7 +667,7 @@ int GameState::getNextFinishTime(const ActionType type) const
     auto it = std::find_if(m_unitsBeingBuilt.rbegin(), m_unitsBeingBuilt.rend(),
               [this, &type](const size_t & uid) { return this->getUnit(uid).getType() == type; });
 
-    return it == m_unitsBeingBuilt.rend() ? getCurrentFrame() : m_units[*it].getTimeUntilFree();
+    return m_currentFrame + (it == m_unitsBeingBuilt.rend() ? 0 : m_units[*it].getTimeUntilFree());
 }
 
 std::string GameState::toString() const
