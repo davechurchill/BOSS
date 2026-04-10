@@ -106,11 +106,11 @@ std::string BuildOrderSearchGoal::toString() const
 
 bool BuildOrderSearchGoal::isAchievedBy(const GameState & state)
 {
-    static const ActionType & Hatchery      = ActionTypes::GetActionType("Zerg_Hatchery");
-    static const ActionType & Lair          = ActionTypes::GetActionType("Zerg_Lair");
-    static const ActionType & Hive          = ActionTypes::GetActionType("Zerg_Hive");
-    static const ActionType & Spire         = ActionTypes::GetActionType("Zerg_Spire");
-    static const ActionType & GreaterSpire  = ActionTypes::GetActionType("Zerg_Greater_Spire");
+    static const ActionType & Hatchery      = ActionTypes::GetActionType("Hatchery");
+    static const ActionType & Lair          = ActionTypes::GetActionType("Lair");
+    static const ActionType & Hive          = ActionTypes::GetActionType("Hive");
+    static const ActionType & Spire         = ActionTypes::GetActionType("Spire");
+    static const ActionType & GreaterSpire  = ActionTypes::GetActionType("GreaterSpire");
 
     for (auto & actionType : ActionTypes::GetAllActionTypes())
     {

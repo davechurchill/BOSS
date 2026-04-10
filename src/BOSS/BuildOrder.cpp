@@ -35,7 +35,7 @@ void BuildOrder::add(const BuildOrder & other)
 void BuildOrder::clear()
 {
     m_buildOrder.clear();
-    m_typeCount.clear();
+    std::fill(m_typeCount.begin(), m_typeCount.end(), 0);
 }
 
 bool BuildOrder::empty() const
@@ -58,6 +58,7 @@ size_t BuildOrder::getTypeCount(const ActionType type) const
 
 void BuildOrder::pop_back()
 {
+    m_typeCount[m_buildOrder.back().getID()]--;
     m_buildOrder.pop_back();
 }
 

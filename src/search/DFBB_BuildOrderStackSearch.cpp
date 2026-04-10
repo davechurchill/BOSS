@@ -205,7 +205,7 @@ void DFBB_BuildOrderStackSearch::updateResults(const GameState & state)
 #define COMPLETED_REPS  m_stack[m_depth].completedRepetitions
 
 #define DFBB_CALL_RETURN  if (m_depth == 0) { return; } else { --m_depth; goto SEARCH_RETURN; }
-#define DFBB_CALL_RECURSE { ++m_depth; goto SEARCH_BEGIN; }
+#define DFBB_CALL_RECURSE { ++m_depth; if (m_depth >= m_stack.size()) { m_stack.resize(m_depth + 64); } goto SEARCH_BEGIN; }
 
 // recursive function which does all search logic
 void DFBB_BuildOrderStackSearch::DFBB()

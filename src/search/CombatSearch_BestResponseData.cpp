@@ -47,11 +47,13 @@ double CombatSearch_BestResponseData::compareBuildOrder(const GameState & initia
     double sumDiff = 0;
     int n = 0;
 
+    if (m_selfArmyValues.empty()) { return maxDiff; }
+
     for (size_t ei(0); ei < m_enemyArmyValues.size(); ++ei)
     {
         double enemyTime = m_enemyArmyValues[ei].first;
-        double enemyVal = m_enemyArmyValues[ei].second;    
-    
+        double enemyVal = m_enemyArmyValues[ei].second;
+
         size_t selfIndex = 0;
 
         // find the corresponding self army value for this time
@@ -64,7 +66,7 @@ double CombatSearch_BestResponseData::compareBuildOrder(const GameState & initia
 
             selfIndex = si;
         }
-    
+
         double selfVal = m_selfArmyValues[selfIndex].second;
         double diff = enemyVal - selfVal;
         maxDiff = std::max(maxDiff, diff);

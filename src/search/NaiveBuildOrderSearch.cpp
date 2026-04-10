@@ -239,9 +239,6 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
     buildOrder.sortByPrerequisites();
 
     // Insert supply buildings so that build order is legal w.r.t. supply counts
-    int maxSupply = m_state.getMaxSupply() + m_state.getSupplyInProgress();
-    int currentSupply = m_state.getCurrentSupply();
-
     const ActionType & supplyProvider = ActionTypes::GetSupplyProvider(m_state.getRace());
 
     BuildOrder finalBuildOrder;
@@ -254,7 +251,7 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
 
 		// insert 1 or more supply providers if needed
         // TODO: don't go over 200 supply
-		while (!nextAction.isMorphed() && !nextAction.isSupplyProvider() && (nextAction.supplyCost() > (maxSupply + supplyInProgress - currentSupply)))
+		while (!nextAction.isSupplyProvider() && (nextAction.supplyCost() > (maxSupply + supplyInProgress - currentSupply)))
 		{
 			BOSS_ASSERT(m_state.isLegal(supplyProvider), "Should be able to build more supply here. Max: %d", maxSupply);
 			finalBuildOrder.add(supplyProvider);

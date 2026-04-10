@@ -76,7 +76,7 @@ bool GameState::isLegal(const ActionType action) const
     if (action.isRefinery() && (numRefineries >= numDepots)) { return false; }
 
     // we don't need to go over the maximum supply limit with supply providers
-    if (action.isSupplyProvider() && (m_maxSupply + getSupplyInProgress() > 400)) { return false; }
+    if (action.isSupplyProvider() && (m_maxSupply + getSupplyInProgress() >= 400)) { return false; }
 
     // if we don't have a builder for the type, we can't build it
     if (!haveBuilder(action) && (action.whatBuilds() != larva)) { return false; }

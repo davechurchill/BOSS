@@ -178,11 +178,11 @@ void DFBB_BuildOrderSmartSearch::setPrerequisiteGoalMax()
     }
     else if (getRace() == Races::Zerg)
     {
-        m_goal.setGoalMax(ActionTypes::GetActionType("Zerg_Spawning_Pool"), 1);
-        m_goal.setGoalMax(ActionTypes::GetActionType("Zerg_Extractor"), 1);
-        m_goal.setGoalMax(ActionTypes::GetActionType("Zerg_Lair"), 1);
-        m_goal.setGoalMax(ActionTypes::GetActionType("Zerg_Spire"), 1);
-        m_goal.setGoalMax(ActionTypes::GetActionType("Zerg_Hydralisk_Den"), 1);
+        m_goal.setGoalMax(ActionTypes::GetActionType("SpawningPool"), 1);
+        m_goal.setGoalMax(ActionTypes::GetActionType("Extractor"), 1);
+        m_goal.setGoalMax(ActionTypes::GetActionType("Lair"), 1);
+        m_goal.setGoalMax(ActionTypes::GetActionType("Spire"), 1);
+        m_goal.setGoalMax(ActionTypes::GetActionType("HydraliskDen"), 1);
     }
 }
 
@@ -233,6 +233,7 @@ size_t DFBB_BuildOrderSmartSearch::calculateSupplyProvidersRequired()
     // for each prerequisite of things in the goal which aren't production facilities set one of
     for (const ActionType & actionType : ActionTypes::GetAllActionTypes())
     {
+        if (actionType == worker) { continue; }
         // add the supply required for this number of goal units and all units currently made
         supplyNeeded += std::max(m_goal.getGoal(actionType), m_initialState.getNumTotal(actionType)) * actionType.supplyCost();
     }
