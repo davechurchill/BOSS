@@ -69,7 +69,7 @@ ActionType ActionType::whatBuildsAddon() const
 
 int ActionType::whatBuildsCount() const
 {
-    return ActionTypeData::GetActionTypeData(m_id).whatBuildsCount;
+    return static_cast<int>(ActionTypeData::GetActionTypeData(m_id).whatBuildsCount);
 }
 
 const std::vector<ActionType> & ActionType::required() const

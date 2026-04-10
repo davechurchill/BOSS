@@ -16,6 +16,10 @@ void CombatSearch_BestResponseData::calculateArmyValues(const GameState & initia
 {
     values.clear();
     GameState state(initialState);
+
+    // Include the initial state so empty build orders still have a meaningful comparison point.
+    values.push_back(std::pair<double, double>(state.getCurrentFrame(), Eval::ArmyTotalResourceSum(state)));
+
     for (size_t i(0); i < buildOrder.size(); ++i)
     {
         state.doAction(buildOrder[i]);
@@ -41,13 +45,8 @@ double CombatSearch_BestResponseData::compareBuildOrder(const GameState & initia
 {
     calculateArmyValues(initialState, buildOrder, m_selfArmyValues);
 
-    size_t selfIndex = 0;
-    size_t enemyIndex = 0;
     double maxDiff = std::numeric_limits<double>::lowest();
-    double sumDiff = 0;
-    int n = 0;
-
-    if (m_selfArmyValues.empty()) { return std::numeric_limits<double>::max(); }
+    if (m_selfArmyValues.empty() || m_enemyArmyValues.empty()) { return std::numeric_limits<double>::max(); }
 
     for (size_t ei(0); ei < m_enemyArmyValues.size(); ++ei)
     {
@@ -77,6 +76,11 @@ double CombatSearch_BestResponseData::compareBuildOrder(const GameState & initia
 
 size_t CombatSearch_BestResponseData::getStateIndex(const GameState & state)
 {
+    if (m_enemyStates.empty())
+    {
+        return 0;
+    }
+
     int frame = state.getCurrentFrame();
 
     if (frame > m_enemyStates.back().getCurrentFrame())

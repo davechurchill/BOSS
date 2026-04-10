@@ -40,11 +40,6 @@ bool GameState::isLegal(const ActionType action) const
 {
     if (action.getRace() != m_race) { return false; }
 
-    if (action.getName() == "Lair")
-    {
-        int a = 7;
-    }
-
     static const ActionType larva("Larva");
     if (action == larva) { return false; }
 
@@ -64,7 +59,8 @@ bool GameState::isLegal(const ActionType action) const
         	
     // if we won't have enough supply eventually to build this item, it's not legal
     // assumes there will never be a situation where one unit builds another, and both have supply costs > 0, unless it is a morph
-    if ((m_currentSupply + action.supplyCost() - action.whatBuilds().supplyCost()) > (m_maxSupply + getSupplyInProgress())) { return false; }
+    const int builderSupplyCost = action.isMorphed() ? action.whatBuilds().supplyCost() * action.whatBuildsCount() : action.whatBuilds().supplyCost();
+    if ((m_currentSupply + action.supplyCost() - builderSupplyCost) > (m_maxSupply + getSupplyInProgress())) { return false; }
 
     // TODO: require an extra for refineries byt not buildings
     // rules for buildings which are built by workers
@@ -91,11 +87,17 @@ void GameState::doAction(const ActionType type)
 {
     BOSS_ASSERT(isLegal(type), "Trying to do illegal action: %s", type.getName().c_str());
 
-    int previousFrame = m_currentFrame;
-
     // figure out when this action can be done and fast forward to it
     const int timeWhenReady = whenCanBuild(type);
     fastForward(timeWhenReady);
+
+    // choose builders before mutating resources/state
+    const std::vector<int> builderIDs = getBuilderIDs(type);
+    BOSS_ASSERT((int)builderIDs.size() == type.whatBuildsCount(), "Incorrect number of builders selected for %s", type.getName().c_str());
+    if ((int)builderIDs.size() != type.whatBuildsCount())
+    {
+        return;
+    }
 
     // subtract the resource cost
     m_minerals      -= scaleResource(type.mineralPrice());
@@ -105,7 +107,7 @@ void GameState::doAction(const ActionType type)
     // Adjusts the supply to match the unit being morphed, rather than the combination of that unit and its builder's supply
     if (type.isMorphed())
     {
-        m_currentSupply -= type.whatBuilds().supplyCost();
+        m_currentSupply -= type.whatBuilds().supplyCost() * type.whatBuildsCount();
     }
 
     // if it's a Terran building that's not an addon, the worker removed from minerals
@@ -121,8 +123,8 @@ void GameState::doAction(const ActionType type)
         m_mineralWorkers--;     // the worker is no longer on minerals
     }
 
-    // get a builder for this type and start building it
-    addUnit(type, getBuilderID(type));
+    // get builders for this type and start building it
+    addUnit(type, builderIDs);
 }
 
 void GameState::fastForward(const int toFrame)
@@ -185,9 +187,9 @@ void GameState::fastForward(const int toFrame)
     static const ActionType larva("Larva");
     for (auto iter = larvae.rbegin(); iter != larvae.rend(); ++iter)
     {
-        for (int i : iter->second)
+        for (size_t i : iter->second)
         {
-            addUnit(larva, m_units[i].getID());
+            addUnit(larva, static_cast<int>(m_units[i].getID()));
             if (iter->first + previousFrame != toFrame)
             {
                 auto& newLarva = m_units.back();
@@ -234,7 +236,7 @@ void GameState::addUnit(const ActionType type, int builderID)
 {
     BOSS_ASSERT(m_race == Races::None || type.getRace() == m_race, "Adding an Unit of a different race");
 
-    m_race = type.getRace();
+    m_race = static_cast<int>(type.getRace());
     
     static const ActionType larva("Larva");
     if (type == larva)
@@ -257,9 +259,9 @@ void GameState::addUnit(const ActionType type, int builderID)
         static const ActionType larva("Larva");
         if (unit.getType() == hatchery)
         {
-            addUnit(larva, unit.getID());
-            addUnit(larva, unit.getID());
-            addUnit(larva, unit.getID());
+            addUnit(larva, static_cast<int>(unit.getID()));
+            addUnit(larva, static_cast<int>(unit.getID()));
+            addUnit(larva, static_cast<int>(unit.getID()));
         }
     }
     // if we have a valid builder for this object, add it to the Units being built
@@ -275,11 +277,11 @@ void GameState::addUnit(const ActionType type, int builderID)
             // if the builder is a larva, we need to subtract from its hatchery's count
             if (builder.getType() == larva)
             {
-                getUnit(builder.getBuilderID()).useLarva();;
+                getUnit(builder.getBuilderID()).useLarva();
             }
 
             builder.startMorphing(type);
-            unitBeingBuiltID = builder.getID();
+            unitBeingBuiltID = static_cast<int>(builder.getID());
         }
         // if it's non-morphed, then we need a new unit
         else
@@ -287,7 +289,7 @@ void GameState::addUnit(const ActionType type, int builderID)
             Unit unit(type, m_units.size(), builderID);
             m_units.push_back(unit);
             getUnit(builderID).startBuilding(m_units.back());
-            unitBeingBuiltID = unit.getID();
+            unitBeingBuiltID = static_cast<int>(unit.getID());
         }
 
         // add the unit ID being built and sort the list
@@ -301,6 +303,37 @@ void GameState::addUnit(const ActionType type, int builderID)
                 std::swap(m_unitsBeingBuilt[i], m_unitsBeingBuilt[i - 1]);
             }
             else { break; }
+        }
+    }
+}
+
+void GameState::addUnit(const ActionType type, const std::vector<int> & builderIDs)
+{
+    if (builderIDs.empty())
+    {
+        BOSS_ASSERT(false, "No builders provided for %s", type.getName().c_str());
+        return;
+    }
+
+    BOSS_ASSERT(builderIDs.size() == (size_t)type.whatBuildsCount(),
+        "Incorrect builder count for %s: expected %d got %d",
+        type.getName().c_str(), type.whatBuildsCount(), (int)builderIDs.size());
+    BOSS_ASSERT(type.isMorphed() || builderIDs.size() == 1,
+        "Multiple builders are only supported for morphed actions: %s",
+        type.getName().c_str());
+
+    // Start the actual build/morph using one builder as before.
+    addUnit(type, builderIDs[0]);
+
+    // Actions like Archon consume additional builders and produce one result.
+    if (type.isMorphed() && builderIDs.size() > 1)
+    {
+        for (size_t i(1); i < builderIDs.size(); ++i)
+        {
+            Unit & extraBuilder = getUnit(builderIDs[i]);
+            BOSS_ASSERT(extraBuilder.whenCanBuild(type) != -1, "Extra builder cannot build %s", type.getName().c_str());
+            extraBuilder.startMorphing(ActionTypes::None);
+            extraBuilder.complete();
         }
     }
 }
@@ -392,18 +425,16 @@ int GameState::whenResourcesReady(const ActionType action) const
     // if we still haven't added enough minerals, add more time
     if (addedMinerals < mineralDifference || addedGas < gasDifference)
     {
-        BOSS_ASSERT(currentMineralWorkers > 0, "Shouldn't have 0 mineral workers");
-
         int mineralIncome       = currentMineralWorkers * MPWPF;
         int gasIncome           = currentGasWorkers * GPWPF;
-        int mineralsNeeded      = mineralDifference - addedMinerals;
-        int gasNeeded           = gasDifference - addedGas;
+        int mineralsNeeded      = std::max(0, mineralDifference - addedMinerals);
+        int gasNeeded           = std::max(0, gasDifference - addedGas);
         int mineralTimeNeeded   = mineralIncome == 0 ? 0 : (mineralsNeeded / mineralIncome);
-        int gasTimeNeeded       = gasIncome     == 0 ? 0 : (gasNeeded / gasIncome);
+        int gasTimeNeeded       = gasIncome == 0 ? 0 : (gasNeeded / gasIncome);
 
         // since this is integer division, check to see if we need one more step to go above required resources
         if (mineralTimeNeeded * mineralIncome < mineralsNeeded) { mineralTimeNeeded += 1; }
-        if (gasTimeNeeded     * gasIncome     < gasNeeded)      { gasTimeNeeded += 1; }
+        if (gasTimeNeeded * gasIncome < gasNeeded) { gasTimeNeeded += 1; }
 
         addedTime += std::max(mineralTimeNeeded, gasTimeNeeded);
     }
@@ -438,16 +469,29 @@ int GameState::whenBuilderReady(const ActionType action) const
     // otherwise, check to see when a builder will be ready
     else
     {
-        int builderID = getBuilderID(action);
-        BOSS_ASSERT(builderID != -1, "Didn't find when builder ready for %s", action.getName().c_str());
-        return m_currentFrame + getUnit(builderID).getTimeUntilFree();
+        std::vector<int> whenReady;
+        whenReady.reserve(m_units.size());
+
+        for (const auto & unit : m_units)
+        {
+            const int ready = unit.whenCanBuild(action);
+            if (ready != -1)
+            {
+                whenReady.push_back(ready);
+            }
+        }
+
+        BOSS_ASSERT(whenReady.size() >= (size_t)action.whatBuildsCount(), "Didn't find enough builders for %s", action.getName().c_str());
+        std::sort(whenReady.begin(), whenReady.end());
+        return m_currentFrame + whenReady[action.whatBuildsCount() - 1];
     }
 
 }
 
 int GameState::whenSupplyReady(const ActionType action) const
 {
-    int supplyNeeded = action.supplyCost() - action.whatBuilds().supplyCost() + m_currentSupply - m_maxSupply;
+    const int builderSupplyCost = action.isMorphed() ? action.whatBuilds().supplyCost() * action.whatBuildsCount() : action.whatBuilds().supplyCost();
+    int supplyNeeded = action.supplyCost() - builderSupplyCost + m_currentSupply - m_maxSupply;
     if (supplyNeeded <= 0) { return m_currentFrame; }
 
     // search the actions in progress in reverse for the first supply provider
@@ -497,6 +541,8 @@ int GameState::whenPrerequisitesReady(const ActionType action) const
 
 int GameState::getBuilderID(const ActionType action) const
 {
+    BOSS_ASSERT(action.whatBuildsCount() == 1, "getBuilderID only supports single-builder actions: %s", action.getName().c_str());
+
     int minWhenReady = std::numeric_limits<int>::max();
     int builderID = -1;
 
@@ -508,7 +554,7 @@ int GameState::getBuilderID(const ActionType action) const
         // shortcut return if we found something that can build now
         if (whenReady == 0)
         {
-            return unit.getID();
+            return static_cast<int>(unit.getID());
         }
 
         // terrain building cannot make addon while it is building
@@ -517,13 +563,57 @@ int GameState::getBuilderID(const ActionType action) const
         if (whenReady != -1 && whenReady < minWhenReady)
         {
             minWhenReady = whenReady;
-            builderID = unit.getID();
+            builderID = static_cast<int>(unit.getID());
         }
     }
 
     BOSS_ASSERT(builderID != -1, "Didn't find a builder for %s", action.getName().c_str());
 
     return builderID;
+}
+
+std::vector<int> GameState::getBuilderIDs(const ActionType action) const
+{
+    std::vector<std::pair<int, int>> builders;
+    builders.reserve(m_units.size());
+
+    for (const auto & unit : m_units)
+    {
+        const int whenReady = unit.whenCanBuild(action);
+        if (whenReady != -1)
+        {
+            builders.emplace_back(whenReady, (int)unit.getID());
+        }
+    }
+
+    BOSS_ASSERT((int)builders.size() >= action.whatBuildsCount(),
+        "Didn't find ready builders for %s (needed %d, found %d)",
+        action.getName().c_str(), action.whatBuildsCount(), (int)builders.size());
+
+    if ((int)builders.size() < action.whatBuildsCount())
+    {
+        return {};
+    }
+
+    std::sort(builders.begin(), builders.end(),
+        [](const std::pair<int, int> & lhs, const std::pair<int, int> & rhs)
+        {
+            if (lhs.first != rhs.first)
+            {
+                return lhs.first < rhs.first;
+            }
+
+            return lhs.second < rhs.second;
+        });
+
+    std::vector<int> builderIDs;
+    builderIDs.reserve(action.whatBuildsCount());
+    for (int i(0); i < action.whatBuildsCount(); ++i)
+    {
+        builderIDs.push_back(builders[i].second);
+    }
+
+    return builderIDs;
 }
 
 bool GameState::haveBuilder(const ActionType type) const
@@ -695,7 +785,7 @@ std::string GameState::toString() const
     for (auto & id : m_unitsBeingBuilt) 
     {
         auto & unit = getUnit(id);
-        sprintf(buf, "%5d %5d %s\n", unit.getID(), unit.getTimeUntilBuilt(), unit.getType().getName().c_str());
+        sprintf(buf, "%5zu %5d %s\n", unit.getID(), unit.getTimeUntilBuilt(), unit.getType().getName().c_str());
         ss << buf;
     }
 
@@ -705,7 +795,7 @@ std::string GameState::toString() const
     ss << "---------------------------------------------------------------\n";
     for (auto & unit : m_units) 
     {
-        sprintf(buf, "%5d %4d %6d %5d %-15s %-15s %5d\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID());
+        sprintf(buf, "%5zu %4zu %6d %5d %-15s %-15s %5zu\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID());
         ss << buf;
     }
     
@@ -723,7 +813,7 @@ std::string GameState::toString() const
     }
 
 	ss << "\nResources:\n";
-    sprintf(buf, "%7d   Minerals %7d\n%7d   Gas  %7d\n%7d   Mineral Workers %7d\n%7d   Gas Workers %7d\n%3d/%3d  Supply\n", getMinerals(), m_minerals, getGas(), m_gas, getNumMineralWorkers(), getNumMineralWorkers()*MPWPF, getNumGasWorkers(), getNumGasWorkers()*GPWPF, m_currentSupply/2, m_maxSupply/2);
+    sprintf(buf, "%7d   Minerals %7d\n%7d   Gas  %7d\n%7zu   Mineral Workers %7zu\n%7zu   Gas Workers %7zu\n%3d/%3d  Supply\n", getMinerals(), m_minerals, getGas(), m_gas, getNumMineralWorkers(), getNumMineralWorkers()*MPWPF, getNumGasWorkers(), getNumGasWorkers()*GPWPF, m_currentSupply/2, m_maxSupply/2);
     ss << buf;
 
     ss << "--------------------------------------\n";
@@ -745,7 +835,7 @@ std::string GameState::toStringAllUnits() const
     ss << "---------------------------------------------------------------\n";
     for (auto& unit : m_units)
     {
-        sprintf(buf, "%5d %4d %6d %5d %-15s %-15s %5d %3d %5d\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID(), unit.numLarva(), unit.timeUntilLarva());
+        sprintf(buf, "%5zu %4zu %6d %5d %-15s %-15s %5zu %3d %5d\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID(), unit.numLarva(), unit.timeUntilLarva());
         ss << buf;
     }
 
@@ -782,7 +872,7 @@ std::string GameState::toStringResources() const
     ss << "Previous Frame: " << m_previousFrame << " (" << (m_previousFrame / (60 * 24)) << "m " << ((m_previousFrame / 24) % 60) << "s)\n\n";
 
     ss << "Resources:\n";
-    sprintf(buf, "%7d   Minerals  %7d\n%7d   Gas       %7d\n%7d   M Workers %7d\n%7d   G Workers %7d\n%3d/%3d  Supply\n", getMinerals(), m_minerals, getGas(), m_gas, getNumMineralWorkers(), getNumMineralWorkers() * MPWPF, getNumGasWorkers(), getNumGasWorkers() * GPWPF, m_currentSupply / 2, m_maxSupply / 2);
+    sprintf(buf, "%7d   Minerals  %7d\n%7d   Gas       %7d\n%7zu   M Workers %7zu\n%7zu   G Workers %7zu\n%3d/%3d  Supply\n", getMinerals(), m_minerals, getGas(), m_gas, getNumMineralWorkers(), getNumMineralWorkers() * MPWPF, getNumGasWorkers(), getNumGasWorkers() * GPWPF, m_currentSupply / 2, m_maxSupply / 2);
     ss << buf;
 
     ss << "--------------------------------------\n";
@@ -802,7 +892,7 @@ std::string GameState::toStringInProgress() const
     for (auto& id : m_unitsBeingBuilt)
     {
         auto& unit = getUnit(id);
-        sprintf(buf, "%5d %5d %s\n", unit.getID(), unit.getTimeUntilBuilt(), unit.getType().getName().c_str());
+        sprintf(buf, "%5zu %5d %s\n", unit.getID(), unit.getTimeUntilBuilt(), unit.getType().getName().c_str());
         ss << buf;
     }
     return ss.str();

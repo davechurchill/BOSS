@@ -152,7 +152,7 @@ void DFBB_BuildOrderStackSearch::generateLegalActions(const GameState & state, A
 size_t DFBB_BuildOrderStackSearch::getRepetitions(const GameState & state, const ActionType & a)
 {
     // set the repetitions if we are using repetitions, otherwise set to 1
-    int repeat = m_params.m_useRepetitions ? m_params.getRepetitions(a) : 1;
+    size_t repeat = m_params.m_useRepetitions ? m_params.getRepetitions(a) : 1;
 
     // if we are using increasing repetitions
     if (m_params.m_useIncreasingRepetitions)
@@ -164,11 +164,17 @@ size_t DFBB_BuildOrderStackSearch::getRepetitions(const GameState & state, const
     // make sure we don't repeat to more than we need for this unit type
     if (m_params.m_goal.getGoal(a))
     {
-        repeat = std::min(repeat, std::max(0, (int)m_params.m_goal.getGoal(a) - (int)state.getNumTotal(a)));
+        const size_t goalCount = m_params.m_goal.getGoal(a);
+        const size_t currentCount = state.getNumTotal(a);
+        const size_t remaining = goalCount > currentCount ? (goalCount - currentCount) : 0;
+        repeat = std::min(repeat, remaining);
     }
     else if (m_params.m_goal.getGoalMax(a))
     {
-        repeat = std::min(repeat, std::max(0, (int)m_params.m_goal.getGoalMax(a) - (int)state.getNumTotal(a)));
+        const size_t goalMaxCount = m_params.m_goal.getGoalMax(a);
+        const size_t currentCount = state.getNumTotal(a);
+        const size_t remaining = goalMaxCount > currentCount ? (goalMaxCount - currentCount) : 0;
+        repeat = std::min(repeat, remaining);
     }
     
     return repeat;

@@ -228,24 +228,24 @@ size_t DFBB_BuildOrderSmartSearch::calculateSupplyProvidersRequired()
     const ActionType & supplyProvider   = ActionTypes::GetSupplyProvider(getRace());
 
     // calculate the upper bound on supply for this goal
-    int supplyNeeded = m_goal.getGoalMax(worker) * worker.supplyCost();
+    long long supplyNeeded = static_cast<long long>(m_goal.getGoalMax(worker)) * worker.supplyCost();
 
     // for each prerequisite of things in the goal which aren't production facilities set one of
     for (const ActionType & actionType : ActionTypes::GetAllActionTypes())
     {
         if (actionType == worker) { continue; }
         // add the supply required for this number of goal units and all units currently made
-        supplyNeeded += std::max(m_goal.getGoal(actionType), m_initialState.getNumTotal(actionType)) * actionType.supplyCost();
+        supplyNeeded += static_cast<long long>(std::max(m_goal.getGoal(actionType), m_initialState.getNumTotal(actionType))) * actionType.supplyCost();
     }
 
     // set the upper bound on supply based on these values
-    size_t supplyFromResourceDepots = m_initialState.getNumTotal(resourceDepot) * resourceDepot.supplyProvided();
+    const long long supplyFromResourceDepots = static_cast<long long>(m_initialState.getNumTotal(resourceDepot)) * resourceDepot.supplyProvided();
 
     // take this away from the supply needed
     supplyNeeded -= supplyFromResourceDepots;
 
     // return the number of supply providers required
-    return supplyNeeded > 0 ? (size_t)std::ceil((double)supplyNeeded / (double)supplyProvider.supplyProvided()) : 0;
+    return supplyNeeded > 0 ? static_cast<size_t>(std::ceil(static_cast<double>(supplyNeeded) / static_cast<double>(supplyProvider.supplyProvided()))) : 0;
 }
 
 void DFBB_BuildOrderSmartSearch::setRepetitions()

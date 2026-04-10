@@ -27,6 +27,7 @@ class GameState
     
     Unit &  getUnit(const size_t & id);
     int     getBuilderID(const ActionType type)             const;
+    std::vector<int> getBuilderIDs(const ActionType type)   const;
     bool    haveBuilder(const ActionType type)              const;
     bool    havePrerequisites(const ActionType type)        const;
     int     whenSupplyReady(const ActionType action)        const;
@@ -65,6 +66,7 @@ public:
     void    doAction(const ActionType type);
     void    fastForward(const int frames);
     void    addUnit(const ActionType unit, int builderID = -1);
+    void    addUnit(const ActionType unit, const std::vector<int> & builderIDs);
     void    setMinerals(const int minerals);
     void    setGas(const int gas);
 

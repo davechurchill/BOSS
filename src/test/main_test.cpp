@@ -1,10 +1,22 @@
 #define CATCH_CONFIG_MAIN
 
 #include "BOSS.h"
+#include "ActionSet.h"
+#include "search/BuildOrderSearchGoal.h"
 
 using namespace BOSS;
 
 #include "catch2/catch_amalgamated.hpp"
+
+namespace BOSS
+{
+namespace Tools
+{
+    int  GetBuildOrderCompletionTime(const GameState & state, const BuildOrder & buildOrder);
+    void DoBuildOrder(GameState & state, const BuildOrder & buildOrder);
+    void CalculatePrerequisitesRequiredToBuild(const GameState & state, const ActionSet & wanted, ActionSet & requiredToBuild);
+}
+}
 
 TEST_CASE("Init BOSS")
 {
@@ -503,6 +515,46 @@ TEST_CASE("Morph Supply Test 2")
     REQUIRE(state.getCurrentSupply() == 20);
 }
 
+TEST_CASE("Archon Merge Uses Two Builders")
+{
+    BOSS::GameState state;
+    state.addUnit(ActionType("Nexus"));
+    state.addUnit(ActionType("HighTemplar"));
+    state.addUnit(ActionType("HighTemplar"));
+
+    const int supplyBefore = state.getCurrentSupply();
+
+    REQUIRE(state.isLegal(ActionType("Archon")));
+    state.doAction(ActionType("Archon"));
+
+    // Archon should consume both templars and keep total supply unchanged (8 -> 8).
+    REQUIRE(state.getCurrentSupply() == supplyBefore);
+    REQUIRE(state.getNumTotal(ActionType("HighTemplar")) == 0);
+    REQUIRE(state.getNumInProgress(ActionType("Archon")) == 1);
+
+    state.fastForward(state.getCurrentFrame() + ActionType("Archon").buildTime());
+    REQUIRE(state.getNumCompleted(ActionType("Archon")) == 1);
+}
+
+TEST_CASE("Gas-Only Wait With Zero Mineral Workers")
+{
+    BOSS::GameState state;
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Drone"));
+    state.addUnit(ActionType("Overlord"));
+    state.addUnit(ActionType("Hatchery"));
+    state.addUnit(ActionType("Extractor"));
+    state.setMinerals(1000);
+    state.setGas(0);
+
+    const ActionType burrowing("Burrowing");
+    REQUIRE(state.getNumMineralWorkers() == 0);
+    REQUIRE(state.getNumGasWorkers() == 3);
+    REQUIRE(state.isLegal(burrowing));
+    REQUIRE_NOTHROW(state.whenCanBuild(burrowing));
+}
+
 void SimulateEachFrameTo(GameState& state, const ActionType& type)
 {
     while (!state.canBuildNow(type))
@@ -797,4 +849,260 @@ TEST_CASE("Unit Completion")
     BOSS::GameState state;
     state.addUnit(ActionType("Hatchery"));
     REQUIRE(state.getUnits()[0].getTimeUntilBuilt() == 0);
+}
+
+namespace
+{
+    void EnsureInit()
+    {
+        BOSS::Init("config/BWData.json");
+    }
+
+    GameState MakeProtossStartState()
+    {
+        EnsureInit();
+        GameState state;
+        state.addUnit(ActionType("Nexus"));
+        state.addUnit(ActionType("Probe"));
+        state.addUnit(ActionType("Probe"));
+        state.addUnit(ActionType("Probe"));
+        state.addUnit(ActionType("Probe"));
+        state.setMinerals(50);
+        return state;
+    }
+
+    GameState MakeTerranStartState()
+    {
+        EnsureInit();
+        GameState state;
+        state.addUnit(ActionType("CommandCenter"));
+        state.addUnit(ActionType("SCV"));
+        state.addUnit(ActionType("SCV"));
+        state.addUnit(ActionType("SCV"));
+        state.addUnit(ActionType("SCV"));
+        state.setMinerals(50);
+        return state;
+    }
+
+    GameState MakeZergStartState()
+    {
+        EnsureInit();
+        GameState state;
+        state.addUnit(ActionType("Drone"));
+        state.addUnit(ActionType("Drone"));
+        state.addUnit(ActionType("Drone"));
+        state.addUnit(ActionType("Drone"));
+        state.addUnit(ActionType("Overlord"));
+        state.addUnit(ActionType("Hatchery"));
+        state.setMinerals(50);
+        return state;
+    }
+
+    bool ContainsAction(const std::vector<ActionType> & actions, const ActionType & target)
+    {
+        return std::any_of(actions.begin(), actions.end(), [&target](const ActionType & action) { return action == target; });
+    }
+}
+
+TEST_CASE("BuildOrder sort keeps prerequisites ahead of dependents [new]")
+{
+    EnsureInit();
+
+    BuildOrder buildOrder;
+    buildOrder.add(ActionType("Dragoon"));
+    buildOrder.add(ActionType("CyberneticsCore"));
+    buildOrder.add(ActionType("Gateway"));
+    buildOrder.add(ActionType("Pylon"));
+
+    buildOrder.sortByPrerequisites();
+
+    for (size_t i(0); i + 1 < buildOrder.size(); ++i)
+    {
+        for (size_t j(i + 1); j < buildOrder.size(); ++j)
+        {
+            REQUIRE_FALSE(buildOrder[i].getRecursivePrerequisiteActionCount().contains(buildOrder[j]));
+        }
+    }
+}
+
+TEST_CASE("Tools DoBuildOrder matches manual execution [new]")
+{
+    GameState manual = MakeProtossStartState();
+    GameState bulk(manual);
+
+    BuildOrder buildOrder;
+    buildOrder.add(ActionType("Probe"));
+    buildOrder.add(ActionType("Assimilator"));
+    buildOrder.add(ActionType("Pylon"));
+    buildOrder.add(ActionType("Gateway"));
+    buildOrder.add(ActionType("CyberneticsCore"));
+    buildOrder.add(ActionType("Dragoon"));
+
+    for (size_t i(0); i < buildOrder.size(); ++i)
+    {
+        REQUIRE(manual.isLegal(buildOrder[i]));
+        manual.doAction(buildOrder[i]);
+    }
+
+    Tools::DoBuildOrder(bulk, buildOrder);
+
+    REQUIRE(manual == bulk);
+}
+
+TEST_CASE("Tools completion time matches post-build last finish time [new]")
+{
+    GameState state = MakeTerranStartState();
+    state.setMinerals(1000);
+
+    BuildOrder buildOrder;
+    buildOrder.add(ActionType("SCV"));
+    buildOrder.add(ActionType("SupplyDepot"));
+    buildOrder.add(ActionType("Barracks"));
+    buildOrder.add(ActionType("Marine"));
+
+    const int completionTime = Tools::GetBuildOrderCompletionTime(state, buildOrder);
+
+    GameState replay(state);
+    Tools::DoBuildOrder(replay, buildOrder);
+
+    REQUIRE(completionTime == replay.getLastActionFinishTime());
+}
+
+TEST_CASE("Zerg goal achievement counts equivalent morph chains [new]")
+{
+    EnsureInit();
+
+    BuildOrderSearchGoal hatcheryGoal;
+    hatcheryGoal.setGoal(ActionType("Hatchery"), 2);
+
+    GameState state1;
+    state1.addUnit(ActionType("Hatchery"));
+    state1.addUnit(ActionType("Lair"));
+    REQUIRE(hatcheryGoal.isAchievedBy(state1));
+
+    BuildOrderSearchGoal spireGoal;
+    spireGoal.setGoal(ActionType("Spire"), 1);
+
+    GameState state2;
+    state2.addUnit(ActionType("GreaterSpire"));
+    REQUIRE(spireGoal.isAchievedBy(state2));
+}
+
+TEST_CASE("Race mismatch actions are illegal [new]")
+{
+    GameState state = MakeProtossStartState();
+
+    REQUIRE_FALSE(state.isLegal(ActionType("SCV")));
+    REQUIRE_FALSE(state.isLegal(ActionType("Marine")));
+}
+
+TEST_CASE("Supply in progress unlocks supply blocked units [new]")
+{
+    EnsureInit();
+
+    GameState state;
+    state.addUnit(ActionType("Nexus"));
+    for (int i(0); i < 9; ++i)
+    {
+        state.addUnit(ActionType("Probe"));
+    }
+    state.setMinerals(500);
+
+    const ActionType probe("Probe");
+    const ActionType pylon("Pylon");
+
+    REQUIRE(state.getCurrentSupply() == state.getMaxSupply());
+    REQUIRE_FALSE(state.isLegal(probe));
+
+    state.doAction(pylon);
+
+    REQUIRE(state.getSupplyInProgress() >= pylon.supplyProvided());
+    REQUIRE(state.isLegal(probe));
+}
+
+TEST_CASE("Terran worker returns to minerals after building completes [new]")
+{
+    GameState state = MakeTerranStartState();
+    state.setMinerals(1000);
+
+    const ActionType supplyDepot("SupplyDepot");
+
+    REQUIRE(state.getNumMineralWorkers() == 4);
+    state.doAction(supplyDepot);
+    REQUIRE(state.getNumMineralWorkers() == 3);
+    REQUIRE(state.getNumInProgress(supplyDepot) == 1);
+
+    state.fastForward(state.getNextFinishTime(supplyDepot));
+
+    REQUIRE(state.getNumInProgress(supplyDepot) == 0);
+    REQUIRE(state.getNumCompleted(supplyDepot) == 1);
+    REQUIRE(state.getNumMineralWorkers() == 4);
+}
+
+TEST_CASE("Refinery legality honors depots including in-progress depots [new]")
+{
+    GameState state = MakeTerranStartState();
+    state.setMinerals(2000);
+
+    const ActionType refinery("Refinery");
+    const ActionType commandCenter("CommandCenter");
+
+    REQUIRE(state.isLegal(refinery));
+    state.doAction(refinery);
+    REQUIRE_FALSE(state.isLegal(refinery));
+
+    REQUIRE(state.isLegal(commandCenter));
+    state.doAction(commandCenter);
+    REQUIRE(state.isLegal(refinery));
+}
+
+TEST_CASE("Prerequisite extraction adds gas building when needed [new]")
+{
+    GameState state = MakeZergStartState();
+
+    ActionSet needed;
+    needed.add(ActionType("Hydralisk"));
+
+    ActionSet required;
+    Tools::CalculatePrerequisitesRequiredToBuild(state, needed, required);
+
+    REQUIRE(required.contains(ActionType("Extractor")));
+    REQUIRE(required.contains(ActionType("SpawningPool")));
+}
+
+TEST_CASE("BuildOrder type counts update with pop and clear [new]")
+{
+    EnsureInit();
+
+    const ActionType probe("Probe");
+    const ActionType pylon("Pylon");
+
+    BuildOrder buildOrder;
+    buildOrder.add(probe);
+    buildOrder.add(probe);
+    buildOrder.add(pylon);
+
+    REQUIRE(buildOrder.getTypeCount(probe) == 2);
+    REQUIRE(buildOrder.getTypeCount(pylon) == 1);
+
+    buildOrder.pop_back();
+    REQUIRE(buildOrder.getTypeCount(pylon) == 0);
+    REQUIRE(buildOrder.getTypeCount(probe) == 2);
+
+    buildOrder.clear();
+    REQUIRE(buildOrder.empty());
+    REQUIRE(buildOrder.getTypeCount(probe) == 0);
+}
+
+TEST_CASE("Protoss opening legal action set contains expected baseline actions [new]")
+{
+    GameState state = MakeProtossStartState();
+    std::vector<ActionType> legalActions;
+    state.getLegalActions(legalActions);
+
+    REQUIRE(ContainsAction(legalActions, ActionType("Probe")));
+    REQUIRE(ContainsAction(legalActions, ActionType("Pylon")));
+    REQUIRE(ContainsAction(legalActions, ActionType("Assimilator")));
+    REQUIRE(ContainsAction(legalActions, ActionType("Nexus")));
+    REQUIRE_FALSE(ContainsAction(legalActions, ActionType("Zealot")));
 }

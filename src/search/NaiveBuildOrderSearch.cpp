@@ -80,7 +80,7 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
     }
 
     // Add some workers to the build order if we don't have many, this usually gives a lower upper bound
-    int requiredWorkers = minWorkers - m_state.getNumCompleted(ActionTypes::GetWorker(m_state.getRace()));
+    int requiredWorkers = minWorkers - static_cast<int>(m_state.getNumCompleted(ActionTypes::GetWorker(m_state.getRace())));
     buildOrder.add(worker, requiredWorkers);
 
     // Add the goal units to the end of the build order 
@@ -88,7 +88,7 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
     {
         int need = (int)m_goal.getGoal(actionType);
         int have = (int)m_state.getNumTotal(actionType);
-        int numNeeded = need - have - buildOrder.getTypeCount(actionType);
+        int numNeeded = need - have - static_cast<int>(buildOrder.getTypeCount(actionType));
          
         buildOrder.add(actionType, numNeeded);
     }
@@ -108,9 +108,9 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
                 {
                     const ActionType & morpher = type.whatBuilds();
 
-                    int willMorph = buildOrder.getTypeCount(type);
-                    int haveMorpher = m_state.getNumTotal(morpher);
-                    int boMoprher = buildOrder.getTypeCount(morpher);
+                    int willMorph = static_cast<int>(buildOrder.getTypeCount(type));
+                    int haveMorpher = static_cast<int>(m_state.getNumTotal(morpher));
+                    int boMoprher = static_cast<int>(buildOrder.getTypeCount(morpher));
 
                     int need = willMorph - haveMorpher - boMoprher;
 
@@ -124,7 +124,7 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
             // add the morphers to the build order
             for (size_t i(0); i<neededMorphers.size(); ++i)
             {
-                buildOrder.add(ActionType(i), neededMorphers[i]);
+                buildOrder.add(ActionType(i), static_cast<int>(neededMorphers[i]));
             }
         }
 
@@ -141,36 +141,36 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
 
         if (m_goal.getGoal(Hydralisk) > 0)
         {
-            int currentHydras = m_state.getNumTotal(Hydralisk) + buildOrder.getTypeCount(Hydralisk) - buildOrder.getTypeCount(Lurker);
-            int additionalHydras = m_goal.getGoal(Hydralisk) - currentHydras;
+            int currentHydras = static_cast<int>(m_state.getNumTotal(Hydralisk)) + static_cast<int>(buildOrder.getTypeCount(Hydralisk)) - static_cast<int>(buildOrder.getTypeCount(Lurker));
+            int additionalHydras = static_cast<int>(m_goal.getGoal(Hydralisk)) - currentHydras;
             buildOrder.add(Hydralisk, additionalHydras);
         }
 
         if (m_goal.getGoal(Guardian) > 0 && m_goal.getGoal(Devourer) > 0)
         {
-            int currentMutas = m_state.getNumTotal(Mutalisk) + buildOrder.getTypeCount(Mutalisk);
-            int additionalMutas = buildOrder.getTypeCount(Guardian) + buildOrder.getTypeCount(Devourer) - currentMutas;
+            int currentMutas = static_cast<int>(m_state.getNumTotal(Mutalisk)) + static_cast<int>(buildOrder.getTypeCount(Mutalisk));
+            int additionalMutas = static_cast<int>(buildOrder.getTypeCount(Guardian)) + static_cast<int>(buildOrder.getTypeCount(Devourer)) - currentMutas;
             buildOrder.add(Mutalisk, additionalMutas);
         }
 
         if (m_goal.getGoal(Mutalisk) > 0)
         {
-            int currentMutas = m_state.getNumTotal(Mutalisk) + buildOrder.getTypeCount(Mutalisk) - buildOrder.getTypeCount(Guardian) - buildOrder.getTypeCount(Devourer);
-            int additionalMutas = m_goal.getGoal(Mutalisk) - currentMutas;
+            int currentMutas = static_cast<int>(m_state.getNumTotal(Mutalisk)) + static_cast<int>(buildOrder.getTypeCount(Mutalisk)) - static_cast<int>(buildOrder.getTypeCount(Guardian)) - static_cast<int>(buildOrder.getTypeCount(Devourer));
+            int additionalMutas = static_cast<int>(m_goal.getGoal(Mutalisk)) - currentMutas;
             buildOrder.add(Mutalisk, additionalMutas);
         }
 
         if (m_goal.getGoal(Sunken) > 0 && m_goal.getGoal(Spore) > 0)
         {
-            int currentCreep = m_state.getNumTotal(Creep) + buildOrder.getTypeCount(Creep);
-            int additionalCreep = buildOrder.getTypeCount(Spore) + buildOrder.getTypeCount(Sunken) - currentCreep;
+            int currentCreep = static_cast<int>(m_state.getNumTotal(Creep)) + static_cast<int>(buildOrder.getTypeCount(Creep));
+            int additionalCreep = static_cast<int>(buildOrder.getTypeCount(Spore)) + static_cast<int>(buildOrder.getTypeCount(Sunken)) - currentCreep;
             buildOrder.add(Creep, additionalCreep);
         }
 
         if (m_goal.getGoal(Creep) > 0)
         {
-            int currentCreep = m_state.getNumTotal(Creep) + buildOrder.getTypeCount(Creep) - buildOrder.getTypeCount(Spore) - buildOrder.getTypeCount(Sunken);
-            int additionalCreep = m_goal.getGoal(Creep) - currentCreep;
+            int currentCreep = static_cast<int>(m_state.getNumTotal(Creep)) + static_cast<int>(buildOrder.getTypeCount(Creep)) - static_cast<int>(buildOrder.getTypeCount(Spore)) - static_cast<int>(buildOrder.getTypeCount(Sunken));
+            int additionalCreep = static_cast<int>(m_goal.getGoal(Creep)) - currentCreep;
             buildOrder.add(Creep, additionalCreep);
         }
     }
@@ -195,7 +195,7 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
         }
     }
 
-    int workersToAdd = workersNeeded - m_state.getNumTotal(worker) - buildOrder.getTypeCount(worker);
+    int workersToAdd = static_cast<int>(workersNeeded) - static_cast<int>(m_state.getNumTotal(worker)) - static_cast<int>(buildOrder.getTypeCount(worker));
     workersToAdd = std::max(0, workersToAdd);
     
     buildOrder.add(worker, workersToAdd);
@@ -218,15 +218,15 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
         static const ActionType PhysicsLab      = ActionTypes::GetActionType("PhysicsLab");
         static const ActionType CovertOps       = ActionTypes::GetActionType("CovertOps");
 
-        int numCommandCenters   = m_state.getNumTotal(CommandCenter)   + buildOrder.getTypeCount(CommandCenter);
-        int numFactories        = m_state.getNumTotal(Factory)         + buildOrder.getTypeCount(Factory);
-        int numStarports        = m_state.getNumTotal(Starport)        + buildOrder.getTypeCount(Starport);
-        int numSci              = m_state.getNumTotal(ScienceFacility) + buildOrder.getTypeCount(ScienceFacility);
+        int numCommandCenters   = static_cast<int>(m_state.getNumTotal(CommandCenter))   + static_cast<int>(buildOrder.getTypeCount(CommandCenter));
+        int numFactories        = static_cast<int>(m_state.getNumTotal(Factory))         + static_cast<int>(buildOrder.getTypeCount(Factory));
+        int numStarports        = static_cast<int>(m_state.getNumTotal(Starport))        + static_cast<int>(buildOrder.getTypeCount(Starport));
+        int numSci              = static_cast<int>(m_state.getNumTotal(ScienceFacility)) + static_cast<int>(buildOrder.getTypeCount(ScienceFacility));
 
-        int commandCenterAddons = buildOrder.getTypeCount(ComsatStation) + buildOrder.getTypeCount(NuclearSilo);
-        int factoryAddons       = buildOrder.getTypeCount(MachineShop);
-        int starportAddons      = buildOrder.getTypeCount(ControlTower);
-        int sciAddons           = buildOrder.getTypeCount(PhysicsLab) + buildOrder.getTypeCount(CovertOps);
+        int commandCenterAddons = static_cast<int>(buildOrder.getTypeCount(ComsatStation)) + static_cast<int>(buildOrder.getTypeCount(NuclearSilo));
+        int factoryAddons       = static_cast<int>(buildOrder.getTypeCount(MachineShop));
+        int starportAddons      = static_cast<int>(buildOrder.getTypeCount(ControlTower));
+        int sciAddons           = static_cast<int>(buildOrder.getTypeCount(PhysicsLab)) + static_cast<int>(buildOrder.getTypeCount(CovertOps));
         
         // add the necessary buildings to make the addons
         buildOrder.add(CommandCenter, commandCenterAddons - numCommandCenters);

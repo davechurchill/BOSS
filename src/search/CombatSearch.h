@@ -30,7 +30,7 @@ protected:
     virtual void                generateLegalActions(const GameState & state,ActionSet & legalActions,const CombatSearchParameters & params);
 
     //virtual double              eval(const GameState & state) const;
-    virtual bool                isTerminalNode(const GameState & s,int depth);
+    virtual bool                isTerminalNode(const GameState & s, size_t depth);
 
     virtual void                updateResults(const GameState & state);
     virtual bool                timeLimitReached();

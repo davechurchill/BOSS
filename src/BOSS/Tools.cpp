@@ -93,7 +93,7 @@ BuildOrder Tools::GetNaiveBuildOrderAddWorkersOld(const GameState & state, const
     }
 
     // Add some workers to the build order if we don't have many, this usually gives a lower upper bound
-    int requiredWorkers = minWorkers - state.getNumCompleted(ActionTypes::GetWorker(state.getRace()));
+    int requiredWorkers = minWorkers - static_cast<int>(state.getNumCompleted(ActionTypes::GetWorker(state.getRace())));
     while (requiredWorkers-- > 0)
     {
         buildOrder.add(worker);
@@ -106,7 +106,7 @@ BuildOrder Tools::GetNaiveBuildOrderAddWorkersOld(const GameState & state, const
         const ActionType & actionType(a);
         int need = (int)goal.getGoal(actionType);
         int have = (int)state.getNumTotal(actionType);
-        int numNeeded = need - have - buildOrderActionTypeCount[actionType.getID()]; 
+        int numNeeded = need - have - static_cast<int>(buildOrderActionTypeCount[actionType.getID()]); 
             
         for (int i(0); i < numNeeded; ++i)
         {
@@ -129,10 +129,10 @@ BuildOrder Tools::GetNaiveBuildOrderAddWorkersOld(const GameState & state, const
         int starportAddons = 0;
         int sciAddons = 0;
 
-        int numCommandCenters = state.getNumTotal(commandCenter);
-        int numFactories = state.getNumTotal(factory);
-        int numStarports = state.getNumTotal(starport);
-        int numSci = state.getNumTotal(scienceFacility);
+        int numCommandCenters = static_cast<int>(state.getNumTotal(commandCenter));
+        int numFactories = static_cast<int>(state.getNumTotal(factory));
+        int numStarports = static_cast<int>(state.getNumTotal(starport));
+        int numSci = static_cast<int>(state.getNumTotal(scienceFacility));
         
         for (size_t a(0); a < buildOrder.size(); ++a)
         {
@@ -225,9 +225,9 @@ BuildOrder Tools::GetNaiveBuildOrderAddWorkersOld(const GameState & state, const
         const ActionType & worker           = ActionTypes::GetWorker(currentState.getRace());
         const ActionType & supplyProvider   = ActionTypes::GetSupplyProvider(currentState.getRace());
         const ActionType & nextAction       = buildOrder[i];
-        size_t maxSupply             = currentState.getMaxSupply() + currentState.getSupplyInProgress();
+        int maxSupply                = currentState.getMaxSupply() + currentState.getSupplyInProgress();
         size_t numWorkers            = currentState.getNumTotal(worker);
-        size_t currentSupply         = currentState.getCurrentSupply();
+        int currentSupply            = currentState.getCurrentSupply();
 
         if (numWorkers < 8)
         {
@@ -312,7 +312,7 @@ void Tools::InsertActionIntoBuildOrder(BuildOrder & result, const BuildOrder & b
             if (completionTime < minCompletionTime)
             {
                 minCompletionTime = completionTime;
-                bestInsertIndex = insertIndex;
+                bestInsertIndex = static_cast<int>(insertIndex);
             }
         }
 

@@ -108,7 +108,7 @@ bool CombatSearch::timeLimitReached()
     return (m_params.getSearchTimeLimit() && (m_results.nodesExpanded % 100 == 0) && (m_searchTimer.getElapsedTimeInMilliSec() > m_params.getSearchTimeLimit()));
 }
 
-bool CombatSearch::isTerminalNode(const GameState & s, int depth)
+bool CombatSearch::isTerminalNode(const GameState & s, size_t depth)
 {
     if (s.getCurrentFrame() >= m_params.getFrameTimeLimit())
     {

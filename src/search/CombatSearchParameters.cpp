@@ -103,7 +103,7 @@ int CombatSearchParameters::getMaxActions(const ActionType & a) const
 
 int CombatSearchParameters::getRepetitions(const ActionType & a) const
 { 
-    return m_repetitionValues[a.getID()]; 
+    return static_cast<int>(m_repetitionValues[a.getID()]); 
 }
 
 void CombatSearchParameters::setFrameTimeLimit(const int limit)

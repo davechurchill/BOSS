@@ -33,7 +33,7 @@ void CombatSearch_Integral::recurse(const GameState & state, size_t depth)
         GameState child(state);
         child.doAction(legalActions[index]);
         m_buildOrder.add(legalActions[index]);
-        m_integral.update(state, m_buildOrder);
+        m_integral.update(child, m_buildOrder);
         
         recurse(child,depth+1);
 
