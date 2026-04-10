@@ -203,7 +203,7 @@ BuildOrder Tools::GetNaiveBuildOrderAddWorkersOld(const GameState & state, const
     }
 
     // Bubble sort the build order so that prerequites always come before what requires them
-    for (size_t i(0); i < buildOrder.size()-1; ++i)
+    for (size_t i(0); buildOrder.size() > 1 && i < buildOrder.size()-1; ++i)
     {
         for (size_t j(i+1); j < buildOrder.size(); ++j)
         {

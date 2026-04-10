@@ -201,8 +201,16 @@ namespace ActionTypes
         ActionSet count;
 
         // add everything from whatBuilds and required
+        if (action.whatBuilds().isBuilding())
+        {
+            count.add(action.whatBuilds());
+        }
 
-        //printf("Finish Prerequisites\n");
+        for (const auto & req : action.required())
+        {
+            count.add(req);
+        }
+
         return count;
     }
 
@@ -217,9 +225,9 @@ namespace ActionTypes
 
         for (size_t a(0); a < pre.size(); ++a)
         {
-            const ActionType & actionType(a);
-            
-            if (pre.contains(actionType) && !allActions.contains(actionType))
+            const ActionType & actionType = pre[a];
+
+            if (!allActions.contains(actionType))
             {
                 allActions.add(actionType);
                 CalculateRecursivePrerequisites(allActions, actionType);

@@ -78,6 +78,7 @@ size_t BuildOrder::size() const
 
 void BuildOrder::sortByPrerequisites()
 {
+    if (m_buildOrder.size() <= 1) { return; }
     for (size_t i(0); i < m_buildOrder.size() - 1; ++i)
     {
         for (size_t j(i + 1); j < m_buildOrder.size(); ++j)

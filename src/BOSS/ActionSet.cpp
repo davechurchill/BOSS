@@ -48,7 +48,7 @@ void ActionSet::remove(const ActionSet & set)
 {
     for (const auto & val : set.m_actions)
     {
-        add(val);
+        remove(val);
     }
 }
 

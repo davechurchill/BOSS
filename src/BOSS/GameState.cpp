@@ -431,8 +431,8 @@ int GameState::whenBuilderReady(const ActionType action) const
                 minLarvaTime = time;
             }
         }
-        return m_currentFrame + minLarvaTime;
         BOSS_ASSERT(minLarvaTime != 1000000, "Error in getting next larva time");
+        return m_currentFrame + minLarvaTime;
     }
     // otherwise, check to see when a builder will be ready
     else

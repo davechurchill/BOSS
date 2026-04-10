@@ -96,7 +96,7 @@ void Unit::fastForward(const int frames)
 
     if (ffLarva)
     {
-        BOSS_ASSERT(m_numLarva < 3, "Shouldn't have less than 3 larva and a non-zero timer");
+        BOSS_ASSERT(m_numLarva < 3, "Shouldn't have 3 or more larva with a non-zero timer");
         
         int ff = frames;
         if (m_type == hatchery && m_timeUntilBuilt <= frames)
