@@ -51,7 +51,7 @@ void Unit::startMorphing(const ActionType & type)
     m_type = type;
 
     // we are building ourself
-    m_builderID = m_id;
+    m_builderID = static_cast<int>(m_id);
 
     static const ActionType hatchery("Hatchery");
     if (type == hatchery && m_builderID != -1)
@@ -217,7 +217,7 @@ size_t Unit::getBuildID() const
     return m_buildID;
 }
 
-size_t Unit::getBuilderID() const
+int Unit::getBuilderID() const
 {
     return m_builderID;
 }

@@ -276,7 +276,7 @@ void GameState::addUnit(const ActionType type, int builderID)
             // if the builder is a larva, we need to subtract from its hatchery's count
             if (builder.getType() == larva)
             {
-                getUnit(builder.getBuilderID()).useLarva();
+                getUnit(static_cast<size_t>(builder.getBuilderID())).useLarva();
             }
 
             builder.startMorphing(type);
@@ -794,7 +794,7 @@ std::string GameState::toString() const
     ss << "---------------------------------------------------------------\n";
     for (auto & unit : m_units) 
     {
-        sprintf(buf, "%5zu %4zu %6d %5d %-15s %-15s %5zu\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID());
+        sprintf(buf, "%5zu %4d %6d %5d %-15s %-15s %5zu\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID());
         ss << buf;
     }
     
@@ -834,7 +834,7 @@ std::string GameState::toStringAllUnits() const
     ss << "---------------------------------------------------------------\n";
     for (auto& unit : m_units)
     {
-        sprintf(buf, "%5zu %4zu %6d %5d %-15s %-15s %5zu %3d %5d\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID(), unit.numLarva(), unit.timeUntilLarva());
+        sprintf(buf, "%5zu %4d %6d %5d %-15s %-15s %5zu %3d %5d\n", unit.getID(), unit.getBuilderID(), unit.getTimeUntilBuilt(), unit.getTimeUntilFree(), unit.getType().getName().c_str(), unit.getBuildType().getName().c_str(), unit.getBuildID(), unit.numLarva(), unit.timeUntilLarva());
         ss << buf;
     }
 

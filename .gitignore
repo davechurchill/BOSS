@@ -22,3 +22,4 @@ emscripten/BOSS.data
 emscripten/BOSS.js
 *.o
 /.claude
+/build

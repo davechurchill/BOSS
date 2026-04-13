@@ -32,16 +32,11 @@ void BuildOrderPlotter::addPlot(const std::string & name, const GameState & stat
 
 void BuildOrderPlotter::doPlots()
 {
-    std::string buildOrderFilename = "AllBuildOrders.gpl";
+    std::string baseName = (m_allPlots.size() == 1) ? m_buildOrderNames[0] + "_BuildOrder" : "AllBuildOrders";
 
-    // if we only have one build order, name the file after it
-    if (m_allPlots.size() == 1)
-    {
-        buildOrderFilename = m_buildOrderNames[0] + "_BuildOrder.gpl";
-    }
+    writeBuildOrderPlot(m_allPlots, m_outputDir + "/" + baseName + ".gpl");
+    writeHTMLPlot(m_outputDir + "/" + baseName + ".html");
 
-    writeBuildOrderPlot(m_allPlots, m_outputDir + "/" + buildOrderFilename);
-    
     // write resource plots
     for (size_t i(0); i < m_allPlots.size(); i++)
     {
@@ -57,8 +52,6 @@ void BuildOrderPlotter::doPlots()
         rss << m_outputDir << "/" << m_buildOrderNames[i] << "_ArmyPlot.gpl";
         writeArmyValuePlot(m_allPlots[i], rss.str());
     }
-
-    getPlotJSON(m_allPlots);
 }
 
 void BuildOrderPlotter::doBuildOrderPlot()
@@ -185,6 +178,135 @@ void BuildOrderPlotter::writeBuildOrderPlot(const std::vector<BuildOrderPlotData
     }
 
     ss << "plot -10000" << std::endl;
+
+    std::ofstream out(filename);
+    out << ss.str();
+    out.close();
+}
+
+void BuildOrderPlotter::writeHTMLPlot(const std::string & filename)
+{
+    const std::string plotJSON = getPlotJSON(m_allPlots);
+
+    std::stringstream ss;
+    ss << R"(<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body {
+    background-color: #ffffff;
+    font-family: arial;
+    font-size: 13px;
+}
+.buildOrderItem {
+    box-sizing: border-box;
+    font-family: arial;
+    font-size: 11px;
+    position: absolute;
+    border: 1px solid #000000;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.plotLabel {
+    position: absolute;
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+}
+#drawArea {
+    position: relative;
+    padding: 10px;
+}
+</style>
+</head>
+<body>
+<div id="drawArea"></div>
+<script>
+let boxHeight = 25;
+let boxHeightBuffer = 4;
+let xScale = 0.15;
+
+function GetTime(frames) {
+    let minutes = "" + parseInt(frames / (24 * 60)) + "m";
+    let seconds = "" + parseInt((frames / 24) % 60) + "s";
+    return minutes + " " + seconds;
+}
+
+function GetVerticalLine(x, y, w, h) {
+    return '<div style="top:' + y + 'px;left:' + x + 'px;width:' + w +
+           'px;height:' + h + 'px;position:absolute;border-left:1px dashed #dddddd;"></div>';
+}
+
+function GetBuildOrderItemDiv(plotIndex, index) {
+    let data = plotData[plotIndex].buildOrder[index];
+    let x = data[1] * xScale;
+    let y = data[5] * (boxHeight + boxHeightBuffer);
+    let w = Math.max((data[2] - data[1]) * xScale, 1);
+    let h = boxHeight;
+    let name = data[0];
+    let color = data[6];
+
+    let title = name + "\n";
+    title += "  Start:    " + data[1] + " (" + GetTime(data[1]) + ")\n";
+    title += "  End:      " + data[2] + " (" + GetTime(data[2]) + ")\n";
+    title += "  Minerals: " + parseInt(data[3]) + "\n";
+    title += "  Gas:      " + parseInt(data[4]);
+
+    return '<div title="' + title + '" class="buildOrderItem" style="' +
+           'top:' + y + 'px;left:' + x + 'px;width:' + w + 'px;height:' + h + 'px;' +
+           'background-color:' + color + ';">' + name + '</div>';
+}
+
+function DrawBuildOrderPlots() {
+    let drawArea = document.getElementById('drawArea');
+    let currentY = 0;
+
+    for (let p = 0; p < plotData.length; ++p) {
+        let bo = plotData[p].buildOrder;
+
+        let maxX = 0;
+        let maxY = 0;
+        for (let i = 0; i < bo.length; ++i) {
+            maxX = Math.max(maxX, bo[i][2] * xScale);
+            maxY = Math.max(maxY, (bo[i][5] + 1) * (boxHeight + boxHeightBuffer));
+        }
+
+        let label = '<div class="plotLabel" style="top:' + currentY + 'px;">' +
+                    plotData[p].name + '</div>';
+        drawArea.innerHTML += label;
+        currentY += 20;
+
+        let boDiv = '<div style="width:' + maxX + 'px;height:' + maxY + 'px;' +
+                    'position:absolute;border:1px dashed #ccc;top:' + currentY + 'px;">';
+
+        for (let x = 1440 * xScale; x < maxX; x += 1440 * xScale) {
+            boDiv += GetVerticalLine(x, -20, 0, maxY + 20);
+        }
+        for (let i = 0; i < bo.length; ++i) {
+            boDiv += GetBuildOrderItemDiv(p, i);
+        }
+        boDiv += '</div>';
+        drawArea.innerHTML += boDiv;
+        currentY += maxY + 50;
+    }
+    drawArea.style.height = currentY + 'px';
+}
+
+)";
+
+    ss << plotJSON << ";\n\n";
+
+    ss << R"(// adapt to the same format DrawBuildOrderPlots expects
+let plotData = plots.map(p => ({ name: p.name, buildOrder: p.buildOrder }));
+DrawBuildOrderPlots();
+</script>
+</body>
+</html>
+)";
 
     std::ofstream out(filename);
     out << ss.str();

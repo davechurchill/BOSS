@@ -14,7 +14,7 @@ namespace UnitJobs
 class Unit
 {
     size_t      m_id                = 0;                    // index in GameState::m_Units
-    size_t      m_builderID         = 0;                    // id of the unit that built this Unit
+    int         m_builderID         = -1;                   // id of the unit that built this Unit, -1 if none
     ActionType  m_type              = ActionTypes::None;    // type of this Unit
     ActionType  m_addon             = ActionTypes::None;    // type of completed addon this Unit has
     size_t      m_addonID           = 0;                    // id of the addon unit for this unit
@@ -38,7 +38,7 @@ public:
     ActionType getBuildType() const;
     size_t getID() const;
     size_t getBuildID() const;
-    size_t getBuilderID() const;
+    int    getBuilderID() const;
     size_t getAddonID() const;
     bool hasAddon() const;
     int timeUntilLarva() const;

@@ -33,7 +33,8 @@ public:
     void writeBuildOrderPlot(const std::vector<BuildOrderPlotData> & plots, const std::string & filename);
 
     std::string getPlotJSON(const std::vector<BuildOrderPlotData> & plots);
-    
+    void writeHTMLPlot(const std::string & filename);
+
     static std::string GetFileNameFromPath(const std::string & path);
     static std::string RemoveFileExtension(const std::string & path);
     static void WriteGnuPlot(const std::string & filename, const std::string & data, const std::string & args);

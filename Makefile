@@ -4,7 +4,9 @@ else
   CXX = g++
 endif
 
-CFLAGS = -O3 -std=c++17 -flto -Wformat=0
+MAKEFLAGS += -j8
+
+CFLAGS = -O3 -std=c++23 -flto -Wformat=0
 LDFLAGS=-O3 -flto
 LDFLAGS_SFML=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 JSFLAGS=-s WASM=0 --memory-init-file 0 -s EXPORTED_FUNCTIONS="['_BOSS_JS_Init', '_BOSS_JS_GetBuildOrderPlot']" -s EXTRA_EXPORTED_RUNTIME_METHODS=["cwrap"] --preload-file bin/config

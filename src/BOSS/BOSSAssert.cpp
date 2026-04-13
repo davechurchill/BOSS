@@ -43,7 +43,7 @@ namespace Assert
         #if !defined(EMSCRIPTEN)
             std::cerr << ss.str() << "\n";
             getchar();
-            __debugbreak;
+            __debugbreak();
         #else
             printf("BOSS Exception Thrown:\n %s\n", ss.str().c_str());
             throw BOSSException(ss.str());
