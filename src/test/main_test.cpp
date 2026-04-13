@@ -904,7 +904,7 @@ namespace
     }
 }
 
-TEST_CASE("BuildOrder sort keeps prerequisites ahead of dependents [new]")
+TEST_CASE("BuildOrder sort keeps prerequisites ahead of dependents")
 {
     EnsureInit();
 
@@ -925,7 +925,7 @@ TEST_CASE("BuildOrder sort keeps prerequisites ahead of dependents [new]")
     }
 }
 
-TEST_CASE("Tools DoBuildOrder matches manual execution [new]")
+TEST_CASE("Tools DoBuildOrder matches manual execution")
 {
     GameState manual = MakeProtossStartState();
     GameState bulk(manual);
@@ -949,7 +949,7 @@ TEST_CASE("Tools DoBuildOrder matches manual execution [new]")
     REQUIRE(manual == bulk);
 }
 
-TEST_CASE("Tools completion time matches post-build last finish time [new]")
+TEST_CASE("Tools completion time matches post-build last finish time")
 {
     GameState state = MakeTerranStartState();
     state.setMinerals(1000);
@@ -968,7 +968,7 @@ TEST_CASE("Tools completion time matches post-build last finish time [new]")
     REQUIRE(completionTime == replay.getLastActionFinishTime());
 }
 
-TEST_CASE("Zerg goal achievement counts equivalent morph chains [new]")
+TEST_CASE("Zerg goal achievement counts equivalent morph chains")
 {
     EnsureInit();
 
@@ -988,7 +988,7 @@ TEST_CASE("Zerg goal achievement counts equivalent morph chains [new]")
     REQUIRE(spireGoal.isAchievedBy(state2));
 }
 
-TEST_CASE("Race mismatch actions are illegal [new]")
+TEST_CASE("Race mismatch actions are illegal")
 {
     GameState state = MakeProtossStartState();
 
@@ -996,7 +996,7 @@ TEST_CASE("Race mismatch actions are illegal [new]")
     REQUIRE_FALSE(state.isLegal(ActionType("Marine")));
 }
 
-TEST_CASE("Supply in progress unlocks supply blocked units [new]")
+TEST_CASE("Supply in progress unlocks supply blocked units")
 {
     EnsureInit();
 
@@ -1020,7 +1020,7 @@ TEST_CASE("Supply in progress unlocks supply blocked units [new]")
     REQUIRE(state.isLegal(probe));
 }
 
-TEST_CASE("Terran worker returns to minerals after building completes [new]")
+TEST_CASE("Terran worker returns to minerals after building completes")
 {
     GameState state = MakeTerranStartState();
     state.setMinerals(1000);
@@ -1039,7 +1039,7 @@ TEST_CASE("Terran worker returns to minerals after building completes [new]")
     REQUIRE(state.getNumMineralWorkers() == 4);
 }
 
-TEST_CASE("Refinery legality honors depots including in-progress depots [new]")
+TEST_CASE("Refinery legality honors depots including in-progress depots")
 {
     GameState state = MakeTerranStartState();
     state.setMinerals(2000);
@@ -1056,7 +1056,7 @@ TEST_CASE("Refinery legality honors depots including in-progress depots [new]")
     REQUIRE(state.isLegal(refinery));
 }
 
-TEST_CASE("Prerequisite extraction adds gas building when needed [new]")
+TEST_CASE("Prerequisite extraction adds gas building when needed")
 {
     GameState state = MakeZergStartState();
 
@@ -1070,7 +1070,7 @@ TEST_CASE("Prerequisite extraction adds gas building when needed [new]")
     REQUIRE(required.contains(ActionType("SpawningPool")));
 }
 
-TEST_CASE("BuildOrder type counts update with pop and clear [new]")
+TEST_CASE("BuildOrder type counts update with pop and clear")
 {
     EnsureInit();
 
@@ -1094,7 +1094,7 @@ TEST_CASE("BuildOrder type counts update with pop and clear [new]")
     REQUIRE(buildOrder.getTypeCount(probe) == 0);
 }
 
-TEST_CASE("Protoss opening legal action set contains expected baseline actions [new]")
+TEST_CASE("Protoss opening legal action set contains expected baseline actions")
 {
     GameState state = MakeProtossStartState();
     std::vector<ActionType> legalActions;
