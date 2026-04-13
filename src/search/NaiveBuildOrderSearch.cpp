@@ -42,8 +42,8 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
 
     if (checkUnsolvable())
     {
-        bool temp = checkUnsolvable();
         m_buildOrder = BuildOrder();
+        m_naiveSolved = true;
         return m_buildOrder;
     }
 
@@ -65,6 +65,7 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
 
     if (wanted.size() == 0)
     {
+        m_naiveSolved = true;
         return m_buildOrder;
     }
 

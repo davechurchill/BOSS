@@ -65,8 +65,6 @@ bool GameState::isLegal(const ActionType action) const
     // TODO: require an extra for refineries byt not buildings
     // rules for buildings which are built by workers
     if (action.isBuilding() && !action.isMorphed() && !action.isAddon() && (mineralWorkers == 0)) { return false; }
-    // if we have no mineral income we'll never have a minerla unit
-    if ((m_minerals < action.mineralPrice()) && (mineralWorkers == 0)) { return false; }
 
     // don't build more refineries than resource depots
     if (action.isRefinery() && (numRefineries >= numDepots)) { return false; }
@@ -241,6 +239,7 @@ void GameState::addUnit(const ActionType type, int builderID)
     static const ActionType larva("Larva");
     if (type == larva)
     {
+        BOSS_ASSERT(builderID != -1, "Larva must have a valid builder (hatchery) ID");
         Unit unit(type, m_units.size(), builderID);
         m_units.push_back(unit);
         getUnit(builderID).addLarva();
