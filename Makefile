@@ -1,7 +1,7 @@
 ifeq ($(TARGET),js)
-  CC = emcc
+  CXX = emcc
 else
-  CC = g++
+  CXX = g++
 endif
 
 CFLAGS = -O3 -std=c++17 -flto -Wformat=0
@@ -26,6 +26,8 @@ OBJ_TEST=$(SRC_TEST:.cpp=.o)
 SRC_EMSCRIPTEN=$(wildcard src/BOSS/*.cpp src/search/*.cpp src/emscripten/*.cpp) 
 OBJ_EMSCRIPTEN=$(SRC_EMSCRIPTEN:.cpp=.o)
 
+.PHONY: all clean
+
 ifeq ($(TARGET),js)
   all: emscripten/BOSS.js
 else
@@ -33,20 +35,20 @@ else
 endif
 
 bin/BOSS_Experiments:$(OBJ_BOSS) $(OBJ_EXPERIMENTS) Makefile
-	$(CC) $(OBJ_BOSS) $(OBJ_EXPERIMENTS) -o $@  $(LDFLAGS)
+	$(CXX) $(OBJ_BOSS) $(OBJ_EXPERIMENTS) -o $@  $(LDFLAGS)
 
 bin/BOSS_SFML:$(OBJ_BOSS) $(OBJ_SFML) Makefile
-	$(CC) $(OBJ_BOSS) $(OBJ_SFML) -o $@  $(LDFLAGS) $(LDFLAGS_SFML)
+	$(CXX) $(OBJ_BOSS) $(OBJ_SFML) -o $@  $(LDFLAGS) $(LDFLAGS_SFML)
 
 bin/BOSS_Test:$(OBJ_BOSS) $(OBJ_TEST) Makefile
-	$(CC) $(OBJ_BOSS) $(OBJ_TEST) -o $@  $(LDFLAGS)
+	$(CXX) $(OBJ_BOSS) $(OBJ_TEST) -o $@  $(LDFLAGS)
 
 emscripten/BOSS.js:$(OBJ_EMSCRIPTEN) Makefile
-	$(CC) $(OBJ_EMSCRIPTEN) -o $@ $(LDFLAGS) $(JSFLAGS)
+	$(CXX) $(OBJ_EMSCRIPTEN) -o $@ $(LDFLAGS) $(JSFLAGS)
 
 .cpp.o:
-	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ 
+	$(CXX) -c $(CFLAGS) $(INCLUDES) $< -o $@
 
 clean:
-	rm -f bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test emscripten/BOSS* src/BOSS/*.o src/search/*.o src/experiments/*.o src/test/*.o src/sfml/*.o src/emscripten/*.o 
+	rm -f bin/BOSS_Experiments bin/BOSS_SFML bin/BOSS_Test emscripten/BOSS* src/BOSS/*.o src/search/*.o src/experiments/*.o src/test/*.o src/test/catch2/*.o src/sfml/*.o src/emscripten/*.o
 
