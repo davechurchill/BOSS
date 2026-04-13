@@ -197,6 +197,7 @@ TEST_CASE("Terran Tech Tree")
     DoLegalCheck(state, legal, "Factory", { });
     DoLegalCheck(state, legal, "MachineShop", { "SiegeTank", "SpiderMines", "TankSiegeMode"});
     DoLegalCheck(state, legal, "SiegeTank", { });
+    DoLegalCheck(state, legal, "Vulture", { });
     DoLegalCheck(state, legal, "Armory", { "Goliath" });
     DoLegalCheck(state, legal, "Goliath", { });
     DoLegalCheck(state, legal, "Starport", { "Wraith", "ControlTower", "ScienceFacility" }); 
@@ -208,6 +209,7 @@ TEST_CASE("Terran Tech Tree")
     DoLegalCheck(state, legal, "Dropship", { });
     DoLegalCheck(state, legal, "ScienceFacility", { "PhysicsLab", "CovertOps", "ScienceVessel", "EMPShockwave", "Irradiate" });
     DoLegalCheck(state, legal, "ScienceFacility", { });
+    DoLegalCheck(state, legal, "ScienceVessel", { });
     DoLegalCheck(state, legal, "PhysicsLab", { "Battlecruiser", "YamatoGun" });
     DoLegalCheck(state, legal, "SupplyDepot", { });
     DoLegalCheck(state, legal, "Battlecruiser", { });
