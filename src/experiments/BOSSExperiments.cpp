@@ -1,6 +1,7 @@
 #include "BOSSExperiments.h"
 
 #include "CombatSearchExperiment.h"
+#include "DFBBSearchExperiment.h"
 #include "BuildOrderPlotter.h"
 #include "FileTools.h"
 
@@ -34,6 +35,10 @@ void Experiments::RunExperiments(const std::string & experimentFilename)
             {
                 RunBuildOrderPlot(name, val);
             }
+            else if (type == "DFBBSearch")
+            {
+                RunDFBBSearchExperiment(name, val);
+            }
             else
             {
                 BOSS_ASSERT(false, "Unknown Experiment Type: %s", type.c_str());
@@ -49,6 +54,16 @@ void Experiments::RunCombatExperiment(const std::string & name, const json & val
     std::cout << "Combat Search Experiment - " << name << std::endl;
 
     CombatSearchExperiment exp(name, val);
+    exp.run();
+
+    std::cout << "    " << name << " completed" << std::endl;
+}
+
+void Experiments::RunDFBBSearchExperiment(const std::string & name, const json & val)
+{
+    std::cout << "DFBB Search Experiment - " << name << std::endl;
+
+    DFBBSearchExperiment exp(name, val);
     exp.run();
 
     std::cout << "    " << name << " completed" << std::endl;

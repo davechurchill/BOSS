@@ -1,4 +1,5 @@
 #include "DFBB_BuildOrderStackSearch.h"
+#include "NaiveBuildOrderSearch.h"
 #include "Tools.h"
 #include "ActionSet.h"
 
@@ -11,7 +12,39 @@ DFBB_BuildOrderStackSearch::DFBB_BuildOrderStackSearch(const DFBB_BuildOrderSear
     , m_wasInterrupted(false)
     , m_stack(100, StackData())
 {
-    
+    const size_t numActions = ActionTypes::GetAllActionTypes().size();
+
+    if (m_params.m_ordering == ActionOrderingType::NaiveBuild)
+    {
+        NaiveBuildOrderSearch naiveSearch(m_params.m_initialState, m_params.m_goal);
+        const BuildOrder & naiveBuildOrder = naiveSearch.solve();
+
+        m_actionOrderRanks.assign(numActions, numActions);
+        for (size_t i = 0; i < naiveBuildOrder.size(); ++i)
+        {
+            const size_t id = naiveBuildOrder[i].getID();
+            if (m_actionOrderRanks[id] == numActions)
+            {
+                m_actionOrderRanks[id] = i;
+            }
+        }
+    }
+    else if (m_params.m_ordering == ActionOrderingType::GoalFirst)
+    {
+        m_actionOrderRanks.assign(numActions, 1);
+        for (size_t i = 0; i < numActions; ++i)
+        {
+            if (m_params.m_goal.getGoal(ActionType(i)) > 0)
+            {
+                m_actionOrderRanks[i] = 0;
+            }
+        }
+    }
+    else if (m_params.m_ordering == ActionOrderingType::LeastBuilt ||
+             m_params.m_ordering == ActionOrderingType::MostBuilt)
+    {
+        m_stateOrderRanks.resize(numActions, 0);
+    }
 }
 
 void DFBB_BuildOrderStackSearch::setTimeLimit(double ms)
@@ -198,7 +231,10 @@ void DFBB_BuildOrderStackSearch::updateResults(const GameState & state)
         m_results.finalState = state;
         m_results.buildOrder = m_buildOrder;
 
-        //_results.printResults(true);
+        if (m_params.m_printNewBest)
+        {
+            std::cout << finishTime << "   " << m_buildOrder.getNameString(2) << std::endl;
+        }
     }
 }
 
@@ -230,6 +266,19 @@ SEARCH_BEGIN:
     }
 
     generateLegalActions(STATE, LEGAL_ACTIONS);
+    if (m_params.m_ordering == ActionOrderingType::LeastBuilt ||
+        m_params.m_ordering == ActionOrderingType::MostBuilt)
+    {
+        for (size_t i = 0; i < m_stateOrderRanks.size(); ++i)
+        {
+            m_stateOrderRanks[i] = STATE.getNumTotal(ActionType(i));
+        }
+        ActionOrdering::ApplyOrdering(LEGAL_ACTIONS, m_params.m_ordering, m_stateOrderRanks);
+    }
+    else
+    {
+        ActionOrdering::ApplyOrdering(LEGAL_ACTIONS, m_params.m_ordering, m_actionOrderRanks);
+    }
     for (CHILD_NUM = 0; CHILD_NUM < LEGAL_ACTIONS.size(); ++CHILD_NUM)
     {
         ACTION_TYPE = LEGAL_ACTIONS[CHILD_NUM];

@@ -4,6 +4,7 @@
 #include "BuildOrderSearchGoal.h"
 #include "GameState.h"
 #include "DFBB_BuildOrderSearchSaveState.h"
+#include "ActionOrdering.hpp"
 
 namespace BOSS
 {
@@ -68,6 +69,9 @@ public:
     //      false: the heuristic is not used
     bool m_useLandmarkLowerBoundHeuristic;
     bool m_useResourceLowerBoundHeuristic;
+
+    bool m_printNewBest;
+    ActionOrderingType m_ordering;
 
     //      Search time limit measured in milliseconds
     //      If searchTimeLimit is set to a value greater than zero, the search will effectively

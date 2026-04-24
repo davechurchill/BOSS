@@ -3,6 +3,7 @@
 #include "Common.h"
 #include "GameState.h"
 #include "DFBB_BuildOrderStackSearch.h"
+#include "ActionOrdering.hpp"
 #include "Timer.hpp"
 
 namespace BOSS
@@ -19,6 +20,15 @@ class DFBB_BuildOrderSmartSearch
     GameState					        m_initialState;
 
     int 							    m_searchTimeLimit;
+    bool                                m_printNewBest;
+    ActionOrderingType                  m_ordering;
+    bool                                m_useRepetitions;
+    bool                                m_useIncreasingRepetitions;
+    bool                                m_useLandmarkLowerBound;
+    bool                                m_useResourceLowerBound;
+    bool                                m_useAlwaysMakeWorkers;
+    bool                                m_useSupplyBounding;
+    double                              m_supplyBoundingThreshold;
 
     Timer							    m_searchTimer;
 
@@ -46,6 +56,15 @@ public:
     void setState(const GameState & state);
     void print();
     void setTimeLimit(int n);
+    void setPrintNewBest(bool printNewBest);
+    void setOrdering(ActionOrderingType ordering);
+    void setUseRepetitions(bool val);
+    void setUseIncreasingRepetitions(bool val);
+    void setUseLandmarkLowerBound(bool val);
+    void setUseResourceLowerBound(bool val);
+    void setUseAlwaysMakeWorkers(bool val);
+    void setUseSupplyBounding(bool val);
+    void setSupplyBoundingThreshold(double val);
 
     void search();
 

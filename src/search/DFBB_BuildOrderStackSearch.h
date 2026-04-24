@@ -43,6 +43,8 @@ class DFBB_BuildOrderStackSearch
 
     std::vector<StackData>              m_stack;
     size_t                              m_depth;
+    std::vector<size_t>                 m_actionOrderRanks;   // precomputed: NaiveBuild, GoalFirst
+    std::vector<size_t>                 m_stateOrderRanks;    // per-node buffer: LeastBuilt, MostBuilt
 
     bool                                m_firstSearch;
 

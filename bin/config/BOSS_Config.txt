@@ -42,11 +42,32 @@
             }
         },
         
-        "DT Rush" :   
-        {   
-            "Run"           : false, 
-            "Type"          : "BuildOrderSearch", 
-            "OutputFile"    : "DTRush_Opt.txt", 
+        "DFBBSearch" :
+        {
+            "Run"               : true,
+            "Type"              : "DFBBSearch",
+            "State"             : "Zerg Start State",
+            "Goal"              : "12 Mutalisks",
+            "SearchTimeLimitMS" : 30000,
+            "SmartSearch"               : true,
+            "Ordering"                  : [ "None", "LowMineralPrice", "HighMineralPrice", "LowGasPrice", "HighGasPrice", "LowTotalPrice", "HighTotalPrice", "LowestTech", "HighestTech", "ShortestBuildTime", "LongestBuildTime", "HighestSupplyCost", "LowestSupplyCost", "GoalFirst", "LeastBuilt", "MostBuilt", "NaiveBuild" ],
+            "HTMLFile"                  : "results/DFBBSearch.html",
+            "PrintNewBest"              : true,
+            "UseRepetitions"            : true,
+            "UseIncreasingRepetitions"  : true,
+            "UseLandmarkLowerBound"     : true,
+            "UseResourceLowerBound"     : true,
+            "UseAlwaysMakeWorkers"      : true,
+            "UseSupplyBounding"         : true,
+            "SupplyBoundingThreshold"   : 1.5,
+            "RelevantActions"           : [ "Probe", "Pylon", "Nexus", "Assimilator", "Gateway", "CyberneticsCore", "CitadelofAdun", "TemplarArchives", "DarkTemplar" ]
+        },
+
+        "DT Rush" :
+        {
+            "Run"           : false,
+            "Type"          : "BuildOrderSearch",
+            "OutputFile"    : "DTRush_Opt.txt",
             "Race"          : "Protoss",
             "State"         : "Protoss Start State"
         }
@@ -85,6 +106,9 @@
     {
         "2 Dark Templars"       : { "race" : "Protoss", "goal" : [ ["DarkTemplar", 2] ], "goalMax" : [] },
         "8 Zealots 2 Dragoons"  : { "race" : "Protoss", "goal" : [ ["Zealot", 8], ["Dragoon", 2] ], "goalMax" : [] },
-        "6 Mutalisks"           : { "race" : "Zerg", "goal" : [ ["Mutalisk", 6] ], "goalMax" : [] }
-    }
+        "6 Mutalisks"           : { "race" : "Zerg", "goal" : [ ["Mutalisk", 6] ],  "goalMax" : [] },
+        "12 Mutalisks"          : { "race" : "Zerg", "goal" : [ ["Mutalisk", 12] ], "goalMax" : [] }
+    },
+
+    "PossibleOrderings" : [ "None", "LowMineralPrice", "HighMineralPrice", "LowGasPrice", "HighGasPrice", "LowTotalPrice", "HighTotalPrice", "LowestTech", "HighestTech", "ShortestBuildTime", "LongestBuildTime", "HighestSupplyCost", "LowestSupplyCost", "GoalFirst", "LeastBuilt", "MostBuilt", "NaiveBuild" ]
 }

@@ -84,19 +84,22 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
     int requiredWorkers = minWorkers - static_cast<int>(m_state.getNumCompleted(ActionTypes::GetWorker(m_state.getRace())));
     buildOrder.add(worker, requiredWorkers);
 
-    // Add the goal units to the end of the build order 
+    // Add the goal units to the end of the build order
     for (const ActionType & actionType : ActionTypes::GetAllActionTypes())
     {
         int need = (int)m_goal.getGoal(actionType);
+        if (need <= 0) { continue; }
         int have = (int)m_state.getNumTotal(actionType);
         int numNeeded = need - have - static_cast<int>(buildOrder.getTypeCount(actionType));
-         
+
         buildOrder.add(actionType, numNeeded);
     }
 
     // if we are zerg, make sure we have enough morphers for morphed units
     if (m_state.getRace() == Races::Zerg)
     {
+        static const ActionType & Larva = ActionTypes::GetActionType("Larva");
+
         // do this whole thing twice so that Hive->Lair->Hatchery is satisfied
         for (size_t t=0; t<2; ++t)
         {
@@ -105,9 +108,13 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
             {
                 const ActionType & type(i);
 
-                if (type.isMorphed())
+                if (type.isMorphed() && type.getRace() == m_state.getRace())
                 {
                     const ActionType & morpher = type.whatBuilds();
+                    if (morpher == Larva)
+                    {
+                        continue;
+                    }
 
                     int willMorph = static_cast<int>(buildOrder.getTypeCount(type));
                     int haveMorpher = static_cast<int>(m_state.getNumTotal(morpher));
@@ -184,12 +191,27 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
 
     workersNeeded = std::max(workersNeeded, gasWorkersNeeded);
 
+    bool needsMineralIncome = false;
+    for (size_t a(0); a < buildOrder.size(); ++a)
+    {
+        if (buildOrder[a].mineralPrice() > 0)
+        {
+            needsMineralIncome = true;
+            break;
+        }
+    }
+
+    if (gasWorkersNeeded > 0 && needsMineralIncome)
+    {
+        workersNeeded = std::max(workersNeeded, gasWorkersNeeded + 1);
+    }
+
     // special case for zerg: buildings consume drones
     if (m_state.getRace() == Races::Zerg)
     {
         for (const ActionType & type : ActionTypes::GetAllActionTypes())
         {
-            if (type.whatBuilds().isWorker() && !type.isMorphed())
+            if (type.whatBuilds().isWorker() && type.getRace() == m_state.getRace())
             {
                 workersNeeded += buildOrder.getTypeCount(type);
             }
@@ -239,6 +261,30 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
     // Bubble sort the build order so that prerequites always come before what requires them
     buildOrder.sortByPrerequisites();
 
+    // Pull queued workers forward before tech can consume or reassign the
+    // workers needed to keep the rest of the naive build legal.
+    if (buildOrder.getTypeCount(worker) > 0)
+    {
+        BuildOrder workerFirstBuildOrder;
+        for (size_t a(0); a < buildOrder.size(); ++a)
+        {
+            if (buildOrder[a] == worker)
+            {
+                workerFirstBuildOrder.add(buildOrder[a]);
+            }
+        }
+
+        for (size_t a(0); a < buildOrder.size(); ++a)
+        {
+            if (buildOrder[a] != worker)
+            {
+                workerFirstBuildOrder.add(buildOrder[a]);
+            }
+        }
+
+        buildOrder = workerFirstBuildOrder;
+    }
+
     // Insert supply buildings so that build order is legal w.r.t. supply counts
     const ActionType & supplyProvider = ActionTypes::GetSupplyProvider(m_state.getRace());
 
@@ -250,27 +296,26 @@ const BuildOrder & NaiveBuildOrderSearch::solve()
         int currentSupply = m_state.getCurrentSupply();
         int supplyInProgress = m_state.getSupplyInProgress();
 
-		// insert 1 or more supply providers if needed
+        // insert 1 or more supply providers if needed
         // TODO: don't go over 200 supply
-		while (!nextAction.isSupplyProvider() && (nextAction.supplyCost() > (maxSupply + supplyInProgress - currentSupply)))
-		{
-			BOSS_ASSERT(m_state.isLegal(supplyProvider), "Should be able to build more supply here. Max: %d", maxSupply);
-			finalBuildOrder.add(supplyProvider);
-			m_state.doAction(supplyProvider);
+        while (!nextAction.isSupplyProvider() && (nextAction.supplyCost() > (maxSupply + supplyInProgress - currentSupply)))
+        {
+            BOSS_ASSERT(m_state.isLegal(supplyProvider), "Should be able to build more supply here. Max: %d", maxSupply);
+            finalBuildOrder.add(supplyProvider);
+            m_state.doAction(supplyProvider);
 
-			maxSupply = m_state.getMaxSupply();
-			currentSupply = m_state.getCurrentSupply();
-			supplyInProgress = m_state.getSupplyInProgress();
-		}
+            maxSupply = m_state.getMaxSupply();
+            currentSupply = m_state.getCurrentSupply();
+            supplyInProgress = m_state.getSupplyInProgress();
+        }
 
-		BOSS_ASSERT(m_state.isLegal(nextAction), "Should be able to build the next action now");
-		finalBuildOrder.add(nextAction);
-		m_state.doAction(nextAction);
-	}
+        BOSS_ASSERT(m_state.isLegal(nextAction), "Should be able to build the next action now: %s", nextAction.getName().c_str());
+        finalBuildOrder.add(nextAction);
+        m_state.doAction(nextAction);
+    }
 
     m_buildOrder = finalBuildOrder;
     m_naiveSolved = true;
 
     return m_buildOrder;
 }
-

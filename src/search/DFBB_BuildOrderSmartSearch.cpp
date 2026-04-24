@@ -3,9 +3,18 @@
 
 using namespace BOSS;
 
-DFBB_BuildOrderSmartSearch::DFBB_BuildOrderSmartSearch() 
+DFBB_BuildOrderSmartSearch::DFBB_BuildOrderSmartSearch()
     : m_stackSearch(m_params)
     , m_searchTimeLimit(30)
+    , m_printNewBest(false)
+    , m_ordering(ActionOrderingType::None)
+    , m_useRepetitions(true)
+    , m_useIncreasingRepetitions(true)
+    , m_useLandmarkLowerBound(true)
+    , m_useResourceLowerBound(true)
+    , m_useAlwaysMakeWorkers(true)
+    , m_useSupplyBounding(true)
+    , m_supplyBoundingThreshold(1.5)
 {
 }
 
@@ -24,13 +33,17 @@ void DFBB_BuildOrderSmartSearch::doSearch()
         calculateSearchSettings();
         m_params.m_goal                     = m_goal;
         m_params.m_initialState             = m_initialState;
-        m_params.m_useRepetitions 			= true;
-        m_params.m_useIncreasingRepetitions = true;
-        m_params.m_useAlwaysMakeWorkers 	= true;
-        m_params.m_useSupplyBounding 		= true;
-        m_params.m_supplyBoundingThreshold  = 1.5;
-        m_params.m_relevantActions          = m_relevantActions;
-        m_params.m_searchTimeLimit          = m_searchTimeLimit;
+        m_params.m_useRepetitions                   = m_useRepetitions;
+        m_params.m_useIncreasingRepetitions         = m_useIncreasingRepetitions;
+        m_params.m_useLandmarkLowerBoundHeuristic   = m_useLandmarkLowerBound;
+        m_params.m_useResourceLowerBoundHeuristic   = m_useResourceLowerBound;
+        m_params.m_useAlwaysMakeWorkers             = m_useAlwaysMakeWorkers;
+        m_params.m_useSupplyBounding                = m_useSupplyBounding;
+        m_params.m_supplyBoundingThreshold          = m_supplyBoundingThreshold;
+        m_params.m_relevantActions                  = m_relevantActions;
+        m_params.m_searchTimeLimit                  = m_searchTimeLimit;
+        m_params.m_printNewBest                     = m_printNewBest;
+        m_params.m_ordering                         = m_ordering;
 
         //BWAPI::Broodwar->printf("Constructing new search object time limit is %lf", _params.searchTimeLimit);
         m_stackSearch = DFBB_BuildOrderStackSearch(m_params);
@@ -292,6 +305,24 @@ void DFBB_BuildOrderSmartSearch::setTimeLimit(int n)
 {
     m_searchTimeLimit = n;
 }
+
+void DFBB_BuildOrderSmartSearch::setPrintNewBest(bool printNewBest)
+{
+    m_printNewBest = printNewBest;
+}
+
+void DFBB_BuildOrderSmartSearch::setOrdering(ActionOrderingType ordering)
+{
+    m_ordering = ordering;
+}
+
+void DFBB_BuildOrderSmartSearch::setUseRepetitions(bool val)           { m_useRepetitions = val; }
+void DFBB_BuildOrderSmartSearch::setUseIncreasingRepetitions(bool val) { m_useIncreasingRepetitions = val; }
+void DFBB_BuildOrderSmartSearch::setUseLandmarkLowerBound(bool val)    { m_useLandmarkLowerBound = val; }
+void DFBB_BuildOrderSmartSearch::setUseResourceLowerBound(bool val)    { m_useResourceLowerBound = val; }
+void DFBB_BuildOrderSmartSearch::setUseAlwaysMakeWorkers(bool val)     { m_useAlwaysMakeWorkers = val; }
+void DFBB_BuildOrderSmartSearch::setUseSupplyBounding(bool val)        { m_useSupplyBounding = val; }
+void DFBB_BuildOrderSmartSearch::setSupplyBoundingThreshold(double val){ m_supplyBoundingThreshold = val; }
 
 void DFBB_BuildOrderSmartSearch::search()
 {

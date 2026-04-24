@@ -207,8 +207,7 @@ void GameState::completeUnit(Unit & unit)
     if (unit.getType().isWorker())
     {
         m_mineralWorkers++;
-        int needGasWorkers = std::max(0, (WorkersPerRefinery*m_numRefineries - m_gasWorkers));
-        BOSS_ASSERT(needGasWorkers <= m_mineralWorkers, "Shouldn't need more gas workers than we have mineral workers");
+        int needGasWorkers = std::min(m_mineralWorkers, std::max(0, (WorkersPerRefinery*m_numRefineries - m_gasWorkers)));
         m_mineralWorkers -= needGasWorkers;
         m_gasWorkers += needGasWorkers;
     }
@@ -216,8 +215,7 @@ void GameState::completeUnit(Unit & unit)
     {
         m_numRefineries++;
         BOSS_ASSERT(m_numRefineries <= m_numDepots + getNumInProgress(ActionTypes::GetResourceDepot(m_race)), "Shouldn't have more refineries than depots");
-        int needGasWorkers = std::max(0, (WorkersPerRefinery*m_numRefineries - m_gasWorkers));
-        BOSS_ASSERT(needGasWorkers <= m_mineralWorkers, "Shouldn't need more gas workers than we have mineral workers");
+        int needGasWorkers = std::min(m_mineralWorkers, std::max(0, (WorkersPerRefinery*m_numRefineries - m_gasWorkers)));
         m_mineralWorkers -= needGasWorkers;
         m_gasWorkers += needGasWorkers;
     }
@@ -412,9 +410,9 @@ int GameState::whenResourcesReady(const ActionType action) const
         // finishing a refinery adjusts the worker count
         else if (unit.getType().isRefinery())
         {
-            BOSS_ASSERT(currentMineralWorkers >= WorkersPerRefinery, "Not enough mineral workers \n");
-            currentMineralWorkers -= WorkersPerRefinery;
-            currentGasWorkers += WorkersPerRefinery;
+            int assigned = std::min(currentMineralWorkers, WorkersPerRefinery);
+            currentMineralWorkers -= assigned;
+            currentGasWorkers += assigned;
         }
 
         // update the last action
