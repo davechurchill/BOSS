@@ -6,5 +6,10 @@ using namespace BOSS;
 
 void FileTools::MakeDirectory(const std::string & dir)
 {
-    std::filesystem::create_directory(dir);
+    if (dir.empty())
+    {
+        return;
+    }
+
+    std::filesystem::create_directories(dir);
 }

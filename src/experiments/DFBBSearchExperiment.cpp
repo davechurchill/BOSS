@@ -1,4 +1,5 @@
 #include "DFBBSearchExperiment.h"
+#include <algorithm>
 #include <iomanip>
 #include "DFBB_BuildOrderSmartSearch.h"
 #include "DFBB_BuildOrderStackSearch.h"
@@ -134,8 +135,6 @@ void DFBBSearchExperiment::run()
     const std::string searchLabel = m_smartSearch ? "DFBB Smart" : "DFBB";
 
     std::vector<RunData> runs;
-    BuildOrderPlotter plotter;
-
     for (const ActionOrderingType ordering : m_orderings)
     {
         const std::string orderingLabel = ActionOrdering::GetOrderingName(ordering);
@@ -187,21 +186,32 @@ void DFBBSearchExperiment::run()
         printResults(run.results);
         runs.push_back(run);
 
-        if (!m_htmlFile.empty() && run.results.solutionFound)
-        {
-            plotter.addPlot(m_name + " [" + orderingLabel + "]", m_initialState, run.results.buildOrder);
-        }
     }
 
     if (!m_htmlFile.empty())
     {
-        writeHTMLFile(runs, plotter);
+        writeHTMLFile(runs);
         std::cout << "  HTML written to: " << m_htmlFile << "\n";
     }
 }
 
-void DFBBSearchExperiment::writeHTMLFile(const std::vector<RunData> & runs, BuildOrderPlotter & plotter) const
+void DFBBSearchExperiment::writeHTMLFile(const std::vector<RunData> & runs) const
 {
+    std::vector<RunData> sortedRuns = runs;
+    std::stable_sort(sortedRuns.begin(), sortedRuns.end(), [](const RunData & lhs, const RunData & rhs)
+    {
+        return lhs.results.nodesExpanded < rhs.results.nodesExpanded;
+    });
+
+    BuildOrderPlotter plotter;
+    for (const RunData & run : sortedRuns)
+    {
+        if (run.results.solutionFound)
+        {
+            plotter.addPlot(m_name + " [" + run.label + "]", m_initialState, run.results.buildOrder);
+        }
+    }
+
     std::stringstream ss;
 
     ss << R"(<!DOCTYPE html>
@@ -235,10 +245,10 @@ tr:hover td { background-color: #f5f5f5; }
     // stats table
     ss << "<table>\n";
     ss << "<tr><th>Ordering</th><th>Solved</th><th>Solution Found</th><th>Timed Out</th>"
-       << "<th>Upper Bound (frames)</th><th>Nodes Expanded</th>"
+       << "<th>Upper Bound (frames)</th><th>Nodes Expanded &#8593;</th>"
        << "<th>Time Elapsed (ms)</th><th>Nodes / sec</th></tr>\n";
 
-    for (const RunData & run : runs)
+    for (const RunData & run : sortedRuns)
     {
         const DFBB_BuildOrderSearchResults & r = run.results;
         double nodesPerSec = (r.timeElapsed > 0) ? (1000.0 * r.nodesExpanded / r.timeElapsed) : 0.0;

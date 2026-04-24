@@ -39,7 +39,7 @@ class DFBBSearchExperiment
     std::vector<ActionType> m_relevantActions;
 
     void printResults(const DFBB_BuildOrderSearchResults & results) const;
-    void writeHTMLFile(const std::vector<RunData> & runs, BuildOrderPlotter & plotter) const;
+    void writeHTMLFile(const std::vector<RunData> & runs) const;
 
 public:
 

@@ -51,7 +51,7 @@ bool ActionType::isBuilding()        const { return ActionTypeData::GetActionTyp
 bool ActionType::isDepot()           const { return ActionTypeData::GetActionTypeData(m_id).isDepot; }
 bool ActionType::isSupplyProvider()  const { return ActionTypeData::GetActionTypeData(m_id).isSupplyProvider; }
 bool ActionType::isUnit()            const { return ActionTypeData::GetActionTypeData(m_id).isUnit; }
-bool ActionType::isUpgrade()         const { return ActionTypeData::GetActionTypeData(m_id).isUpgrade; }
+bool ActionType::isUpgrade()         const { return isTech() || ActionTypeData::GetActionTypeData(m_id).isUpgrade; }
 bool ActionType::isAbility()         const { return ActionTypeData::GetActionTypeData(m_id).isAbility; }
 bool ActionType::isMorphed()         const { return ActionTypeData::GetActionTypeData(m_id).isMorphed; }
 bool ActionType::isHatchery()        const { return ActionTypeData::GetActionTypeData(m_id).isHatchery; }
@@ -204,6 +204,11 @@ namespace ActionTypes
         if (action.whatBuilds().isBuilding())
         {
             count.add(action.whatBuilds());
+        }
+
+        if (action.whatBuildsAddon() != ActionTypes::None)
+        {
+            count.add(action.whatBuildsAddon());
         }
 
         for (const auto & req : action.required())

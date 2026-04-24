@@ -46,8 +46,8 @@
         {
             "Run"               : true,
             "Type"              : "DFBBSearch",
-            "State"             : "Zerg Start State",
-            "Goal"              : "12 Mutalisks",
+            "State"             : "Terran Start State",
+            "Goal"              : "2 Battlecruisers",
             "SearchTimeLimitMS" : 30000,
             "SmartSearch"               : true,
             "Ordering"                  : [ "None", "LowMineralPrice", "HighMineralPrice", "LowGasPrice", "HighGasPrice", "LowTotalPrice", "HighTotalPrice", "LowestTech", "HighestTech", "ShortestBuildTime", "LongestBuildTime", "HighestSupplyCost", "LowestSupplyCost", "GoalFirst", "LeastBuilt", "MostBuilt", "NaiveBuild" ],
@@ -107,7 +107,8 @@
         "2 Dark Templars"       : { "race" : "Protoss", "goal" : [ ["DarkTemplar", 2] ], "goalMax" : [] },
         "8 Zealots 2 Dragoons"  : { "race" : "Protoss", "goal" : [ ["Zealot", 8], ["Dragoon", 2] ], "goalMax" : [] },
         "6 Mutalisks"           : { "race" : "Zerg", "goal" : [ ["Mutalisk", 6] ],  "goalMax" : [] },
-        "12 Mutalisks"          : { "race" : "Zerg", "goal" : [ ["Mutalisk", 12] ], "goalMax" : [] }
+        "12 Mutalisks"          : { "race" : "Zerg", "goal" : [ ["Mutalisk", 12] ], "goalMax" : [] },
+        "2 Battlecruisers"      : { "race" : "Terran", "goal" : [ ["Battlecruiser", 2] ], "goalMax" : [] }
     },
 
     "PossibleOrderings" : [ "None", "LowMineralPrice", "HighMineralPrice", "LowGasPrice", "HighGasPrice", "LowTotalPrice", "HighTotalPrice", "LowestTech", "HighestTech", "ShortestBuildTime", "LongestBuildTime", "HighestSupplyCost", "LowestSupplyCost", "GoalFirst", "LeastBuilt", "MostBuilt", "NaiveBuild" ]

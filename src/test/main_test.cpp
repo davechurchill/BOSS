@@ -622,6 +622,22 @@ TEST_CASE("Tech Test")
     REQUIRE(!state.isLegal(act));
 }
 
+TEST_CASE("Tech actions are treated as upgrade actions")
+{
+    BOSS::Init("config/BWData.json");
+
+    const ActionType stimPacks("StimPacks");
+    const ActionType yamatoGun("YamatoGun");
+
+    REQUIRE(stimPacks.isTech());
+    REQUIRE(stimPacks.isUpgrade());
+    REQUIRE_FALSE(stimPacks.isUnit());
+
+    REQUIRE(yamatoGun.isTech());
+    REQUIRE(yamatoGun.isUpgrade());
+    REQUIRE_FALSE(yamatoGun.isBuilding());
+}
+
 TEST_CASE("Equivalencies")
 {
     // test isEquivalentTo() method
@@ -679,6 +695,49 @@ TEST_CASE("Addons")
     REQUIRE(!state.isLegal(silo));
 }
 
+TEST_CASE("Terran addon prerequisites are recursive prerequisites")
+{
+    BOSS::Init("config/BWData.json");
+
+    const ActionType battlecruiser("Battlecruiser");
+    const ActionSet & directPrerequisites = battlecruiser.getPrerequisiteActionCount();
+    const ActionSet & recursivePrerequisites = battlecruiser.getRecursivePrerequisiteActionCount();
+
+    REQUIRE(directPrerequisites.contains(ActionType("Starport")));
+    REQUIRE(directPrerequisites.contains(ActionType("ControlTower")));
+    REQUIRE(directPrerequisites.contains(ActionType("PhysicsLab")));
+
+    REQUIRE(recursivePrerequisites.contains(ActionType("Factory")));
+    REQUIRE(recursivePrerequisites.contains(ActionType("Barracks")));
+    REQUIRE(recursivePrerequisites.contains(ActionType("Refinery")));
+    REQUIRE(recursivePrerequisites.contains(ActionType("ScienceFacility")));
+}
+
+TEST_CASE("Battlecruiser requires a Starport ControlTower")
+{
+    BOSS::Init("config/BWData.json");
+
+    BOSS::GameState state;
+    state.addUnit(ActionType("CommandCenter"));
+    state.addUnit(ActionType("SCV"));
+    state.addUnit(ActionType("SupplyDepot"));
+    state.addUnit(ActionType("SupplyDepot"));
+    state.addUnit(ActionType("Barracks"));
+    state.addUnit(ActionType("Factory"));
+    state.addUnit(ActionType("Starport"));
+    state.addUnit(ActionType("ScienceFacility"));
+    state.setMinerals(10000);
+    state.setGas(10000);
+
+    state.doAction(ActionType("PhysicsLab"));
+
+    REQUIRE_FALSE(state.isLegal(ActionType("Battlecruiser")));
+
+    state.doAction(ActionType("ControlTower"));
+
+    REQUIRE(state.isLegal(ActionType("Battlecruiser")));
+}
+
 TEST_CASE("Gas legality")
 {
     // Tests that units that require gas become legal once a gas extractor begins construction
@@ -715,6 +774,7 @@ TEST_CASE("Gas legality")
         REQUIRE(!state.isLegal(ActionType("Factory")));
         state.doAction(ActionType("Refinery"));
         REQUIRE(state.isLegal(ActionType("Factory")));
+        REQUIRE(state.whenCanBuild(ActionType("Factory")) >= state.getNextFinishTime(ActionType("Refinery")));
     }
 }
 
