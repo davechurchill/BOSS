@@ -2,6 +2,7 @@
 
 #include "CombatSearchExperiment.h"
 #include "DFBBSearchExperiment.h"
+#include "DFBB_BuildOrderSmartSearch.h"
 #include "BuildOrderPlotter.h"
 #include "FileTools.h"
 
@@ -39,6 +40,10 @@ void Experiments::RunExperiments(const std::string & experimentFilename)
             {
                 RunDFBBSearchExperiment(name, val);
             }
+            else if (type == "BuildOrderSearch")
+            {
+                RunBuildOrderSearchExperiment(name, val);
+            }
             else
             {
                 BOSS_ASSERT(false, "Unknown Experiment Type: %s", type.c_str());
@@ -65,6 +70,46 @@ void Experiments::RunDFBBSearchExperiment(const std::string & name, const json &
 
     DFBBSearchExperiment exp(name, val);
     exp.run();
+
+    std::cout << "    " << name << " completed" << std::endl;
+}
+
+void Experiments::RunBuildOrderSearchExperiment(const std::string & name, const json & val)
+{
+    std::cout << "Build Order Search Experiment - " << name << std::endl;
+
+    BOSS_ASSERT(val.count("State") && val["State"].is_string(), "BuildOrderSearch experiment must have a 'State' string");
+    BOSS_ASSERT(val.count("Goal") && val["Goal"].is_string(), "BuildOrderSearch experiment must have a 'Goal' string");
+
+    DFBB_BuildOrderSmartSearch search;
+    search.setState(BOSSConfig::Instance().GetState(val["State"]));
+    search.setGoal(BOSSConfig::Instance().GetBuildOrderSearchGoalMap(val["Goal"]));
+
+    if (val.count("SearchTimeLimitMS") && val["SearchTimeLimitMS"].is_number_integer())
+    {
+        search.setTimeLimit(val["SearchTimeLimitMS"]);
+    }
+
+    if (val.count("PrintNewBest") && val["PrintNewBest"].is_boolean())
+    {
+        search.setPrintNewBest(val["PrintNewBest"]);
+    }
+
+    search.search();
+    const DFBB_BuildOrderSearchResults & results = search.getResults();
+    results.printResults();
+
+    if (val.count("OutputFile") && val["OutputFile"].is_string())
+    {
+        std::ofstream out(val["OutputFile"].get<std::string>());
+        out << "Solved: " << (results.solved ? "yes" : "no") << "\n";
+        out << "Timed Out: " << (results.timedOut ? "yes" : "no") << "\n";
+        out << "Solution Found: " << (results.solutionFound ? "yes" : "no") << "\n";
+        out << "Upper Bound: " << results.upperBound << "\n";
+        out << "Nodes Expanded: " << results.nodesExpanded << "\n";
+        out << "Time Elapsed: " << results.timeElapsed << "\n";
+        out << "Build Order: " << results.buildOrder.getNameString() << "\n";
+    }
 
     std::cout << "    " << name << " completed" << std::endl;
 }

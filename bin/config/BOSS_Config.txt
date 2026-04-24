@@ -68,6 +68,7 @@
             "Run"           : false,
             "Type"          : "BuildOrderSearch",
             "OutputFile"    : "DTRush_Opt.txt",
+            "Goal"          : "2 Dark Templars",
             "Race"          : "Protoss",
             "State"         : "Protoss Start State"
         }

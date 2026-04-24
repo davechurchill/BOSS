@@ -3,7 +3,6 @@
 #include "Common.h"
 #include "BuildOrderSearchGoal.h"
 #include "GameState.h"
-#include "DFBB_BuildOrderSearchSaveState.h"
 #include "ActionOrdering.hpp"
 
 namespace BOSS
