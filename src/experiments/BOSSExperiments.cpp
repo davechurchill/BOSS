@@ -1,10 +1,12 @@
 #include "BOSSExperiments.h"
 
+#include "AStarSearchExperiment.h"
 #include "CombatSearchExperiment.h"
 #include "DFBBSearchExperiment.h"
 #include "DFBB_BuildOrderSmartSearch.h"
 #include "BuildOrderPlotter.h"
 #include "FileTools.h"
+#include "MonteCarloTreeSearchExperiment.h"
 
 using namespace BOSS;
 
@@ -43,6 +45,14 @@ void Experiments::RunExperiments(const std::string & experimentFilename)
             else if (type == "BuildOrderSearch")
             {
                 RunBuildOrderSearchExperiment(name, val);
+            }
+            else if (type == "MonteCarloTreeSearch")
+            {
+                RunMonteCarloTreeSearchExperiment(name, val);
+            }
+            else if (type == "AStarSearch")
+            {
+                RunAStarSearchExperiment(name, val);
             }
             else
             {
@@ -110,6 +120,26 @@ void Experiments::RunBuildOrderSearchExperiment(const std::string & name, const 
         out << "Time Elapsed: " << results.timeElapsed << "\n";
         out << "Build Order: " << results.buildOrder.getNameString() << "\n";
     }
+
+    std::cout << "    " << name << " completed" << std::endl;
+}
+
+void Experiments::RunMonteCarloTreeSearchExperiment(const std::string & name, const json & val)
+{
+    std::cout << "Monte Carlo Tree Search Experiment - " << name << std::endl;
+
+    MonteCarloTreeSearchExperiment exp(name, val);
+    exp.run();
+
+    std::cout << "    " << name << " completed" << std::endl;
+}
+
+void Experiments::RunAStarSearchExperiment(const std::string & name, const json & val)
+{
+    std::cout << "A* Search Experiment - " << name << std::endl;
+
+    AStarSearchExperiment exp(name, val);
+    exp.run();
 
     std::cout << "    " << name << " completed" << std::endl;
 }

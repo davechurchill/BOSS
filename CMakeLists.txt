@@ -56,9 +56,11 @@ target_link_libraries(BOSS_Test PRIVATE BOSS)
 
 # ── BOSS_Experiments ──────────────────────────────────────────────────────────
 add_executable(BOSS_Experiments
+    src/experiments/AStarSearchExperiment.cpp
     src/experiments/BOSSExperiments.cpp
     src/experiments/CombatSearchExperiment.cpp
     src/experiments/DFBBSearchExperiment.cpp
+    src/experiments/MonteCarloTreeSearchExperiment.cpp
     src/experiments/main_experiments.cpp
 )
 

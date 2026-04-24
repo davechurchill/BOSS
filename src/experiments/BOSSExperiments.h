@@ -14,6 +14,8 @@ namespace Experiments
     void RunBuildOrderPlot(const std::string & name, const json & j);
     void RunDFBBSearchExperiment(const std::string & name, const json & val);
     void RunBuildOrderSearchExperiment(const std::string & name, const json & val);
+    void RunMonteCarloTreeSearchExperiment(const std::string & name, const json & val);
+    void RunAStarSearchExperiment(const std::string & name, const json & val);
 }
 
 }

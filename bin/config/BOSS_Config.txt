@@ -44,7 +44,7 @@
         
         "DFBBSearch" :
         {
-            "Run"               : true,
+            "Run"               : false,
             "Type"              : "DFBBSearch",
             "State"             : "Terran Start State",
             "Goal"              : "2 Battlecruisers",
@@ -52,6 +52,48 @@
             "SmartSearch"               : true,
             "Ordering"                  : [ "None", "LowMineralPrice", "HighMineralPrice", "LowGasPrice", "HighGasPrice", "LowTotalPrice", "HighTotalPrice", "LowestTech", "HighestTech", "ShortestBuildTime", "LongestBuildTime", "HighestSupplyCost", "LowestSupplyCost", "GoalFirst", "LeastBuilt", "MostBuilt", "NaiveBuild" ],
             "HTMLFile"                  : "results/DFBBSearch.html",
+            "PrintNewBest"              : true,
+            "UseRepetitions"            : true,
+            "UseIncreasingRepetitions"  : true,
+            "UseLandmarkLowerBound"     : true,
+            "UseResourceLowerBound"     : true,
+            "UseAlwaysMakeWorkers"      : true,
+            "UseSupplyBounding"         : true,
+            "SupplyBoundingThreshold"   : 1.5,
+            "RelevantActions"           : [ "Probe", "Pylon", "Nexus", "Assimilator", "Gateway", "CyberneticsCore", "CitadelofAdun", "TemplarArchives", "DarkTemplar" ]
+        },
+
+        "MonteCarloTreeSearch" :
+        {
+            "Run"                       : true,
+            "Type"                      : "MonteCarloTreeSearch",
+            "State"                     : "Terran Start State",
+            "Goal"                      : "2 Battlecruisers",
+            "SearchTimeLimitMS"         : 50000,
+            "Iterations"                : 1000000,
+            "ExplorationConstant"       : 0.5,
+            "OutputFile"                : "results/MonteCarloTreeSearch.txt",
+            "HTMLFile"                  : "results/MonteCarloTreeSearch.html",
+            "PrintNewBest"              : true,
+            "UseRepetitions"            : true,
+            "UseIncreasingRepetitions"  : true,
+            "UseLandmarkLowerBound"     : true,
+            "UseResourceLowerBound"     : true,
+            "UseAlwaysMakeWorkers"      : true,
+            "UseSupplyBounding"         : true,
+            "SupplyBoundingThreshold"   : 1.5
+        },
+
+        "AStarSearch" :
+        {
+            "Run"                       : true,
+            "Type"                      : "AStarSearch",
+            "State"                     : "Terran Start State",
+            "Goal"                      : "2 Battlecruisers",
+            "SearchTimeLimitMS"         : 5000,
+            "SmartSearch"               : true,
+            "Ordering"                  : [ "None", "NaiveBuild" ],
+            "HTMLFile"                  : "results/AStarSearch.html",
             "PrintNewBest"              : true,
             "UseRepetitions"            : true,
             "UseIncreasingRepetitions"  : true,
